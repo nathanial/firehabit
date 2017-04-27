@@ -1,44 +1,40 @@
 import React from 'react';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import {history} from '../util';
-const SiteNavbarContainer = styled.div`
-	border-bottom: 1px solid black;
-	padding: 10px;
-	text-align: left;
-	background: white;
-`;
-
-const NavbarButton = styled.div`
-	background: white;
-	border: 1px solid black;
-	display: inline-block;
-	padding: 5px 15px;
-	margin: 0 5px;
-	cursor: pointer;
-	background: ${(props) => props.active ? 'red' : 'white'}
-`;
 
 export default class SiteNavbar extends React.Component {
-
 	static propTypes = {
 		onNavigate: PropTypes.func.isRequired
 	}
 
 	render(){
 		const path = history.location.pathname;
-		return (
-			<SiteNavbarContainer>
-				<NavbarButton active={path === '/' || path === '/habits'} onClick={() => this.goto('habits')}>Habits</NavbarButton>
-				<NavbarButton active={path === '/calories'} onClick={() => this.goto('calories')}>Calories</NavbarButton>
-				<NavbarButton active={path === '/todo'} onClick={() => this.goto('todo')}>TODO</NavbarButton>
-				<NavbarButton active={path === '/notes'} onClick={() => this.goto('notes')}>Notes</NavbarButton>
-				<NavbarButton active={path === '/schedule'} onClick={() => this.goto('schedule')}>Schedule</NavbarButton>
-			</SiteNavbarContainer>
-		);
-	}
 
-	goto = (tab) => {
-		this.props.onNavigate(tab);
+		const NavBtn = (props) => {
+			return (
+				<button onClick={() => this.props.onNavigate(props.goto)}
+								className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
+					{props.children}
+				</button>
+			);
+		};
+
+		return (
+			<nav className="pt-navbar .modifier">
+				<div className="pt-navbar-group pt-align-left">
+					<div className="pt-navbar-heading">Personal Life Manager</div>
+					<span className="pt-navbar-divider"></span>
+					<NavBtn goto="habits" icon="pt-icon-pulse" active={(path === '/' || path === '/habits')}>Habits</NavBtn>
+					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'}>Calories</NavBtn>
+					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'}>TODO</NavBtn>
+					<NavBtn goto="notes" icon="pt-icon-projects" active={path === '/notes'}>Notes</NavBtn>
+					<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'}>Schedule</NavBtn>
+				</div>
+				<div className="pt-navbar-group pt-align-right">
+					<button className="pt-button pt-minimal pt-icon-user"></button>
+					<button className="pt-button pt-minimal pt-icon-cog"></button>
+				</div>
+			</nav>
+		);
 	}
 }
