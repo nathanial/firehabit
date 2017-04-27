@@ -15,6 +15,19 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Personal Life Manager</title>
+    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+    <script>
+			// Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyB8MpJg-KhRzFrc7nWEgbwWx3An27lLMx4",
+				authDomain: "personal-life-tracker.firebaseapp.com",
+				databaseURL: "https://personal-life-tracker.firebaseio.com",
+				projectId: "personal-life-tracker",
+				storageBucket: "personal-life-tracker.appspot.com",
+				messagingSenderId: "892752440591"
+			};
+			firebase.initializeApp(config);
+    </script>
   </head>
   <body>
     <div id="root"></div>
