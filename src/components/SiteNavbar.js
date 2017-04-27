@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {history} from '../util';
@@ -20,7 +21,7 @@ export default class SiteNavbar extends React.Component {
 		};
 
 		return (
-			<nav className="pt-navbar .modifier">
+			<nav className="pt-navbar .modifier" {..._.omit(this.props, _.keys(SiteNavbar.propTypes))}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading">Personal Life Manager</div>
 					<span className="pt-navbar-divider"></span>
