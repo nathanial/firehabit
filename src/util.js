@@ -6,6 +6,7 @@ export const auth = new AuthService('kN2pjFvY3nrSUBIvMrpeJ5DIu7QFhdJZ', 'habit-t
 
 class State {
 	loggedIn = observable(false);
+	foodEntries = observable([]);
 }
 
 export const state = new State();

@@ -40,7 +40,7 @@ class App extends Component {
   render() {
     return (
       <Router history={history}>
-        <div className="App">
+        <div className="App ">
           <SiteNavbar onNavigate={this.onNavigate} />
           <Route exact path="/" component={checkAuth(HabitsPage)} />
           <Route exact path="/habits" component={checkAuth(HabitsPage)} />
