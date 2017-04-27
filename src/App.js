@@ -13,19 +13,27 @@ import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/NotesPage';
 import TodoPage from './components/TodoPage';
 import SchedulePage from './components/SchedulePage';
-import LoginPage from './components/LoginPage';
-import {auth, history} from './util';
-
+import {state, history, auth} from './util';
+import {observer} from 'mobx-react';
 
 function checkAuth(Component){
   return () => {
-		if(auth.loggedIn()){
+		if(state.loggedIn){
 			return <Component/>
 		} else {
 		  history.replace('/login');
 		  return null;
     }
   };
+}
+
+function login() {
+	if(!state.loggedIn){
+		auth.login();
+	} else {
+		history.replace('/');
+	}
+	return null;
 }
 
 class App extends Component {
@@ -41,7 +49,7 @@ class App extends Component {
           <Route path="/todo" component={checkAuth(TodoPage)} />
           <Route path="/notes" component={checkAuth(NotesPage)} />
           <Route path="/schedule" component={checkAuth(SchedulePage)} />
-          <Route path="/login" component={LoginPage} />
+          <Route path="/login" component={login} />
         </div>
       </Router>
 		);
@@ -52,4 +60,4 @@ class App extends Component {
   };
 }
 
-export default App;
+export default observer(App);
