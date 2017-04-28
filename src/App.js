@@ -20,15 +20,17 @@ class App extends Component {
   render() {
     return (
       <Router history={history}>
-        <div className="App ">
+        <div className="App">
           <SiteNavbar onNavigate={this.onNavigate} />
-          <Route exact path="/" component={HabitsPage} />
-          <Route exact path="/habits" component={HabitsPage} />
-          <Route path="/calories" component={CaloriesPage} />
-          <Route path="/dailies" component={DailiesPage} />
-          <Route path="/todo" component={TodoPage} />
-          <Route path="/notes" component={NotesPage} />
-          <Route path="/schedule" component={SchedulePage} />
+          <div className="app-content">
+            <Route exact path="/" component={HabitsPage} />
+            <Route exact path="/habits" component={HabitsPage} />
+            <Route path="/calories" component={CaloriesPage} />
+            <Route path="/dailies" component={DailiesPage} />
+            <Route path="/todo" component={TodoPage} />
+            <Route path="/notes" component={NotesPage} />
+            <Route path="/schedule" component={SchedulePage} />
+          </div>
         </div>
       </Router>
 		);

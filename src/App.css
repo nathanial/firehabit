@@ -22,3 +22,17 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.App .pt-navbar {
+  position: fixed;
+  width: 100%;
+}
+
+.App > .app-content {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}

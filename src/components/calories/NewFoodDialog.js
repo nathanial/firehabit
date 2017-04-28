@@ -4,7 +4,7 @@ import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import {Dialog} from "@blueprintjs/core/dist/components/dialog/dialog";
 import {Intent} from '@blueprintjs/core';
 import styled from 'styled-components';
-import firebase from 'firebase';
+import {appState} from '../../util';
 
 const NewFoodDialogWrapper = styled.div`
 	margin-top: 20px;
@@ -56,10 +56,7 @@ export default class NewFoodDialog extends React.Component {
 	openDialog = () => this.setState({ isOpen: true });
 
 	onAddFood = async () => {
-		const user = firebase.auth().currentUser;
-		const userId = user.uid;
-		const allFoodsRef = firebase.database().ref(`/users/${userId}/allFoods`);
-		await allFoodsRef.push({
+		await appState.addFoodDefinition({
 			name: this.refs.foodName.value,
 			calories: this.refs.calories.value
 		});

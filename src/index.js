@@ -59,15 +59,16 @@ async function setInitialData(){
 	const userData = userSnapshot.val();
 	if(_.isNull(userData)){
 		await userRef.set({
-			name: user.displayName,
-			foodEntries: []
+			name: user.displayName
 		});
 	}
 }
 
+
 async function init(){
 	await loginToFirebase();
 	await setInitialData();
+	await appState.loadFromDB();
 	ReactDOM.render(
 		<App />,
 		document.getElementById('root')
