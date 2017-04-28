@@ -2,7 +2,7 @@ import createBrowserHistory from 'history/createBrowserHistory'
 import {observable} from "../node_modules/mobx/lib/mobx";
 export const history = createBrowserHistory();
 
-class State {
+class AppState {
 	loggedIn = observable(false);
 	foodEntries = observable([]);
 	user = observable({
@@ -11,4 +11,4 @@ class State {
 	})
 }
 
-export const state = new State();
+export const appState = new AppState();

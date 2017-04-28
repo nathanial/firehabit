@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
-import {state} from "./util";
+import {appState} from "./util";
 import firebase from 'firebase';
 
 // Initialize Firebase
@@ -21,16 +21,16 @@ async function loginToFirebase(){
 	return new Promise((resolve, reject) => {
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
-				state.loggedIn = true;
+				appState.loggedIn = true;
 				console.log("User", user);
-				state.user.name = user.name;
-				state.user.email = user.email;
+				appState.user.name = user.name;
+				appState.user.email = user.email;
 				resolve();
 				// User is signed in.
 			} else {
 				if(firebase.auth().currentUser){
 					console.log("GOT USER");
-					state.loggedIn = true;
+					appState.loggedIn = true;
 					resolve();
 					return;
 				}
@@ -39,11 +39,11 @@ async function loginToFirebase(){
 					const result = await firebase.auth().signInWithPopup(provider)
 					const user = result.user;
 					console.log("User", user);
-					state.loggedIn = true
+					appState.loggedIn = true
 					resolve();
 				} catch(error){
 					console.error(error);
-					state.loggedIn = false;
+					appState.loggedIn = false;
 					reject();
 				}
 			}
