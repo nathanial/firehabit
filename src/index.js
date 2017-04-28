@@ -4,9 +4,20 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import {state} from "./util";
+import firebase from 'firebase';
+
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyB8MpJg-KhRzFrc7nWEgbwWx3An27lLMx4",
+	authDomain: "personal-life-tracker.firebaseapp.com",
+	databaseURL: "https://personal-life-tracker.firebaseio.com",
+	projectId: "personal-life-tracker",
+	storageBucket: "personal-life-tracker.appspot.com",
+	messagingSenderId: "892752440591"
+};
+firebase.initializeApp(config);
 
 async function loginToFirebase(){
-	const firebase = window.firebase;
 	return new Promise((resolve, reject) => {
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
@@ -41,7 +52,6 @@ async function loginToFirebase(){
 }
 
 async function setInitialData(){
-	const firebase = window.firebase;
 	const user = firebase.auth().currentUser;
 	const userId = user.uid;
 	const userRef = firebase.database().ref(`/users/${userId}`);

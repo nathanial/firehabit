@@ -8,7 +8,7 @@ import {
 	Route
 } from 'react-router-dom'
 import HabitsPage from './components/HabitsPage';
-import CaloriesPage from './components/CaloriesPage';
+import CaloriesPage from './components/calories/CaloriesPage';
 import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/NotesPage';
 import TodoPage from './components/TodoPage';

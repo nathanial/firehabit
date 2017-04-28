@@ -1,13 +1,10 @@
 // Line Limit 100
 import React from 'react';
 import styled from 'styled-components';
-import {observer} from 'mobx-react';
-import {state} from '../util';
-import _ from 'lodash';
-import DayPicker from './DayPicker';
-
-const CaloriesPageWrapper = styled.div`
-`;
+import DayPicker from "../DayPicker";
+import NewFoodDialog from './NewFoodDialog';
+import * as _ from 'lodash';
+import PropTypes from 'prop-types';
 
 const CaloriesFormWrapper = styled.div`
 	position: relative;
@@ -32,13 +29,32 @@ function FoodEntry(props){
 	);
 }
 
+const SearchResultsWrapper = styled.ul`
+	
+`;
+
 class SearchResults extends React.Component {
 	render(){
-		return <h1>Search Results</h1>;
+		return (
+			<SearchResultsWrapper>
+				{this.props.allFoods.map(food => {
+					return (
+						<li key={food.name}>{food.name}</li>
+					);
+				})}
+			</SearchResultsWrapper>
+		);
 	}
 }
 
-class CaloriesForm extends React.Component {
+
+
+export default class CaloriesForm extends React.Component {
+
+	static propTypes = {
+		consumedFoods: PropTypes.array.isRequired,
+		allFoods: PropTypes.array.isRequired
+	};
 
 	state = {
 		value: ''
@@ -67,11 +83,17 @@ class CaloriesForm extends React.Component {
 
 	content = () =>{
 		if(!_.isEmpty(this.state.value)){
-			return <SearchResults />
+			console.log("All Foods", this.props.allFoods);
+			return (
+				<div>
+					<SearchResults search={this.state.value} allFoods={this.props.allFoods} />
+					<NewFoodDialog />
+				</div>
+			);
 		}
 		return (
 			<CaloriesList>
-				{this.props.foodEntries.map(entry => {
+				{this.props.consumedFoods.map(entry => {
 					return <FoodEntry entry={entry} />
 				})}
 			</CaloriesList>
@@ -79,16 +101,3 @@ class CaloriesForm extends React.Component {
 	}
 
 }
-
-class CaloriesPage extends React.Component {
-	render(){
-		const foodEntries = state.foodEntries;
-		return (
-			<CaloriesPageWrapper>
-				<CaloriesForm foodEntries={foodEntries} />
-			</CaloriesPageWrapper>
-		);
-	}
-}
-
-export default observer(CaloriesPage);
