@@ -29,10 +29,10 @@ class CaloriesPage extends React.Component {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.allFoodsRef = firebase.database().ref(`/users/${userId}/allFoods`);
+		this.consumedFoodsRef = firebase.database().ref(`/users/${userId}/consumedFoods`);
 
 		this.allFoodsRef.on('child_added', (snapshot) => {
 			const value = snapshot.val();
-			console.log("Child Added", value);
 			this.setState({
 				allFoods: this.state.allFoods.concat(value)
 			});
@@ -41,8 +41,22 @@ class CaloriesPage extends React.Component {
 			const value = snapshot.val();
 			console.log("Removed", value);
 		});
-
 		this.allFoodsRef.on('child_changed', (snapshot) => {
+			const value = snapshot.val();
+			console.log("Changed", value);
+		});
+
+		this.consumedFoodsRef.on('child_added', (snapshot) => {
+			const value = snapshot.val();
+			this.setState({
+				consumedFoods: this.state.consumedFoods.concat(value)
+			});
+		});
+		this.consumedFoodsRef.on('child_removed', (snapshot) => {
+			const value = snapshot.val();
+			console.log("Removed", value);
+		});
+		this.consumedFoodsRef.on('child_changed', (snapshot) => {
 			const value = snapshot.val();
 			console.log("Changed", value);
 		});

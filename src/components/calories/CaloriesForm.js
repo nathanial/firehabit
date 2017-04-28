@@ -5,6 +5,9 @@ import DayPicker from "../DayPicker";
 import NewFoodDialog from './NewFoodDialog';
 import * as _ from 'lodash';
 import PropTypes from 'prop-types';
+import firebase from 'firebase';
+import SearchResults from "./SearchResults";
+import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 
 const CaloriesFormWrapper = styled.div`
 	position: relative;
@@ -20,33 +23,30 @@ const CaloriesList = styled.ul`
 	border: 1px solid #ccc;
 	width: 500px;
 	min-height: 300px;
-`;
-
-
-function FoodEntry(props){
-	return (
-		<li>Food Entry</li>
-	);
-}
-
-const SearchResultsWrapper = styled.ul`
+	list-style-type: none;
+	text-align: left;
+	padding: 0;
 	
-`;
-
-class SearchResults extends React.Component {
-	render(){
-		return (
-			<SearchResultsWrapper>
-				{this.props.allFoods.map(food => {
-					return (
-						<li key={food.name}>{food.name}</li>
-					);
-				})}
-			</SearchResultsWrapper>
-		);
+	& > li {
+		background: #eee;
+		padding: 20px;
+		position: relative;
+		
+		& > .food-name {
+		}
+		
+		& > .calories {
+			position: absolute;
+			right: 200px;
+		}
+		
+		& > button {
+			position: absolute;
+			right: 10px;
+			top: 15px;
+		}
 	}
-}
-
+`;
 
 
 export default class CaloriesForm extends React.Component {
@@ -59,6 +59,14 @@ export default class CaloriesForm extends React.Component {
 	state = {
 		value: ''
 	};
+
+	constructor(){
+		super(...arguments);
+
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+		this.consumedFoodsRef = firebase.database().ref(`/users/${userId}/consumedFoods`);
+	}
 
 	render() {
 		return (
@@ -83,21 +91,36 @@ export default class CaloriesForm extends React.Component {
 
 	content = () =>{
 		if(!_.isEmpty(this.state.value)){
-			console.log("All Foods", this.props.allFoods);
 			return (
 				<div>
-					<SearchResults search={this.state.value} allFoods={this.props.allFoods} />
+					<SearchResults search={this.state.value} allFoods={this.props.allFoods} onAddFood={this.onAddFood} />
 					<NewFoodDialog />
 				</div>
 			);
 		}
 		return (
 			<CaloriesList>
-				{this.props.consumedFoods.map(entry => {
-					return <FoodEntry entry={entry} />
+				{this.props.consumedFoods.map((entry, index) => {
+					return (
+						<li key={index}>
+							<span className="food-name">{entry.name}</span>
+							<span className="calories">{entry.calories}</span>
+							<Button iconName="trash" onClick={() => this.onRemoveFood(entry)} />
+						</li>
+					);
 				})}
 			</CaloriesList>
 		);
+	};
+
+	onAddFood = async (food) => {
+		await this.consumedFoodsRef.push(food);
+		this.setState({
+			value: ''
+		});
+	};
+
+	onRemoveFood = async (food) => {
 	}
 
 }
