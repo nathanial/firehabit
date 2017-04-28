@@ -30,11 +30,22 @@ export class AppState {
 		}
 
 		this.consumedFoodsRef.on('child_added', (snapshot) => {
-			const existingIDs = _.map(this.consumedFoodsRef, 'id');
+			const existingIDs = _.map(this.consumedFoods, 'id');
 			if(!_.includes(existingIDs, snapshot.key)){
 				this.consumedFoods.push({id: snapshot.key, ...snapshot.val()});
 			}
-		})
+		});
+		this.foodDefinitionsRef.on('child_added', (snapshot) => {
+			const existingIDs = _.map(this.foodDefinitions, 'id');
+			console.log("Existing IDS", existingIDs, snapshot.key);
+			if(!_.includes(existingIDs, snapshot.key)){
+				this.foodDefinitions.push({id: snapshot.key, ...snapshot.val()});
+			}
+		});
+		this.consumedFoodsRef.on('child_removed', (snapshot) => {
+			const entry = _.find(this.consumedFoods, {id: snapshot.key});
+			this.consumedFoods.splice(this.consumedFoods.indexOf(entry), 1);
+		});
 	}
 
 	async addConsumedFood(food) {

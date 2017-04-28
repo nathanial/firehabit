@@ -3,6 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
+import {appState} from '../../util';
+import {observer} from 'mobx-react';
 
 const SearchResultsWrapper = styled.ul`
 	list-style-type: none;
@@ -34,7 +36,7 @@ const SearchResultsWrapper = styled.ul`
 	
 `;
 
-export default class SearchResults extends React.Component {
+export default observer(class SearchResults extends React.Component {
 
 	static propTypes = {
 		onAddFood: PropTypes.func.isRequired
@@ -43,7 +45,7 @@ export default class SearchResults extends React.Component {
 	render(){
 		return (
 			<SearchResultsWrapper>
-				{this.props.allFoods.map(food => {
+				{appState.foodDefinitions.map(food => {
 					return (
 						<li key={food.name}>
 							<div className="food-name">{food.name}</div>
@@ -59,4 +61,4 @@ export default class SearchResults extends React.Component {
 	onAddFood = (food) => {
 		this.props.onAddFood(food);
 	}
-}
+})
