@@ -1,13 +1,16 @@
+// Line Limit 100
 import React from 'react';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import {state} from '../util';
 import _ from 'lodash';
+import DayPicker from './DayPicker';
 
 const CaloriesPageWrapper = styled.div`
 `;
 
 const CaloriesFormWrapper = styled.div`
+	position: relative;
 	width: 500px;
 	margin: 50px;
 	& > h2 {
@@ -17,7 +20,11 @@ const CaloriesFormWrapper = styled.div`
 `;
 
 const CaloriesList = styled.ul`
+	border: 1px solid #ccc;
+	width: 500px;
+	min-height: 300px;
 `;
+
 
 function FoodEntry(props){
 	return (
@@ -41,6 +48,7 @@ class CaloriesForm extends React.Component {
 		return (
 			<CaloriesFormWrapper>
 				<h2>Calories</h2>
+				<DayPicker />
 				<div className="pt-input-group">
 					<span className="pt-icon pt-icon-search"></span>
 					<input ref="search" value={this.state.value} className="pt-input" type="search" placeholder="Add Food" dir="auto" onChange={this.onChange} />
@@ -62,15 +70,12 @@ class CaloriesForm extends React.Component {
 			return <SearchResults />
 		}
 		return (
-			<h1>Calories List</h1>
+			<CaloriesList>
+				{this.props.foodEntries.map(entry => {
+					return <FoodEntry entry={entry} />
+				})}
+			</CaloriesList>
 		);
-		// return (
-		// 	<CaloriesList>
-		// 		{this.props.foodEntries.map(entry => {
-		// 			return <FoodEntry entry={entry} />
-		// 		})}
-		// 	</CaloriesList>
-		// );
 	}
 
 }
