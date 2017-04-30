@@ -8,6 +8,7 @@ import SearchResults from "./SearchResults";
 import {appState} from '../../util';
 import ConsumedFoodsList from "./ConsumedFoodsList";
 import {observer} from 'mobx-react';
+import moment from 'moment';
 
 const CaloriesFormWrapper = styled.div`
 	position: relative;
@@ -25,16 +26,17 @@ const CaloriesFormWrapper = styled.div`
 export default observer(class CaloriesForm extends React.Component {
 
 	state = {
-		value: ''
+		value: '',
+		date: moment().format('MM/DD/YY')
 	};
 
 	render() {
 		return (
 			<CaloriesFormWrapper>
 				<h2>Calories</h2>
-				<DayPicker />
+				<DayPicker date={this.state.date} onChange={(newDate) => this.setState({date: newDate})} />
 				<div className="pt-input-group">
-					<span className="pt-icon pt-icon-search"></span>
+					<span className="pt-icon pt-icon-search"/>
 					<input ref="search" value={this.state.value} className="pt-input" type="search" placeholder="Add Food" dir="auto" onChange={this.onChange} />
 				</div>
 				{this.content()}
@@ -53,8 +55,11 @@ export default observer(class CaloriesForm extends React.Component {
 		if(!_.isEmpty(this.state.value)){
 			return (
 				<div>
-					<SearchResults search={this.state.value} allFoods={appState.foodDefinitions} onAddFood={this.onAddFood} />
-					<NewFoodDialog />
+					<SearchResults search={this.state.value}
+												 foodDefinitions={appState.foodDefinitions}
+												 onAddFood={this.onAddFood}
+											   onRemoveFoodDefinition={this.onRemoveFoodDefinition}/>
+					<NewFoodDialog defaultName={this.state.value} />
 				</div>
 			);
 		}
@@ -64,13 +69,14 @@ export default observer(class CaloriesForm extends React.Component {
 	};
 
 	onAddFood = async (food) => {
-		await appState.addConsumedFood(food);
+		await appState.addConsumedFood(this.state.date, food);
 		this.setState({
 			value: ''
 		});
 	};
 
-	onRemoveFood = async (food) => {
+	onRemoveFoodDefinition = async (food) => {
+		await appState.removeFoodDefinition(food);
 	}
 
 })

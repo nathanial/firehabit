@@ -2,10 +2,40 @@ import _ from 'lodash';
 import {observable} from 'mobx';
 import firebase from 'firebase';
 
+function flattenKeys(value){
+	return _.map(_.keys(value), key => {
+		return {id: key, ...value[key]};
+	});
+}
+
+function pushAll(dst, src){
+	for(const item of src){
+		dst.push(item);
+	}
+}
+
+async function downloadRef(dst, ref){
+	const data = await ref.once('value');
+	pushAll(dst, flattenKeys(data.val()));
+}
+
+function watchRef(dst, ref){
+	ref.on('child_added', (snapshot) => {
+		const existingIDs = _.map(dst, 'id');
+		if(!_.includes(existingIDs, snapshot.key)){
+			dst.push({id: snapshot.key, ...snapshot.val()});
+		}
+	});
+	ref.on('child_removed', (snapshot) => {
+		const entry = _.find(dst, {id: snapshot.key});
+		dst.splice(dst.indexOf(entry), 1);
+	});
+}
+
 export class AppState {
 	loggedIn = observable(false);
 	foodDefinitions = observable([]);
-	consumedFoods = observable([]);
+	days = observable([]);
 	user = observable({
 		name: '',
 		email: ''
@@ -15,49 +45,35 @@ export class AppState {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.foodDefinitionsRef = firebase.database().ref(`/users/${userId}/foodDefinitions`);
-		this.consumedFoodsRef = firebase.database().ref(`/users/${userId}/consumedFoods`);
+		this.daysRef = firebase.database().ref(`/users/${userId}/days`);
 
-		const consumedFoodsSnapshot = await this.consumedFoodsRef.once('value');
-		const consumedFoodsValue = consumedFoodsSnapshot.val();
-		for(const foodKey of _.keys(consumedFoodsValue)){
-			this.consumedFoods.push({id: foodKey, ...consumedFoodsValue[foodKey]});
-		}
+		await downloadRef(this.days, this.daysRef);
+		await downloadRef(this.foodDefinitions, this.foodDefinitionsRef);
 
-		const foodDefinitionsSnapshot = await this.foodDefinitionsRef.once('value');
-		const foodDefinitionsValue = foodDefinitionsSnapshot.val();
-		for(const foodKey of _.keys(foodDefinitionsValue)){
-			this.foodDefinitions.push({id: foodKey, ...foodDefinitionsValue[foodKey]});
-		}
-
-		this.consumedFoodsRef.on('child_added', (snapshot) => {
-			const existingIDs = _.map(this.consumedFoods, 'id');
-			if(!_.includes(existingIDs, snapshot.key)){
-				this.consumedFoods.push({id: snapshot.key, ...snapshot.val()});
-			}
-		});
-		this.foodDefinitionsRef.on('child_added', (snapshot) => {
-			const existingIDs = _.map(this.foodDefinitions, 'id');
-			console.log("Existing IDS", existingIDs, snapshot.key);
-			if(!_.includes(existingIDs, snapshot.key)){
-				this.foodDefinitions.push({id: snapshot.key, ...snapshot.val()});
-			}
-		});
-		this.consumedFoodsRef.on('child_removed', (snapshot) => {
-			const entry = _.find(this.consumedFoods, {id: snapshot.key});
-			this.consumedFoods.splice(this.consumedFoods.indexOf(entry), 1);
-		});
+		watchRef(this.days, this.daysRef);
+		watchRef(this.foodDefinitions, this.foodDefinitionsRef);
 	}
 
-	async addConsumedFood(food) {
+	async addConsumedFood(date, food) {
 		food = _.omit(food, ['id']);
-		this.consumedFoodsRef.push(food);
+		const day = _.find(this.days, d => d.date === date);
+		if(day){
+			this.daysRef.child(day.id+'/consumed').push(day);
+		} else {
+			const childRef = this.daysRef.push({date});
+			this.daysRef.child(childRef.key + '/consumed').push(food);
+		}
 	}
 
 	async removeConsumedFood(food){
-		this.consumedFoodsRef.child(food.id).remove();
+		this.days.child(food.id).remove();
 	}
 
-	async addFoodDefinition(food){
-		this.foodDefinitionsRef.push(food);
+	async addFoodDefinition(definition){
+		this.foodDefinitionsRef.push(definition);
+	}
+
+	async removeFoodDefinition(definition){
+		this.foodDefinitionsRef.child(definition.id).remove();
 	}
 }

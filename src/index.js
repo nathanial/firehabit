@@ -22,7 +22,6 @@ async function loginToFirebase(){
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
 				appState.loggedIn = true;
-				console.log("User", user);
 				appState.user.name = user.name;
 				appState.user.email = user.email;
 				resolve();

@@ -1,8 +1,11 @@
 import React from 'react';
+import moment from 'moment';
 import {observer} from 'mobx-react';
 import {appState} from '../../util';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
+import _ from 'lodash';
+
 const CaloriesListWrapper = styled.ul`
 	border: 1px solid #ccc;
 	width: 500px;
@@ -38,9 +41,14 @@ const CaloriesListWrapper = styled.ul`
 
 export default observer(class ConsumedFoodsList extends React.Component {
 	render(){
+		const date = moment().format('MM/DD/YY')
+		const day = _.find(appState.days, day => day.date === date);
+		if(!day || !day.consumed) {
+			return <div></div>
+		}
 		return (
 			<CaloriesListWrapper>
-				{appState.consumedFoods.map((entry, index) => {
+				{day.consumed.map((entry, index) => {
 					return (
 						<li key={index}>
 							<span className="food-name">{entry.name}</span>

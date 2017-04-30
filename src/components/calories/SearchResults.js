@@ -3,9 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
-import {appState} from '../../util';
 import {observer} from 'mobx-react';
-
 const SearchResultsWrapper = styled.ul`
 	list-style-type: none;
 	padding: 20px;
@@ -16,6 +14,7 @@ const SearchResultsWrapper = styled.ul`
 		position: relative;
 		height: 30px;
 		line-height: 30px;
+		margin: 10px 0;
 		& > .food-name {
 			display: inline-block;
 			left: 30px;
@@ -26,7 +25,7 @@ const SearchResultsWrapper = styled.ul`
 			position: absolute;
 			right: 100px;
 		}
-		& > button {
+		& > .pt-button-group {
 			display: inline-block;
 			position: absolute;
 			right: 10px;
@@ -39,26 +38,29 @@ const SearchResultsWrapper = styled.ul`
 export default observer(class SearchResults extends React.Component {
 
 	static propTypes = {
-		onAddFood: PropTypes.func.isRequired
+		foodDefinitions: PropTypes.object.isRequired,
+		onAddFood: PropTypes.func.isRequired,
+		onRemoveFoodDefinition: PropTypes.func.isRequired
 	};
 
 	render(){
 		return (
 			<SearchResultsWrapper>
-				{appState.foodDefinitions.map(food => {
-					return (
-						<li key={food.name}>
-							<div className="food-name">{food.name}</div>
-							<div className="calories">{food.calories}</div>
-							<Button iconName="plus" onClick={() => this.onAddFood(food)} />
-						</li>
-					);
+				{this.props.foodDefinitions.map((food, i) => {
+					if(food.name.toLowerCase().indexOf(this.props.search.toLowerCase()) !== -1) {
+						return (
+							<li key={i}>
+								<div className="food-name">{food.name}</div>
+								<div className="calories">{food.calories}</div>
+								<div className="pt-button-group">
+									<Button iconName="trash" onClick={() => this.props.onRemoveFoodDefinition(food)} />
+									<Button iconName="plus" onClick={() => this.props.onAddFood(food)} />
+								</div>
+							</li>
+						);
+					}
 				})}
 			</SearchResultsWrapper>
 		);
-	}
-
-	onAddFood = (food) => {
-		this.props.onAddFood(food);
 	}
 })
