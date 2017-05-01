@@ -28,7 +28,6 @@ async function loginToFirebase(){
 				// User is signed in.
 			} else {
 				if(firebase.auth().currentUser){
-					console.log("GOT USER");
 					appState.loggedIn = true;
 					resolve();
 					return;
@@ -37,7 +36,6 @@ async function loginToFirebase(){
 				try {
 					const result = await firebase.auth().signInWithPopup(provider)
 					const user = result.user;
-					console.log("User", user);
 					appState.loggedIn = true
 					resolve();
 				} catch(error){

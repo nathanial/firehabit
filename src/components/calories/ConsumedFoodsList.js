@@ -54,8 +54,8 @@ export default observer(class ConsumedFoodsList extends React.Component {
 							<span className="food-name">{entry.name}</span>
 							<span className="calories">{entry.calories}</span>
 							<div className="pt-button-group">
-								<Button iconName="repeat" onClick={() => this.onRepeatFood(entry)} />
-								<Button iconName="trash" onClick={() => this.onRemoveFood(entry)} />
+								<Button iconName="repeat" onClick={() => this.onRepeatFood(day, entry)} />
+								<Button iconName="trash" onClick={() => this.onRemoveFood(day, entry)} />
 							</div>
 						</li>
 					);
@@ -64,11 +64,12 @@ export default observer(class ConsumedFoodsList extends React.Component {
 		);
 	}
 
-	onRepeatFood = (entry) => {
-		appState.addConsumedFood(entry);
+	onRepeatFood = (day, entry) => {
+		appState.addConsumedFood(day, entry);
 	};
 
-	onRemoveFood = (entry) => {
-		appState.removeConsumedFood(entry);
-	}
-})
+	onRemoveFood = (day, entry) => {
+		appState.removeConsumedFood(day, entry);
+	};
+
+});
