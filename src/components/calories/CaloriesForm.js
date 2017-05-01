@@ -1,16 +1,17 @@
 // Line Limit 100
 import React from 'react';
 import styled from 'styled-components';
-import DayPicker from "../DayPicker";
+import DayPicker from '../DayPicker';
 import NewFoodDialog from './NewFoodDialog';
 import * as _ from 'lodash';
-import SearchResults from "./SearchResults";
+import SearchResults from './SearchResults';
 import {appState} from '../../util';
-import ConsumedFoodsList from "./ConsumedFoodsList";
+import ConsumedFoodsList from './ConsumedFoodsList';
 import {observer} from 'mobx-react';
 import moment from 'moment';
 
 const CaloriesFormWrapper = styled.div`
+	display: inline-block;
 	position: relative;
 	width: 500px;
 	margin: 50px;
@@ -19,9 +20,6 @@ const CaloriesFormWrapper = styled.div`
 		margin-bottom: 20px;
 	}
 `;
-
-
-
 
 export default observer(class CaloriesForm extends React.Component {
 
