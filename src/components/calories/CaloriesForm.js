@@ -37,7 +37,10 @@ export default observer(class CaloriesForm extends React.Component {
 				<DayPicker date={this.state.date} onChange={(newDate) => this.setState({date: newDate})} />
 				<div className="pt-input-group">
 					<span className="pt-icon pt-icon-search"/>
-					<input ref="search" value={this.state.value} className="pt-input" type="search" placeholder="Add Food" dir="auto" onChange={this.onChange} />
+					<input ref="search" value={this.state.value}
+								 className="pt-input" type="search"
+								 placeholder="Add Food" dir="auto"
+								 onChange={this.onChange} />
 				</div>
 				{this.content()}
 			</CaloriesFormWrapper>
@@ -46,9 +49,7 @@ export default observer(class CaloriesForm extends React.Component {
 
 	onChange = () => {
 		const value = this.refs.search.value;
-		this.setState({
-			value
-		});
+		this.setState({ value });
 	};
 
 	content = () =>{
@@ -64,7 +65,7 @@ export default observer(class CaloriesForm extends React.Component {
 			);
 		}
 		return (
-			<ConsumedFoodsList/>
+			<ConsumedFoodsList day={this.state.date} />
 		);
 	};
 

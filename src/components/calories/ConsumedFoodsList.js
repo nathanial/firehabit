@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import {observer} from 'mobx-react';
 import {appState} from '../../util';
@@ -45,9 +46,13 @@ const CaloriesListWrapper = styled.ul`
 `;
 
 export default observer(class ConsumedFoodsList extends React.Component {
+
+	static propTypes = {
+		day: PropTypes.string.isRequired
+	};
+
 	render(){
-		const date = moment().format('MM/DD/YY')
-		const day = _.find(appState.days, day => day.date === date);
+		const day = _.find(appState.days, day => day.date === this.props.day);
 		if(!day || !day.consumed) {
 			return <div></div>
 		}

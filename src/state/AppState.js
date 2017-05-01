@@ -57,10 +57,23 @@ function watchCollection(dst, ref){
 			for(let key of _.keys(changedChild)) {
 				const newValue = changedChild[key];
 				if(_.isArray(newValue)) {
+					if(_.isUndefined(dstItem[key])) {
+						dstItem[key] = observable([]);
+					}
 					dstItem[key].splice(0, dstItem[key].length);
 					pushAll(dstItem[key], newValue);
 				} else {
 					dstItem[key] = newValue;
+				}
+			}
+
+			for(let key of _.keys(dstItem)){
+				if(_.isUndefined(changedChild[key])){
+					if(_.isObject(dstItem[key]) && dstItem[key].length > 0) {
+						dstItem[key].splice(0, dstItem[key].length);
+					} else {
+						delete dstItem[key];
+					}
 				}
 			}
 		}
