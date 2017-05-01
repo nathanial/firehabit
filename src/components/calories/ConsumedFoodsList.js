@@ -24,6 +24,11 @@ const CaloriesListWrapper = styled.ul`
 		position: relative;
 		
 		& > .food-name {
+			display: inline-block;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 220px;
 		}
 		
 		& > .calories {
