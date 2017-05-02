@@ -23,16 +23,21 @@ const CaloriesFormWrapper = styled.div`
 
 export default observer(class CaloriesForm extends React.Component {
 
+	static propTypes = {
+		date: React.PropTypes.string.isRequired,
+		onChangeDate: React.PropTypes.func.isRequired
+	}
+
 	state = {
-		value: '',
-		date: moment().format('MM/DD/YY')
+		value: ''
 	};
 
 	render() {
 		return (
 			<CaloriesFormWrapper>
 				<h2>Calories</h2>
-				<DayPicker date={this.state.date} onChange={(newDate) => this.setState({date: newDate})} />
+				<DayPicker date={this.props.date}
+									 onChange={(newDate) => this.props.onChangeDate(newDate)} />
 				<div className="pt-input-group">
 					<span className="pt-icon pt-icon-search"/>
 					<input ref="search" value={this.state.value}
@@ -63,12 +68,12 @@ export default observer(class CaloriesForm extends React.Component {
 			);
 		}
 		return (
-			<ConsumedFoodsList day={this.state.date} />
+			<ConsumedFoodsList day={this.props.date} />
 		);
 	};
 
 	onAddFood = async (food) => {
-		await appState.addConsumedFood(this.state.date, food);
+		await appState.addConsumedFood(this.props.date, food);
 		this.setState({
 			value: ''
 		});
