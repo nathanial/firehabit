@@ -92,20 +92,32 @@ export class AppState {
 		name: '',
 		email: ''
 	});
+	todoColumns = observable([]);
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
-		this.foodDefinitionsRef = firebase.database().ref(`/users/${userId}/foodDefinitions`);
+		this.db = firebase.database();
+		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
+		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
 	}
 
+	async initializeColumnsRef(){
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+
+		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
+		await downloadCollection(this.todoColumns, this.todoColumnsRef);
+		watchCollection(this.todoColumns, this.todoColumnsRef);
+	}
+
 	async initializeDaysRef(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
-		this.daysRef = firebase.database().ref(`/users/${userId}/days`);
+		this.daysRef = this.db.ref(`/users/${userId}/days`);
 		await downloadCollection(this.days, this.daysRef);
 		watchCollection(this.days, this.daysRef);
 	}
@@ -136,5 +148,15 @@ export class AppState {
 
 	async removeFoodDefinition(definition){
 		this.foodDefinitionsRef.child(definition.id).remove();
+	}
+
+	async addTodoColumn(name) {
+		this.todoColumnsRef.push({
+			name
+		});
+	}
+
+	async deleteTodoColumn(column){
+		this.todoColumnsRef.child(column.id).remove();
 	}
 }

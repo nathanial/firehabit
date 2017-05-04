@@ -8,7 +8,7 @@ import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import _ from 'lodash';
 
 const CaloriesListWrapper = styled.ul`
-	border: 1px solid #ccc;
+	border: 1px solid #000;
 	width: 500px;
 	min-height: 100px;
 	max-height: 500px;
@@ -18,7 +18,7 @@ const CaloriesListWrapper = styled.ul`
 	padding: 0;
 	
 	&> li:nth-child(odd) {
-		background: #eee;
+		background: #333;
 	}
 	& > li {
 		padding: 20px;

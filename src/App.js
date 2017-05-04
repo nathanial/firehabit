@@ -11,7 +11,7 @@ import HabitsPage from './components/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
 import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/NotesPage';
-import TodoPage from './components/TodoPage';
+import TodoPage from './components/todo/TodoPage';
 import SchedulePage from './components/SchedulePage';
 import {appState, history} from './util';
 import {observer} from 'mobx-react';
@@ -20,7 +20,7 @@ class App extends Component {
   render() {
     return (
       <Router history={history}>
-        <div className="App">
+        <div className="App pt-dark">
           <SiteNavbar onNavigate={this.onNavigate} />
           <div className="app-content">
             <Route exact path="/" component={HabitsPage} />

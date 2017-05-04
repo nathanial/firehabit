@@ -36,3 +36,7 @@
   bottom: 0;
   overflow: auto;
 }
+
+body {
+  background: #444;
+}

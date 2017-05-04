@@ -21,7 +21,7 @@ export default class SiteNavbar extends React.Component {
 		};
 
 		return (
-			<nav className="pt-navbar" {..._.omit(this.props, _.keys(SiteNavbar.propTypes))}>
+			<nav className="pt-navbar pt-dark" {..._.omit(this.props, _.keys(SiteNavbar.propTypes))}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading">Personal Life Manager</div>
 					<span className="pt-navbar-divider"></span>
