@@ -7,7 +7,7 @@ class BasicDialog extends React.Component {
 		return (
 			<Dialog iconName="inbox"
 							isOpen={true}
-							onClose={this.toggleDialog}
+							onClose={this.onCancel}
 							title={this.props.title}>
 				<div className="pt-dialog-body">
 					<label className="pt-label .modifier">

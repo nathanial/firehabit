@@ -159,4 +159,12 @@ export class AppState {
 	async deleteTodoColumn(column){
 		this.todoColumnsRef.child(column.id).remove();
 	}
+
+	async updateTodoColumn(id, values) {
+		this.todoColumnsRef.child(id).update(values);
+	}
+
+	async addTodo(column, todo) {
+		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
+	}
 }
