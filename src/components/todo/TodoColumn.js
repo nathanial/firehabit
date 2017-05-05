@@ -114,7 +114,7 @@ export default observer(class TodoColumn extends React.Component {
 	};
 
 	render(){
-		const todos = (this.props.column.todos || []);
+		const todos = this.props.column.todos || [];
 		return (
 			<TodoColumnWrapper className="pt-card pt-elevation-2">
 				<EditableText value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
@@ -131,7 +131,13 @@ export default observer(class TodoColumn extends React.Component {
 	}
 
 	onAddTodo = async () => {
+		const firstTodo = _.isUndefined(this.props.column.todos) || this.props.column.todos.length === 0;
 		appState.addTodo(this.props.column, {name: 'NEW TODO'});
+		if(firstTodo){
+			setTimeout(() => {
+				this.forceUpdate();
+			}, 100);
+		}
 	};
 
 	onStartDelete = async () => {
