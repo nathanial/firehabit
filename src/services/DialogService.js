@@ -18,7 +18,7 @@ class BasicDialog extends React.Component {
 					<div className="pt-dialog-footer-actions">
 						<Button text={this.props.cancelBtn} onClick={this.onCancel} />
 						<Button
-							intent={Intent.DANGER}
+							intent={this.props.confirmBtnIntent}
 							onClick={this.onConfirm}
 							text={this.props.confirmBtn}
 						/>
@@ -54,9 +54,35 @@ export default class DialogService {
 				<BasicDialog question={question}
 										 title="Danger"
 										 confirmBtn={confirmBtn}
+										 confirmBtnIntent={Intent.DANGER}
 										 cancelBtn={cancelBtn}
 										 onCancel={cancel}
 										 onConfirm={confirm} />,
+				document.getElementById('dialogs')
+			);
+		});
+	}
+
+	static async showDialog(title, confirmBtn, cancelBtn, content) {
+		return new Promise((resolve) => {
+			function cancel(){
+				resolve(false);
+				ReactDOM.unmountComponentAtNode(document.getElementById('dialogs'));
+			}
+
+			function confirm(){
+				resolve(true);
+				ReactDOM.unmountComponentAtNode(document.getElementById('dialogs'));
+			}
+			ReactDOM.render(
+				<BasicDialog title={title}
+										 confirmBtn={confirmBtn}
+										 cancelBtn={cancelBtn}
+										 onCancel={cancel}
+										 confirmBtnIntent={Intent.PRIMARY}
+										 onConfirm={confirm}>
+					{content}
+				</BasicDialog>,
 				document.getElementById('dialogs')
 			);
 		});

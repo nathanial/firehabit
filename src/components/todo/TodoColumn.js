@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import React from 'react';
 import {Button, EditableText} from "@blueprintjs/core";
 import {appState} from '../../util';
@@ -8,7 +9,7 @@ import {observer} from 'mobx-react';
 const TodoColumnWrapper = styled.div`
 	display: inline-block;
 	margin: 10px;
-	padding: 7px 30px 30px 30px;
+	padding: 20px 10px 10px 10px;
 	width: 280px;
 	text-align: center;
 	height: 500px;
@@ -31,15 +32,75 @@ const TodoColumnWrapper = styled.div`
 	& > h4 {
 		margin-top: 0;
 	}
+	
+	overflow: hidden;
+	
 `;
 
 const TodoListWrapper = styled.ul`
+	list-style-type: none;
+	margin: 0;
+	padding: 0 10px;
+	overflow-y: auto;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 40px;
 
+	& > li {
+		padding: 10px;
+		background: #eee !important;
+		margin: 10px;
+		color: black;
+		text-align: left;
+		cursor: pointer;
+		
+		&:hover {
+			background: #bbb !important;
+		}
+	}
 `;
 
-function Todo(props){
-	console.log("TODO", props.todo);
-	return <li>{props.todo.name}</li>
+class TodoEditForm extends React.Component {
+	render(){
+		return (
+			<div>
+				<h1>Todo Edit Form</h1>
+			</div>
+		);
+	}
+}
+
+class Todo extends React.Component {
+
+	state = {
+		updatedTodo: _.cloneDeep(this.props.todo)
+	};
+
+	render(){
+		return (
+			<li className="pt-card pt-elevation-2" onClick={this.onClick}>
+				{this.props.todo.name}
+			</li>
+		);
+	}
+
+	onClick = async () => {
+		const result = await DialogService.showDialog(`Edit Todo`, 'Save', 'Cancel',
+			<TodoEditForm todo={this.props.todo} onChange={this.onDialogChange} />
+		);
+		if(result){
+			appState.updateTodo(this.state.updatedTodo);
+		}
+		this.setState({updatedTodo: _.cloneDeep(this.props.todo)});
+	};
+
+	onDialogChange = (newValue) => {
+		this.setState({
+			updatedTodo: newValue
+		});
+	}
 }
 
 export default observer(class TodoColumn extends React.Component {
@@ -53,7 +114,6 @@ export default observer(class TodoColumn extends React.Component {
 	};
 
 	render(){
-		console.log("Column Name", this.state.columnName);
 		const todos = (this.props.column.todos || []);
 		return (
 			<TodoColumnWrapper className="pt-card pt-elevation-2">
@@ -62,8 +122,8 @@ export default observer(class TodoColumn extends React.Component {
 				<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
 
 				<TodoListWrapper>
-					{todos.map(todo => {
-						return <Todo todo={todo} />;
+					{todos.map((todo, i) => {
+						return <Todo key={i} todo={todo} />;
 					})}
 				</TodoListWrapper>
 			</TodoColumnWrapper>
