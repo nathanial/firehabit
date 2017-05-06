@@ -12,6 +12,8 @@
     "moment": "^2.18.1",
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.5.2",
+    "react-dnd": "^2.3.0",
+    "react-dnd-html5-backend": "^2.3.0",
     "react-dom": "^15.5.4",
     "react-mixin": "^3.0.5",
     "react-router-dom": "^4.1.1",
