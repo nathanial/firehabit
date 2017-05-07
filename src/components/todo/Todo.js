@@ -14,6 +14,11 @@ const TodoContentWrapper = styled.div`
 		right: -5px;
 		padding: 0;
 	}
+	
+	.pt-editable-text {
+		max-width: 180px;
+	}
+	
 `;
 
 class Todo extends React.Component {
@@ -34,6 +39,7 @@ class Todo extends React.Component {
 			<li className="pt-card pt-elevation-2" onClick={this.onClick}>
 				<TodoContentWrapper>
 					<EditableText value={this.state.updatedTodo.name}
+												multiline={true}
 												onChange={this.onNameChanged}
 												onConfirm={this.onUpdatedTodo} />
 					<Button iconName="trash" className="pt-minimal" intent={Intent.DANGER} onClick={this.onRemove} />
