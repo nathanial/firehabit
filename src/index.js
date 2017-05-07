@@ -34,9 +34,8 @@ async function loginToFirebase(){
 				}
 				const provider = new firebase.auth.GoogleAuthProvider();
 				try {
-					const result = await firebase.auth().signInWithRedirect(provider)
-					const user = result.user;
-					appState.loggedIn = true
+					await firebase.auth().signInWithRedirect(provider)
+					appState.loggedIn = true;
 					resolve();
 				} catch(error){
 					console.error(error);

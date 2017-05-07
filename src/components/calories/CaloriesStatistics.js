@@ -37,7 +37,7 @@ export default observer(class CalorieStatistics extends React.Component {
 			<CalorieStatisticsWrapper>
 				<p className="pt-running-text">
 					<span className="total-calories-label">Total Calories: </span>
-					<span>{_.sum(_.map(day.consumed, f => parseInt(f.calories)))}</span>
+					<span>{_.sum(_.map(day.consumed, f => parseInt(f.calories, 10)))}</span>
 				</p>
 			</CalorieStatisticsWrapper>
 		);

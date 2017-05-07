@@ -1,9 +1,11 @@
 import React from 'react';
 import {appState} from '../../util';
-import {Button, EditableText} from "@blueprintjs/core";
+import {Button} from "@blueprintjs/core";
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoColumn from "./TodoColumn";
+import {DragDropContext} from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 const TodoPageWrapper = styled.div`
 	display: block;
@@ -26,7 +28,7 @@ const ColumnsContainer = styled.div`
 	
 `;
 
-export default observer(class TodoPage extends React.Component {
+export default DragDropContext(HTML5Backend)(observer(class TodoPage extends React.Component {
 	render(){
 		const todoColumns = appState.todoColumns;
 		return (
@@ -44,4 +46,4 @@ export default observer(class TodoPage extends React.Component {
 	onAddColumn = () => {
 		appState.addTodoColumn('New Column');
 	}
-})
+}))

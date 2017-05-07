@@ -13,7 +13,7 @@ import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/NotesPage';
 import TodoPage from './components/todo/TodoPage';
 import SchedulePage from './components/SchedulePage';
-import {appState, history} from './util';
+import {history} from './util';
 import {observer} from 'mobx-react';
 
 class App extends Component {

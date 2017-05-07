@@ -8,7 +8,6 @@ import SearchResults from './SearchResults';
 import {appState} from '../../util';
 import ConsumedFoodsList from './ConsumedFoodsList';
 import {observer} from 'mobx-react';
-import moment from 'moment';
 
 const CaloriesFormWrapper = styled.div`
 	display: inline-block;

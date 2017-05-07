@@ -5,6 +5,8 @@ import {appState} from '../../util';
 import DialogService from "../../services/DialogService";
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
+import Todo from "./Todo";
+import {DropTarget} from 'react-dnd';
 
 const TodoColumnWrapper = styled.div`
 	display: inline-block;
@@ -34,7 +36,6 @@ const TodoColumnWrapper = styled.div`
 	}
 	
 	overflow: hidden;
-	
 `;
 
 const TodoListWrapper = styled.ul`
@@ -62,48 +63,23 @@ const TodoListWrapper = styled.ul`
 	}
 `;
 
-class TodoEditForm extends React.Component {
-	render(){
-		return (
-			<div>
-				<h1>Todo Edit Form</h1>
-			</div>
-		);
+const todoTarget = {
+	drop(props, monitor) {
+		console.log("Drop");
+		const {todo} = monitor.getItem();
+		appState.moveTodo(todo, props.column);
 	}
+};
+
+function collect(connect, monitor) {
+	return {
+		connectDropTarget: connect.dropTarget(),
+		isOver: monitor.isOver()
+	};
 }
 
-class Todo extends React.Component {
 
-	state = {
-		updatedTodo: _.cloneDeep(this.props.todo)
-	};
-
-	render(){
-		return (
-			<li className="pt-card pt-elevation-2" onClick={this.onClick}>
-				{this.props.todo.name}
-			</li>
-		);
-	}
-
-	onClick = async () => {
-		const result = await DialogService.showDialog(`Edit Todo`, 'Save', 'Cancel',
-			<TodoEditForm todo={this.props.todo} onChange={this.onDialogChange} />
-		);
-		if(result){
-			appState.updateTodo(this.state.updatedTodo);
-		}
-		this.setState({updatedTodo: _.cloneDeep(this.props.todo)});
-	};
-
-	onDialogChange = (newValue) => {
-		this.setState({
-			updatedTodo: newValue
-		});
-	}
-}
-
-export default observer(class TodoColumn extends React.Component {
+export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn extends React.Component {
 
 	static propTypes = {
 		column: React.PropTypes.object.isRequired
@@ -115,18 +91,21 @@ export default observer(class TodoColumn extends React.Component {
 
 	render(){
 		const todos = this.props.column.todos || [];
-		return (
-			<TodoColumnWrapper className="pt-card pt-elevation-2">
-				<EditableText value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
-				<Button iconName="trash" className="trash-btn pt-minimal pt-intent-danger" onClick={this.onStartDelete} />
-				<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
+		const {connectDropTarget} = this.props;
+		return connectDropTarget(
+			<div style={{display:'inline-block'}}>
+				<TodoColumnWrapper className="pt-card pt-elevation-2">
+					<EditableText value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
+					<Button iconName="trash" className="trash-btn pt-minimal pt-intent-danger" onClick={this.onStartDelete} />
+					<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
 
-				<TodoListWrapper>
-					{todos.map((todo, i) => {
-						return <Todo key={i} todo={todo} />;
-					})}
-				</TodoListWrapper>
-			</TodoColumnWrapper>
+					<TodoListWrapper>
+						{todos.map((todo, i) => {
+							return <Todo key={i} todo={todo} />;
+						})}
+					</TodoListWrapper>
+				</TodoColumnWrapper>
+			</div>
 		);
 	}
 
@@ -160,4 +139,4 @@ export default observer(class TodoColumn extends React.Component {
 	onFinishEditingColumnName = () => {
 		appState.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
 	}
-});
+}));
