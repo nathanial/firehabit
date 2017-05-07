@@ -112,6 +112,11 @@ export class AppState {
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		await downloadCollection(this.todoColumns, this.todoColumnsRef);
 		watchCollection(this.todoColumns, this.todoColumnsRef);
+		for(let todoColumn of this.todoColumns){
+			if(_.isUndefined(todoColumn.todos)){
+				todoColumn.todos = observable([]);
+			}
+		}
 	}
 
 	async initializeDaysRef(){
@@ -168,12 +173,19 @@ export class AppState {
 		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
 	}
 
+	async updateTodo(todo){
+		const column = _.find(this.todoColumns, (column) => {
+			return !_.isUndefined(_.find(column.todos, t => t.id === todo.id));
+		});
+		this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).update(_.omit(todo, 'id'));
+	}
+
 	async moveTodo(todo, column){
-		await this.removeOldTodo(todo);
+		await this.removeTodo(todo);
 		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(todo, 'id'));
 	}
 
-	async removeOldTodo(todo) {
+	async removeTodo(todo) {
 		const columns = _.filter(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, t => t.id === todo.id));
 		});

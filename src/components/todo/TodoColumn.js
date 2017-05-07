@@ -100,8 +100,8 @@ export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn
 					<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
 
 					<TodoListWrapper>
-						{todos.map((todo, i) => {
-							return <Todo key={i} todo={todo} />;
+						{todos.map((todo) => {
+							return <Todo key={todo.id} todo={todo} />;
 						})}
 					</TodoListWrapper>
 				</TodoColumnWrapper>
@@ -110,13 +110,7 @@ export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn
 	}
 
 	onAddTodo = async () => {
-		const firstTodo = _.isUndefined(this.props.column.todos) || this.props.column.todos.length === 0;
 		appState.addTodo(this.props.column, {name: 'NEW TODO'});
-		if(firstTodo){
-			setTimeout(() => {
-				this.forceUpdate();
-			}, 100);
-		}
 	};
 
 	onStartDelete = async () => {
