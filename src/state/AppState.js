@@ -93,6 +93,7 @@ export class AppState {
 		email: ''
 	});
 	todoColumns = observable([]);
+	dailies = observable([]);
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
@@ -101,8 +102,18 @@ export class AppState {
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
 		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
+		await this.initializeDailiesRef();
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
+	}
+
+	async initializeDailiesRef(){
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+
+		this.dailiesRef = this.db.ref(`/users/${userId}/dailies`);
+		await downloadCollection(this.dailies, this.dailiesRef);
+		watchCollection(this.dailies, this.dailiesRef);
 	}
 
 	async initializeColumnsRef(){

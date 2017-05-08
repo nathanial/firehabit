@@ -7,7 +7,7 @@ import {
   Router,
 	Route
 } from 'react-router-dom'
-import HabitsPage from './components/HabitsPage';
+import HabitsPage from './components/habits/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
 import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/NotesPage';
