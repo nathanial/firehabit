@@ -155,6 +155,10 @@ export class AppState {
 		this.foodDefinitionsRef.child(definition.id).remove();
 	}
 
+	async updateFoodDefinition(definition){
+		this.foodDefinitionsRef.child(definition.id).update(_.omit(definition, 'id'));
+	}
+
 	async addTodoColumn(name) {
 		this.todoColumnsRef.push({
 			name

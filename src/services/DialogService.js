@@ -13,6 +13,7 @@ class BasicDialog extends React.Component {
 					<label className="pt-label .modifier">
 						{this.props.question}
 					</label>
+					{this.props.children}
 				</div>
 				<div className="pt-dialog-footer">
 					<div className="pt-dialog-footer-actions">

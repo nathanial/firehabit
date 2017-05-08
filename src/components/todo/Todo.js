@@ -34,7 +34,7 @@ class Todo extends React.Component {
 	};
 
 	render(){
-		const { isDragging, connectDragSource } = this.props;
+		const { connectDragSource } = this.props;
 		return connectDragSource(
 			<li className="pt-card pt-elevation-2" onClick={this.onClick}>
 				<TodoContentWrapper>
@@ -52,11 +52,11 @@ class Todo extends React.Component {
 		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
 		updatedTodo.name = newName;
 		this.setState({updatedTodo});
-	}
+	};
 
 	onUpdatedTodo = () =>{
 		appState.updateTodo(this.state.updatedTodo);
-	}
+	};
 
 	onRemove = () => {
 		appState.removeTodo(this.props.todo);

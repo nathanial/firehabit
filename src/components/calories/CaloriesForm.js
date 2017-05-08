@@ -8,6 +8,8 @@ import SearchResults from './SearchResults';
 import {appState} from '../../util';
 import ConsumedFoodsList from './ConsumedFoodsList';
 import {observer} from 'mobx-react';
+import DialogService from "../../services/DialogService";
+import FoodDefinitionForm from "./FoodDefinitionForm";
 
 const CaloriesFormWrapper = styled.div`
 	display: inline-block;
@@ -61,7 +63,8 @@ export default observer(class CaloriesForm extends React.Component {
 					<SearchResults search={this.state.value}
 												 foodDefinitions={appState.foodDefinitions}
 												 onAddFood={this.onAddFood}
-											   onRemoveFoodDefinition={this.onRemoveFoodDefinition}/>
+											   onRemoveFoodDefinition={this.onRemoveFoodDefinition}
+												 onEditFoodDefinition={this.onEditFoodDefinition}/>
 					<NewFoodDialog defaultName={this.state.value} />
 				</div>
 			);
@@ -80,6 +83,19 @@ export default observer(class CaloriesForm extends React.Component {
 
 	onRemoveFoodDefinition = async (food) => {
 		await appState.removeFoodDefinition(food);
-	}
+	};
+
+	onEditFoodDefinition = async (food) => {
+		let updatedFoodDefinition;
+		function onChange(newValue){
+			updatedFoodDefinition = newValue;
+		}
+		const result = await DialogService.showDialog("Food Definition", "Ok", "Cancel", (
+			<FoodDefinitionForm foodDefinition={food} onChange={onChange}></FoodDefinitionForm>
+		));
+		if(result && updatedFoodDefinition){
+			await appState.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
+		}
+	};
 
 })

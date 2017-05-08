@@ -19,11 +19,15 @@ const SearchResultsWrapper = styled.ul`
 			display: inline-block;
 			left: 30px;
 			position: absolute;
+			max-width: 230px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 		& > .calories {
 			display: inline-block;
 			position: absolute;
-			right: 100px;
+			right: 150px;
 		}
 		& > .pt-button-group {
 			display: inline-block;
@@ -40,7 +44,8 @@ export default observer(class SearchResults extends React.Component {
 	static propTypes = {
 		foodDefinitions: PropTypes.object.isRequired,
 		onAddFood: PropTypes.func.isRequired,
-		onRemoveFoodDefinition: PropTypes.func.isRequired
+		onRemoveFoodDefinition: PropTypes.func.isRequired,
+		onEditFoodDefinition: PropTypes.func.isRequired
 	};
 
 	render(){
@@ -54,6 +59,7 @@ export default observer(class SearchResults extends React.Component {
 								<div className="calories">{food.calories}</div>
 								<div className="pt-button-group">
 									<Button iconName="trash" onClick={() => this.props.onRemoveFoodDefinition(food)} />
+									<Button iconName="edit" onClick={() => this.props.onEditFoodDefinition(food)} />
 									<Button iconName="plus" onClick={() => this.props.onAddFood(food)} />
 								</div>
 							</li>
