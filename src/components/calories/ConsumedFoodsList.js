@@ -55,16 +55,21 @@ export default observer(class ConsumedFoodsList extends React.Component {
 		if(!day || !day.consumed) {
 			return <div></div>
 		}
+		const groups = this.getEntryGroups(day);
 		return (
 			<CaloriesListWrapper>
-				{day.consumed.map((entry, index) => {
+				{groups.map((entry, index) => {
+					let name = entry.name;
+					if(entry.count > 1){
+						name += ` x${entry.count}`;
+					}
 					return (
-						<li key={index}>
-							<span className="food-name">{entry.name}</span>
+						<li key={JSON.stringify(entry)}>
+							<span className="food-name">{name}</span>
 							<span className="calories">{entry.calories}</span>
 							<div className="pt-button-group">
-								<Button iconName="repeat" onClick={() => this.onRepeatFood(day, entry)} />
-								<Button iconName="trash" onClick={() => this.onRemoveFood(day, entry)} />
+								<Button iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))} />
+								<Button iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
 							</div>
 						</li>
 					);
@@ -72,6 +77,18 @@ export default observer(class ConsumedFoodsList extends React.Component {
 			</CaloriesListWrapper>
 		);
 	}
+
+	getEntryGroups = (day) => {
+		const pairs = _.toPairs(_.groupBy(day.consumed, 'name'));
+		return _.map(pairs, ([name, group]) => {
+			return {
+				name,
+				count: group.length,
+				calories: _.sumBy(group, e => parseInt(e.calories, 10)),
+				group: group
+			};
+		});
+	};
 
 	onRepeatFood = (day, entry) => {
 		appState.addConsumedFood(day, entry);
