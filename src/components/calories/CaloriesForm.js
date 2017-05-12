@@ -14,12 +14,13 @@ import FoodDefinitionForm from "./FoodDefinitionForm";
 const CaloriesFormWrapper = styled.div`
 	display: inline-block;
 	position: relative;
-	width: 500px;
 	margin: 50px;
 	& > h2 {
 		text-align: left;
 		margin-bottom: 20px;
+		margin-top: 10px;
 	}
+	min-width: 540px;
 `;
 
 export default observer(class CaloriesForm extends React.Component {
@@ -35,7 +36,7 @@ export default observer(class CaloriesForm extends React.Component {
 
 	render() {
 		return (
-			<CaloriesFormWrapper>
+			<CaloriesFormWrapper className="pt-card pt-elevation-1">
 				<h2>Calories</h2>
 				<DayPicker date={this.props.date}
 									 onChange={(newDate) => this.props.onChangeDate(newDate)} />

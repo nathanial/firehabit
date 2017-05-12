@@ -8,7 +8,8 @@ const SearchResultsWrapper = styled.ul`
 	list-style-type: none;
 	padding: 20px;
 	text-align: left;
-	border: 1px solid #ccc;
+	max-height: 300px;
+	overflow-y: auto;
 	
 	& > li {
 		position: relative;

@@ -6,11 +6,10 @@ import {appState} from '../../util';
 
 const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
-	border: 1px solid #aaa;
 	width: 200px;
 	height: 200px;
 	vertical-align: top;
-	margin-top: 90px;
+	margin-top: 50px;
 	
 	& > .pt-running-text {
 		margin-top: 20px;
@@ -18,8 +17,6 @@ const CalorieStatisticsWrapper = styled.div`
 			margin-right: 10px;
 		}
 	}
-	
-	
 `;
 
 export default observer(class CalorieStatistics extends React.Component {
@@ -34,7 +31,7 @@ export default observer(class CalorieStatistics extends React.Component {
 			return <div></div>
 		}
 		return (
-			<CalorieStatisticsWrapper>
+			<CalorieStatisticsWrapper className="pt-card pt-elevation-1">
 				<p className="pt-running-text">
 					<span className="total-calories-label">Total Calories: </span>
 					<span>{_.sum(_.map(day.consumed, f => parseInt(f.calories, 10)))}</span>

@@ -38,5 +38,12 @@
 }
 
 body {
-  background: #444;
+  background: #1D3040;
 }
+
+
+.color-primary-0 { color: #30404D }	/* Main Primary color */
+.color-primary-1 { color: #647583 }
+.color-primary-2 { color: #475969 }
+.color-primary-3 { color: #1D3040 }
+.color-primary-4 { color: #102232 }

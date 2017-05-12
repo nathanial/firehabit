@@ -5,8 +5,8 @@ import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 
 const DayPickerWrapper = styled.div`
 	position: absolute;
-	top: -3px;
 	left: 200px;
+	top: 26px;
 	
 	& > span {
 		font-size: 14px;

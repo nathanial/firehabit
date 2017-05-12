@@ -17,7 +17,7 @@ const CaloriesListWrapper = styled.ul`
 	padding: 0;
 	
 	&> li:nth-child(odd) {
-		background: #333;
+		background: #475969;
 	}
 	& > li {
 		padding: 20px;
