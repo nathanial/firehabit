@@ -208,4 +208,16 @@ export class AppState {
 			await this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
 		}
 	}
+
+	async addDaily(daily) {
+		this.dailiesRef.push(daily);
+	}
+
+	async removeDaily(daily) {
+		this.dailiesRef.child(daily.id).remove();
+	}
+
+	async updateDaily(daily) {
+		this.dailiesRef.child(daily.id).update(_.omit(daily, 'id'));
+	}
 }
