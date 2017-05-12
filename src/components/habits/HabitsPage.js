@@ -8,6 +8,7 @@ import * as colors from '../../theme/colors';
 import {observer} from 'mobx-react';
 import {EditableText} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
+import moment from "moment";
 
 const HabitsPageWrapper = styled.div`
 	& > h1 {
@@ -22,13 +23,12 @@ const DailiesListWrapper = styled.div`
 	display: inline-block;
 	text-align: left;
 	& > ul {
-		min-height: 300px;
-		max-height: 300px;
+		min-height: 271px;
 		overflow-y: auto;
 		list-style-type: none;
 		padding: 0;
 		margin: 30px 0;
-		font-size: 22px;
+		font-size: 20px;
 		border: 1px solid ${colors.primaryColor5};
 		& > li {
 			padding: 10px 30px;
@@ -45,10 +45,16 @@ const DailiesListWrapper = styled.div`
 			}
 		}
 		
-		& > li:nth-child(odd) {
-			background: #475969;
-		}
+		// & > li:nth-child(odd) {
+		// 	background: #475969;
+		// }
 	}
+`;
+
+const DailyItemWrapper = styled.li`
+	background: ${colors.primaryColor4};
+	color: ${(props) => props.doneToday ? colors.primaryColor3 : 'white' }
+	text-decoration: ${(props) => props.doneToday ? 'line-through' : '' }
 `;
 
 class DailyItem extends React.Component {
@@ -63,7 +69,7 @@ class DailyItem extends React.Component {
 	render(){
 		const entry = this.props.entry;
 		return (
-			<li >
+			<DailyItemWrapper doneToday={this.dailyWasDoneToday()}>
 				<EditableText value={this.state.updatedEntry.name}
 											multiline={true}
 											onChange={this.onNameChanged}
@@ -72,25 +78,48 @@ class DailyItem extends React.Component {
 					{this.renderStar()}
 					<Button iconName="trash" onClick={this.onRemove} ></Button>
 				</div>
-			</li>
+			</DailyItemWrapper>
 		);
 	}
 
 	renderStar(){
 		if(this.dailyWasDoneToday(this.props.entry)){
 			return (
-				<Button iconName="star" ></Button>
+				<Button iconName="star" onClick={this.setUnfinished}></Button>
 			);
 		} else {
 			return (
-				<Button iconName="star-empty"></Button>
+				<Button iconName="star-empty" onClick={this.setFinished}></Button>
 			);
 		}
 	}
 
 	dailyWasDoneToday(){
-		return false;
+		const finishedToday = _.get(this.state.updatedEntry.records, this.today());
+		return finishedToday;
 	}
+
+	today(){
+		return moment().format('MM-DD-YY');
+	}
+
+	setFinished = () => {
+		const updatedEntry = _.cloneDeep(this.state.updatedEntry);
+		updatedEntry.records = updatedEntry.records || {};
+		updatedEntry.records[this.today()] = true;
+		this.setState({updatedEntry}, () => {
+			appState.updateDaily(this.state.updatedEntry);
+		});
+	};
+
+	setUnfinished = () => {
+		const updatedEntry = _.cloneDeep(this.state.updatedEntry);
+		updatedEntry.records = updatedEntry.records || {};
+		updatedEntry.records[this.today()] = false;
+		this.setState({updatedEntry}, () => {
+			appState.updateDaily(this.state.updatedEntry);
+		});
+	};
 
 	onNameChanged = (newName) => {
 		const updatedEntry = _.cloneDeep(this.state.updatedEntry);
