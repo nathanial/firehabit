@@ -94,17 +94,28 @@ export class AppState {
 	});
 	todoColumns = observable([]);
 	dailies = observable([]);
+	notesSections = observable([]);
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.db = firebase.database();
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
+		await this.initializeNotesSectionsRef();
 		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
 		await this.initializeDailiesRef();
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
+	}
+
+	async initializeNotesSectionsRef(){
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+
+		this.notesSectionsRef = this.db.ref(`/users/${userId}/notesSections`);
+		await downloadCollection(this.notesSections, this.notesSectionsRef);
+		watchCollection(this.notesSections, this.notesSectionsRef);
 	}
 
 	async initializeDailiesRef(){
@@ -186,6 +197,10 @@ export class AppState {
 
 	async addTodo(column, todo) {
 		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
+	}
+
+	async addNotesSection(name){
+		this.notesSectionsRef.push({name});
 	}
 
 	async updateTodo(todo){

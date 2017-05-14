@@ -10,7 +10,7 @@ import {
 import HabitsPage from './components/habits/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
 import DailiesPage from './components/DailiesPage';
-import NotesPage from './components/NotesPage';
+import NotesPage from './components/notes/NotesPage';
 import TodoPage from './components/todo/TodoPage';
 import SchedulePage from './components/SchedulePage';
 import {history} from './util';
