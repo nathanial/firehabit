@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import * as colors from "../../theme/colors";
 import {appState} from '../../util';
 import {observer} from 'mobx-react'
-import SidePanel from './SidePanel';
 import ReactQuill from "react-quill";
 
 const NotesWrapper = styled.div`
@@ -15,7 +14,6 @@ const NotesWrapper = styled.div`
 
 const ContentWrapper = styled.div`
  position: relative;
- left: 300px;
  height: 100%;
  & > .quill {
  	border: 0 solid transparent;
@@ -38,42 +36,18 @@ const ContentWrapper = styled.div`
 `;
 
 export default observer(class NotesPage extends React.Component {
-	state = {
-		selectedSection: _.get(appState.notesSections, '[0]')
-	};
-
 	render(){
-		const selectedSection = this.state.selectedSection;
-		const notesSections = appState.notesSections;
 		return (
 			<NotesWrapper>
-				<SidePanel notesSections={notesSections}
-									 selectedSection={selectedSection}
-									 onSelectedSectionChanged={this.onSelectedSectionChanged}
-									 onAddNotesSection={this.onAddNotesSection}/>
-				{this.renderContent()}
+				<ContentWrapper>
+					<ReactQuill value={appState.notes.content} theme="snow"
+											onChange={this.handleChange} />
+				</ContentWrapper>
 			</NotesWrapper>
 		);
 	}
 
-	renderContent(){
-		if(this.state.selectedSection) {
-			return (
-				<ContentWrapper>
-					<ReactQuill value={this.state.text} theme="snow"
-											onChange={this.handleChange} />
-				</ContentWrapper>
-			);
-		}
-	}
-
-	onSelectedSectionChanged = (newSection) => {
-		this.setState({
-			selectedSection: newSection
-		});
-	};
-
-	onAddNotesSection = () => {
-		appState.addNotesSection('New Notes Section');
+	handleChange = (newValue) => {
+		appState.updateNotes(newValue);
 	}
 })

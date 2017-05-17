@@ -94,14 +94,16 @@ export class AppState {
 	});
 	todoColumns = observable([]);
 	dailies = observable([]);
-	notesSections = observable([]);
+	notes = observable({
+		content: ''
+	});
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.db = firebase.database();
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
-		await this.initializeNotesSectionsRef();
+		await this.initializeNotesRef();
 		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
 		await this.initializeDailiesRef();
@@ -109,13 +111,19 @@ export class AppState {
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
 	}
 
-	async initializeNotesSectionsRef(){
+	async initializeNotesRef(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 
-		this.notesSectionsRef = this.db.ref(`/users/${userId}/notesSections`);
-		await downloadCollection(this.notesSections, this.notesSectionsRef);
-		watchCollection(this.notesSections, this.notesSectionsRef);
+		this.notesRef = this.db.ref(`/users/${userId}/notes`);
+		this.notesRef.on('value', (snapshot) => {
+			const value = snapshot.val();
+			this.notes.content = value.content;
+		});
+		this.notesRef.on('child_changed', (snapshot) => {
+			const value = snapshot.val();
+			this.notes.content = value;
+		})
 	}
 
 	async initializeDailiesRef(){
@@ -199,10 +207,6 @@ export class AppState {
 		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
 	}
 
-	async addNotesSection(name){
-		this.notesSectionsRef.push({name});
-	}
-
 	async updateTodo(todo){
 		const column = _.find(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, t => t.id === todo.id));
@@ -234,5 +238,9 @@ export class AppState {
 
 	async updateDaily(daily) {
 		this.dailiesRef.child(daily.id).update(_.omit(daily, 'id'));
+	}
+
+	async updateNotes(content){
+		this.notesRef.update({content});
 	}
 }
