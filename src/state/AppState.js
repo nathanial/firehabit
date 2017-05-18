@@ -118,7 +118,9 @@ export class AppState {
 		this.notesRef = this.db.ref(`/users/${userId}/notes`);
 		this.notesRef.on('value', (snapshot) => {
 			const value = snapshot.val();
-			this.notes.content = value.content;
+			if(value){
+				this.notes.content = value.content;
+			}
 		});
 		this.notesRef.on('child_changed', (snapshot) => {
 			const value = snapshot.val();
