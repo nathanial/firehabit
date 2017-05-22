@@ -10,6 +10,6 @@ yarn install
 
 ## Running 
 ```
-cd personal-life-amanger
+cd personal-life-manager
 yarn start
 ```
