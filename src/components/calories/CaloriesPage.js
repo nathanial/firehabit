@@ -7,8 +7,6 @@ import CalorieStatistics from "./CaloriesStatistics";
 import moment from 'moment';
 
 const CaloriesPageWrapper = styled.div`
-	margin-left: 20px;
-	
 `;
 
 export default observer(class CaloriesPage extends React.Component {
