@@ -30,6 +30,7 @@ export default class SiteNavbar extends React.Component {
 					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'}>TODO</NavBtn>
 					<NavBtn goto="notes" icon="pt-icon-projects" active={path === '/notes'}>Notes</NavBtn>
 					<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'}>Schedule</NavBtn>
+					<NavBtn goto="exercise" icon="pt-icon-flash" active={path === '/exercise'}>Exercise</NavBtn>
 				</div>
 				<div className="pt-navbar-group pt-align-right">
 					<button className="pt-button pt-minimal pt-icon-user"></button>

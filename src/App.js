@@ -13,6 +13,7 @@ import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/notes/NotesPage';
 import TodoPage from './components/todo/TodoPage';
 import SchedulePage from './components/SchedulePage';
+import ExercisePage from './components/exercise/ExercisePage';
 import {history} from './util';
 import {observer} from 'mobx-react';
 
@@ -30,6 +31,7 @@ class App extends Component {
             <Route path="/todo" component={TodoPage} />
             <Route path="/notes" component={NotesPage} />
             <Route path="/schedule" component={SchedulePage} />
+            <Route path="/exercise" component={ExercisePage} />
           </div>
         </div>
       </Router>
