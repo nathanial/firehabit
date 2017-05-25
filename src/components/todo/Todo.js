@@ -8,17 +8,36 @@ import styled from 'styled-components';
 
 const TodoContentWrapper = styled.div`
 	position: relative;
+	left: 30px;
 	button {
 		position: absolute;
 		top: -5px;
-		right: -5px;
+		right: 20px;
 		padding: 0;
 	}
 	
 	.pt-editable-text {
 		max-width: 180px;
 	}
-	
+`;
+
+const TodoWrapper = styled.li`
+	position: relative;
+	.drag-handle {
+		position: absolute;
+		width: 25px;
+		height: 100%;
+		left: 0;
+		top: 0;
+		font-size: 24px;
+		
+		.inner-icon {
+			position: absolute;
+			top: 50%;
+			margin-top: -17px;
+		}
+	}
+	border-radius: 0;
 `;
 
 class Todo extends React.Component {
@@ -35,16 +54,16 @@ class Todo extends React.Component {
 
 	render(){
 		const { connectDragSource } = this.props;
-		return connectDragSource(
-			<li className="pt-card pt-elevation-2" onClick={this.onClick}>
+		return (
+			<TodoWrapper className="pt-card pt-elevation-2" onClick={this.onClick}>
+				{connectDragSource(<div className="drag-handle"><div className="inner-icon pt-icon-drag-handle-vertical"></div></div>)}
 				<TodoContentWrapper>
 					<EditableText value={this.state.updatedTodo.name}
 												multiline={true}
 												onChange={this.onNameChanged}
 												onConfirm={this.onUpdatedTodo} />
-					<Button iconName="trash" className="pt-minimal" intent={Intent.DANGER} onClick={this.onRemove} />
 				</TodoContentWrapper>
-			</li>
+			</TodoWrapper>
 		);
 	}
 
@@ -57,10 +76,6 @@ class Todo extends React.Component {
 	onUpdatedTodo = () =>{
 		appState.updateTodo(this.state.updatedTodo);
 	};
-
-	onRemove = () => {
-		appState.removeTodo(this.props.todo);
-	}
 
 }
 
