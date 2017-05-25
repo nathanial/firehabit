@@ -6,6 +6,8 @@ import {observer} from 'mobx-react';
 import TodoColumn from "./TodoColumn";
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import {Route} from "react-router-dom";
+import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 
 const TodoPageWrapper = styled.div`
 	display: block;
@@ -30,6 +32,15 @@ const ColumnsContainer = styled.div`
 
 export default DragDropContext(HTML5Backend)(observer(class TodoPage extends React.Component {
 	render(){
+		return (
+			<div>
+				<Route exact path="/todo" render={this.renderColumns} />
+				<Route exact path="/todo/column/:columnID/settings" component={TodoColumnSettingsPage} />
+			</div>
+		);
+	}
+
+	renderColumns = () => {
 		const todoColumns = appState.todoColumns;
 		return (
 			<TodoPageWrapper>

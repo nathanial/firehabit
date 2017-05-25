@@ -1,12 +1,14 @@
 import * as _ from 'lodash';
 import React from 'react';
 import {Button, EditableText} from "@blueprintjs/core";
-import {appState} from '../../util';
+import {appState, history} from '../../util';
 import DialogService from "../../services/DialogService";
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import Todo from "./Todo";
 import {DropTarget} from 'react-dnd';
+import ScrollArea from 'react-scrollbar';
+import * as colors from '../../theme/colors';
 
 const TodoColumnWrapper = styled.div`
 	display: inline-block;
@@ -17,18 +19,21 @@ const TodoColumnWrapper = styled.div`
 	height: 500px;
 	position: relative;
 	vertical-align: top;
-
 	
-	& > .trash-btn {
-		position: absolute;
-		top: 0;
-		right: 0;
+	& > .column-name {
+		margin-top: -12px;
 	}
-	
+
 	& > .add-todo-btn {
 		position: absolute;
 		top: 0;
 		left: 0;
+	}
+	
+	& > .settings-btn {
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 	
 	& > h4 {
@@ -41,21 +46,42 @@ const TodoColumnWrapper = styled.div`
 const TodoListWrapper = styled.ul`
 	list-style-type: none;
 	margin: 0;
-	padding: 0 10px;
+	padding: 0;
 	overflow-y: auto;
 	position: absolute;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	top: 40px;
+	
+	& > .scrollarea {
+		height: 100%;
+		& > .scrollarea-content {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+		
+		& > .scrollbar-container.vertical {
+			& > .scrollbar {
+				background: ${colors.primaryColor2};
+			}
+			&:hover {
+				background: ${colors.primaryColor1};
+			}
+		}
+	}
 
-	& > li {
+	& li {
 		padding: 10px;
 		background: #eee !important;
 		margin: 10px;
 		color: black;
 		text-align: left;
 		cursor: pointer;
+		
+		&:first-child {
+			margin-top: 0;
+		}
 		
 		&:hover {
 			background: #bbb !important;
@@ -78,7 +104,6 @@ function collect(connect, monitor) {
 	};
 }
 
-
 export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn extends React.Component {
 
 	static propTypes = {
@@ -91,18 +116,23 @@ export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn
 
 	render(){
 		const todos = this.props.column.todos || [];
+		const columnColor = this.props.column.color;
 		const {connectDropTarget} = this.props;
 		return connectDropTarget(
 			<div style={{display:'inline-block'}}>
-				<TodoColumnWrapper className="pt-card pt-elevation-2">
-					<EditableText value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
-					<Button iconName="trash" className="trash-btn pt-minimal pt-intent-danger" onClick={this.onStartDelete} />
+				<TodoColumnWrapper className="pt-card pt-elevation-2" style={{background: columnColor}}>
+					<EditableText className="column-name" value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
+					<Button iconName="settings" className="settings-btn pt-minimal" onClick={this.gotoColumnSettings} />
 					<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
 
 					<TodoListWrapper>
-						{todos.map((todo) => {
-							return <Todo key={todo.id} todo={todo} />;
-						})}
+						<ScrollArea
+							speed={0.8}
+							horizontal={false}>
+							{todos.map((todo) => {
+								return <Todo key={todo.id} todo={todo} />;
+							})}
+						</ScrollArea>
 					</TodoListWrapper>
 				</TodoColumnWrapper>
 			</div>
@@ -132,5 +162,9 @@ export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn
 
 	onFinishEditingColumnName = () => {
 		appState.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
+	}
+
+	gotoColumnSettings = () => {
+		history.push(`/todo/column/${this.props.column.id}/settings`);
 	}
 }));
