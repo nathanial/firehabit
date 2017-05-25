@@ -89,22 +89,19 @@ const TodoListWrapper = styled.ul`
 	}
 `;
 
-const todoTarget = {
+@DropTarget("todo", {
 	drop(props, monitor) {
-		console.log("Drop");
 		const {todo} = monitor.getItem();
 		appState.moveTodo(todo, props.column);
 	}
-};
-
-function collect(connect, monitor) {
+}, (connect, monitor) => {
 	return {
 		connectDropTarget: connect.dropTarget(),
 		isOver: monitor.isOver()
 	};
-}
-
-export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn extends React.Component {
+})
+@observer
+export default class TodoColumn extends React.Component {
 
 	static propTypes = {
 		column: React.PropTypes.object.isRequired
@@ -167,4 +164,4 @@ export default DropTarget("todo", todoTarget, collect)(observer(class TodoColumn
 	gotoColumnSettings = () => {
 		history.push(`/todo/column/${this.props.column.id}/settings`);
 	}
-}));
+}

@@ -217,11 +217,11 @@ export class AppState {
 	}
 
 	async moveTodo(todo, column){
-		await this.removeTodo(todo);
+		await this.deleteTodo(todo);
 		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(todo, 'id'));
 	}
 
-	async removeTodo(todo) {
+	async deleteTodo(todo) {
 		const columns = _.filter(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, t => t.id === todo.id));
 		});

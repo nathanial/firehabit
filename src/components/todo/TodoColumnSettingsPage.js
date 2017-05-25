@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import {appState, history} from '../../util';
 import { SketchPicker } from 'react-color';
 import {observer} from 'mobx-react';
+import DialogService from "../../services/DialogService";
 
 const PageWrapper = styled.div`
 	.back-btn {
@@ -15,11 +16,14 @@ const PageWrapper = styled.div`
 	
 	.settings-container {
 		width: 500px;
-		height: 500px;
 		margin-top: 10px;
 		position: relative;
 		display: inline-block;
 		text-align: left;
+	}
+	
+	.delete-column-btn {
+		margin-top: 30px;
 	}
 `;
 
@@ -46,6 +50,7 @@ export default observer(class TodoColumnSettingsPage extends React.Component {
 						<SketchPicker color={color} className="sketch-picker" onChange={this.onChange}/>
 						<Button style={{marginTop: 10}} onClick={this.onResetColor}>Reset Color</Button>
 					</SettingsContent>
+					<Button className="pt-intent-danger delete-column-btn" onClick={this.onDeleteColumn}>Delete Column</Button>
 				</div>
 			</PageWrapper>
 		);
@@ -61,5 +66,14 @@ export default observer(class TodoColumnSettingsPage extends React.Component {
 
 	onChange = (event) => {
 		appState.updateTodoColumn(this.props.match.params.columnID, {color: event.hex});
+	}
+
+	onDeleteColumn = async () => {
+		const column = _.find(appState.todoColumns, {id: this.props.match.params.columnID});
+		const result = await DialogService.showDangerDialog(`Are you sure you wan't delete ${column.name}?`, 'Delete', 'Cancel');
+		if(result){
+			appState.deleteTodoColumn(column);
+			this.goBack();
+		}
 	}
 })

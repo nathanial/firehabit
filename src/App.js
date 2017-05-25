@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom'
 import HabitsPage from './components/habits/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
-import DailiesPage from './components/DailiesPage';
 import NotesPage from './components/notes/NotesPage';
 import TodoPage from './components/todo/TodoPage';
 import SchedulePage from './components/SchedulePage';
@@ -26,7 +25,6 @@ class App extends Component {
             <Route exact path="/" component={HabitsPage} />
             <Route exact path="/habits" component={HabitsPage} />
             <Route path="/calories" component={CaloriesPage} />
-            <Route path="/dailies" component={DailiesPage} />
             <Route path="/todo" component={TodoPage} />
             <Route path="/notes" component={NotesPage} />
             <Route path="/schedule" component={SchedulePage} />
