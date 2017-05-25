@@ -30,7 +30,9 @@ const ColumnsContainer = styled.div`
 	
 `;
 
-export default DragDropContext(HTML5Backend)(observer(class TodoPage extends React.Component {
+@DragDropContext(HTML5Backend)
+@observer
+export default class TodoPage extends React.Component {
 	render(){
 		return (
 			<div>
@@ -57,4 +59,4 @@ export default DragDropContext(HTML5Backend)(observer(class TodoPage extends Rea
 	onAddColumn = () => {
 		appState.addTodoColumn('New Column');
 	}
-}))
+}
