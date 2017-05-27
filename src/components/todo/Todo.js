@@ -21,14 +21,14 @@ const TodoContentWrapper = styled.div`
 	}
 `;
 
-const TodoWrapper = styled.li`
+const TodoWrapper = styled.div`
 	position: relative;
 	.drag-handle {
 		position: absolute;
-		width: 25px;
-		height: 100%;
 		left: 0;
 		top: 0;
+		bottom: 0;
+		width: 30px;
 		font-size: 24px;
 		
 		.inner-icon {
@@ -40,12 +40,28 @@ const TodoWrapper = styled.li`
 	border-radius: 0;
 `;
 
+
+@DragSource('todo',{
+		beginDrag(props) {
+			return {
+				todo: props.todo
+			};
+		}
+	},
+	(connect, monitor) => {
+		return {
+			connectDragSource: connect.dragSource(),
+			connectDragPreview: connect.dragPreview(),
+			isDragging: monitor.isDragging()
+		};
+	})
 class Todo extends React.Component {
 
 	static propTypes = {
 		todo: PropTypes.object.isRequired,
 		isDragging: PropTypes.bool.isRequired,
-		connectDragSource: PropTypes.func.isRequired
+		connectDragSource: PropTypes.func.isRequired,
+		connectDragPreview: PropTypes.func.isRequired
 	};
 
 	state = {
@@ -53,17 +69,21 @@ class Todo extends React.Component {
 	};
 
 	render(){
-		const { connectDragSource } = this.props;
+		const { connectDragSource, connectDragPreview } = this.props;
 		return (
-			<TodoWrapper className="pt-card pt-elevation-2" onClick={this.onClick}>
-				{connectDragSource(<div className="drag-handle"><div className="inner-icon pt-icon-drag-handle-vertical"></div></div>)}
-				<TodoContentWrapper>
-					<EditableText value={this.state.updatedTodo.name}
-												multiline={true}
-												onChange={this.onNameChanged}
-												onConfirm={this.onUpdatedTodo} />
-				</TodoContentWrapper>
-			</TodoWrapper>
+			connectDragPreview(
+				<li className="pt-card pt-elevation-2" style={{paddingLeft: 0}}>
+					<TodoWrapper onClick={this.onClick}>
+						{connectDragSource(<div className="drag-handle"><div className="inner-icon pt-icon-drag-handle-vertical"></div></div>)}
+						<TodoContentWrapper>
+							<EditableText value={this.state.updatedTodo.name}
+														multiline={true}
+														onChange={this.onNameChanged}
+														onConfirm={this.onUpdatedTodo} />
+						</TodoContentWrapper>
+					</TodoWrapper>
+				</li>
+			)
 		);
 	}
 
@@ -79,19 +99,4 @@ class Todo extends React.Component {
 
 }
 
-const todoSource = {
-	beginDrag(props) {
-		return {
-			todo: props.todo
-		};
-	}
-};
-
-function collect(connect, monitor){
-	return {
-		connectDragSource: connect.dragSource(),
-		isDragging: monitor.isDragging()
-	};
-}
-
-export default DragSource('todo', todoSource, collect)(Todo);
+export default Todo;
