@@ -148,10 +148,6 @@ export class AppState {
 			if(_.isUndefined(todoColumn.todos)){
 				todoColumn.todos = observable([]);
 			}
-			todoColumn.todos.sort((a,b) => a.index - b.index);
-			for(let i = 0; i < todoColumn.todos.length; i++){
-				todoColumn.todos[i].index = i;
-			}
 		}
 	}
 
@@ -252,16 +248,6 @@ export class AppState {
 
 	async updateNotes(content){
 		this.notesRef.update({content});
-	}
-
-	async reorderTodo({after, target}) {
-		const column = this.findColumnForTodo(target);
-		const targetTodo = this.findTodoByID(target);
-		const afterTodo = this.findTodoByID(after);
-		targetTodo.index = afterTodo.index + 0.5;
-		const todos = column.todos.toJS();
-		todos.sort((a,b) => a.index - b.index);
-		column.todos = observable(todos);
 	}
 
 	findColumnForTodo(todoID) {
