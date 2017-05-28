@@ -1,8 +1,10 @@
+// Line Limit 100
 import _ from 'lodash';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { DragSource } from 'react-dnd';
-import {EditableText, Button, Intent} from "@blueprintjs/core";
+import { DragSource, DropTarget } from 'react-dnd';
+import {EditableText, Button} from "@blueprintjs/core";
 import {appState} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
@@ -52,7 +54,6 @@ const TodoWrapper = styled.div`
 	border-radius: 0;
 `;
 
-
 @DragSource('todo',{
 		beginDrag(props) {
 			return {
@@ -67,7 +68,7 @@ const TodoWrapper = styled.div`
 			isDragging: monitor.isDragging()
 		};
 	})
-class Todo extends React.Component {
+export default class Todo extends React.Component {
 
 	static propTypes = {
 		todo: PropTypes.object.isRequired,
@@ -81,9 +82,8 @@ class Todo extends React.Component {
 	};
 
 	render(){
-		const { connectDragSource, connectDragPreview } = this.props;
-		return (
-			connectDragPreview(
+		const { connectDragSource, connectDragPreview, connectDropTarget } = this.props;
+		return connectDragPreview(
 				<li className="pt-card pt-elevation-2" style={{paddingLeft: 0}}>
 					<TodoWrapper onClick={this.onClick}>
 						{connectDragSource(<div className="drag-handle"><div className="inner-icon pt-icon-drag-handle-vertical"></div></div>)}
@@ -96,8 +96,7 @@ class Todo extends React.Component {
 						</TodoContentWrapper>
 					</TodoWrapper>
 				</li>
-			)
-		);
+			);
 	}
 
 	onNameChanged = (newName) => {
@@ -117,5 +116,3 @@ class Todo extends React.Component {
 		}
 	}
 }
-
-export default Todo;

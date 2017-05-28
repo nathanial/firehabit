@@ -9,6 +9,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoSidebar from "./TodoSidebar";
+import GarbageBin from "./GarbageBin";
 
 const TodoPageWrapper = styled.div`
 	display: block;
@@ -38,6 +39,7 @@ class ColumnsPage extends React.Component {
 						return <TodoColumn key={i} column={column} />
 					})}
 				</ColumnsContainer>
+				<GarbageBin />
 			</TodoPageWrapper>
 		);
 	}

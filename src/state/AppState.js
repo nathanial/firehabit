@@ -148,6 +148,10 @@ export class AppState {
 			if(_.isUndefined(todoColumn.todos)){
 				todoColumn.todos = observable([]);
 			}
+			todoColumn.todos.sort((a,b) => a.index - b.index);
+			for(let i = 0; i < todoColumn.todos.length; i++){
+				todoColumn.todos[i].index = i;
+			}
 		}
 	}
 
@@ -217,6 +221,10 @@ export class AppState {
 	}
 
 	async moveTodo(todo, column){
+		const originalColumn = this.findColumnForTodo(todo.id);
+		if(originalColumn && originalColumn.id === column.id) {
+			return;
+		}
 		await this.deleteTodo(todo);
 		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(todo, 'id'));
 	}
@@ -244,5 +252,31 @@ export class AppState {
 
 	async updateNotes(content){
 		this.notesRef.update({content});
+	}
+
+	async reorderTodo({after, target}) {
+		const column = this.findColumnForTodo(target);
+		const targetTodo = this.findTodoByID(target);
+		const afterTodo = this.findTodoByID(after);
+		targetTodo.index = afterTodo.index + 0.5;
+		const todos = column.todos.toJS();
+		todos.sort((a,b) => a.index - b.index);
+		column.todos = observable(todos);
+	}
+
+	findColumnForTodo(todoID) {
+		return _.find(this.todoColumns, (column) => {
+			const todoIDs = _.map(column.todos, t => t.id);
+			return _.includes(todoIDs, todoID);
+		});
+	}
+
+	findTodoByID(todoID) {
+		for(let column of this.todoColumns) {
+			const result = _.find(column.todos, (todo) => todo.id === todoID);
+			if(result){
+				return result;
+			}
+		}
 	}
 }
