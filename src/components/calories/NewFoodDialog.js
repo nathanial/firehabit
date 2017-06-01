@@ -33,7 +33,7 @@ export default class NewFoodDialog extends React.Component {
 					title="Add New Food"
 				>
 					<div className="pt-dialog-body">
-						<label className="pt-label .modifier">
+						<label className="pt-label">
 							Food Name
 							<span className="pt-text-muted">(required)</span>
 							<input ref="foodName" className="pt-input"
@@ -42,7 +42,7 @@ export default class NewFoodDialog extends React.Component {
 										 value={this.state.foodName}
 										 onChange={(event) => this.setState({foodName: this.refs.foodName.value})} />
 						</label>
-						<label className="pt-label .modifier">
+						<label className="pt-label">
 							Calories
 							<span className="pt-text-muted">(required)</span>
 							<input ref="calories" className="pt-input" style={{width: 200}} type="text" placeholder="Calories" dir="auto" />
