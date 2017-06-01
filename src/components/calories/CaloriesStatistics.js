@@ -2,10 +2,12 @@ import React from 'react';
 import {observer} from 'mobx-react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import {appState} from '../../util';
+import {appState, history} from '../../util';
+import {Button} from '@blueprintjs/core';
 
 const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
+	position: relative;
 	width: 200px;
 	height: 200px;
 	vertical-align: top;
@@ -17,9 +19,16 @@ const CalorieStatisticsWrapper = styled.div`
 			margin-right: 10px;
 		}
 	}
+	
+	.settings-btn {
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
 `;
 
-export default observer(class CalorieStatistics extends React.Component {
+@observer
+export default class CalorieStatistics extends React.Component {
 
 	static propTypes = {
 		date: React.PropTypes.string.isRequired,
@@ -36,7 +45,12 @@ export default observer(class CalorieStatistics extends React.Component {
 					<span className="total-calories-label">Total Calories: </span>
 					<span>{_.sum(_.map(day.consumed, f => parseInt(f.calories, 10)))}</span>
 				</p>
+				<Button className="settings-btn pt-minimal" iconName="settings" onClick={this.gotoSettings}></Button>
 			</CalorieStatisticsWrapper>
 		);
 	}
-});
+
+	gotoSettings = () => {
+		history.push('/calories/settings');
+	}
+}
