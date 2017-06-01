@@ -97,6 +97,10 @@ export class AppState {
 	notes = observable({
 		content: ''
 	});
+	calorieSettings = observable({
+		caloricGoal: 0,
+		weightStasisGoal: 0
+	})
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
@@ -107,6 +111,7 @@ export class AppState {
 		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
 		await this.initializeDailiesRef();
+		await this.initializeCalorieSettingsRef();
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
 	}
@@ -126,6 +131,20 @@ export class AppState {
 			const value = snapshot.val();
 			this.notes.content = value;
 		})
+	}
+
+	async initializeCalorieSettingsRef(){
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+
+		this.calorieSettingsRef = this.db.ref(`/users/${userId}/calorie-settings`);
+		this.calorieSettingsRef.on('value', (snapshot) => {
+			const value = snapshot.val();
+			if(value){
+				this.calorieSettings.caloricGoal = value.caloricGoal;
+				this.calorieSettings.weightStasisGoal = value.weightStasisGoal;
+			}
+		});
 	}
 
 	async initializeDailiesRef(){
@@ -203,6 +222,10 @@ export class AppState {
 
 	async updateTodoColumn(id, values) {
 		this.todoColumnsRef.child(id).update(values);
+	}
+
+	async updateCalorieSettings(values) {
+		this.calorieSettingsRef.update(values);
 	}
 
 	async addTodo(column, todo) {
