@@ -92,7 +92,6 @@ const TodoListWrapper = styled.ul`
 @DropTarget("todo", {
 	drop(props, monitor) {
 		const {todo} = monitor.getItem();
-		console.log("Move Todo", todo, props.column);
 		appState.moveTodo(todo, props.column);
 	}
 }, (connect, monitor) => {

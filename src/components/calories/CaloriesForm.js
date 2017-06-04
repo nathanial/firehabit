@@ -10,20 +10,27 @@ import ConsumedFoodsList from './ConsumedFoodsList';
 import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
 import FoodDefinitionForm from "./FoodDefinitionForm";
+import WeightForm from "./WeightForm";
 
 const CaloriesFormWrapper = styled.div`
-	display: inline-block;
 	position: relative;
-	margin: 50px;
 	& > h2 {
 		text-align: left;
 		margin-bottom: 20px;
 		margin-top: 10px;
 	}
 	min-width: 540px;
+	margin-top: 30px;
 `;
 
-export default observer(class CaloriesForm extends React.Component {
+const CaloriesFormOuterWrapper = styled.div`
+	display: inline-block;
+	position: relative;
+	margin: 50px;
+`;
+
+@observer
+export default class CaloriesForm extends React.Component {
 
 	static propTypes = {
 		date: React.PropTypes.string.isRequired,
@@ -36,19 +43,22 @@ export default observer(class CaloriesForm extends React.Component {
 
 	render() {
 		return (
-			<CaloriesFormWrapper className="pt-card pt-elevation-1">
-				<h2>Calories</h2>
-				<DayPicker date={this.props.date}
-									 onChange={(newDate) => this.props.onChangeDate(newDate)} />
-				<div className="pt-input-group">
-					<span className="pt-icon pt-icon-search"/>
-					<input ref="search" value={this.state.value}
-								 className="pt-input" type="search"
-								 placeholder="Add Food" dir="auto"
-								 onChange={this.onChange} />
-				</div>
-				{this.content()}
-			</CaloriesFormWrapper>
+			<CaloriesFormOuterWrapper>
+				<WeightForm date={this.props.date} />
+				<CaloriesFormWrapper className="pt-card pt-elevation-2">
+					<h2>Calories</h2>
+					<DayPicker date={this.props.date}
+										 onChange={(newDate) => this.props.onChangeDate(newDate)} />
+					<div className="pt-input-group">
+						<span className="pt-icon pt-icon-search"/>
+						<input ref="search" value={this.state.value}
+									 className="pt-input" type="search"
+									 placeholder="Add Food" dir="auto"
+									 onChange={this.onChange} />
+					</div>
+					{this.content()}
+				</CaloriesFormWrapper>
+			</CaloriesFormOuterWrapper>
 		);
 	}
 
@@ -99,4 +109,4 @@ export default observer(class CaloriesForm extends React.Component {
 		}
 	};
 
-})
+}

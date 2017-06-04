@@ -198,6 +198,22 @@ export class AppState {
 		}
 	}
 
+	async updateDay(date, values) {
+		let day;
+		if(_.isObject(date)){
+			day = date;
+		} else {
+			day = _.find(this.days, d => d.date === date);
+		}
+		if(day){
+			this.daysRef.child(day.id).update(values);
+		} else {
+			const childRef = this.daysRef.push({date});
+			this.daysRef.child(childRef.key).update(values);
+		}
+	}
+
+
 	async removeConsumedFood(day, food){
 		this.daysRef.child(day.id + '/consumed/' + food.id).remove();
 	}
