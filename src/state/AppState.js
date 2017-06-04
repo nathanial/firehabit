@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {observable} from 'mobx';
 import firebase from 'firebase';
+import * as mobx from "mobx";
 
 function allKeysBeginWithDash(value){
 	return !_.some(_.keys(value), k => k[0] !== '-');
@@ -241,7 +242,7 @@ export class AppState {
 
 	async moveTodo(todo, column){
 		await this.deleteTodo(todo);
-		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(todo, 'id'));
+		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(mobx.toJS(todo), 'id'));
 	}
 
 	async deleteTodo(todo) {

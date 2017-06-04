@@ -71,7 +71,7 @@ const TodoListWrapper = styled.ul`
 		}
 	}
 
-	& li {
+	& > .scrollarea > .scrollarea-content > li {
 		padding: 10px;
 		background: #eee !important;
 		margin: 10px;
