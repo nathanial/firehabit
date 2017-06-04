@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import update from 'immutability-helper';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 import {EditableText, Button, Intent} from "@blueprintjs/core";
+import mobx from 'mobx';
 import {appState} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
@@ -23,18 +25,43 @@ const TodoContentWrapper = styled.div`
 	
 	.delete-btn {
 		position: absolute;
-		right: 20px;
+		right: 35px;
 		top: -6px;
+		min-width: 18px;
+		min-height: 18px;
+		line-height: 18px;
 		opacity: 0.2;
 		transition: opacity 0.2s ease-out;
 		&:hover {
 			opacity: 1;
 		}
+		&:before {
+			font-size: 12px;
+			vertical-align: middle;
+		}
+	}
+	
+	.add-subtask-btn {
+		position: absolute;
+		top: 15px;
+		right: 35px;
+		min-width: 18px;
+		min-height: 18px;
+		line-height: 18px
+		opacity: 0.2;
+		&:hover {
+			opacity: 1;
+		}
+		&:before {
+			font-size: 12px;
+			vertical-align: middle;
+		}		
 	}
 `;
 
 const TodoWrapper = styled.div`
 	position: relative;
+	padding: 10px 0;
 	.drag-handle {
 		position: absolute;
 		left: 0;
@@ -50,6 +77,48 @@ const TodoWrapper = styled.div`
 		}
 	}
 	border-radius: 0;
+	
+	&:hover {
+	 & > ul {
+	 		border-top: 1px solid #999;
+	 }
+	}
+`;
+
+const SubtasksList = styled.ul`
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	border-top: 1px solid #ccc;
+	margin-right: 0;
+	margin-top: 10px;
+	padding-top: 10px;
+	& > li {
+		position: relative;
+		padding: 2px 0;
+		margin: 0;
+		margin-left: 35px;
+		
+		.pt-editable-text {
+			width: 180px;
+		}
+		
+		& > .close-btn {
+			position: absolute;
+			right: 6px;
+			top: 1px;
+			padding: 0;
+			min-height: 10px;
+			min-width: 10px;
+			font-size: 10px;
+			line-height: 15px;
+			opacity: 0.2;
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
 `;
 
 
@@ -77,28 +146,60 @@ class Todo extends React.Component {
 	};
 
 	state = {
-		updatedTodo: _.cloneDeep(this.props.todo)
+
 	};
+
+	constructor(){
+		super(...arguments);
+		this.state.updatedTodo = _.cloneDeep(mobx.toJS(this.props.todo));
+	}
 
 	render(){
 		const { connectDragSource, connectDragPreview } = this.props;
 		return (
 			connectDragPreview(
-				<li className="pt-card pt-elevation-2" style={{paddingLeft: 0}}>
+				<li className="pt-card pt-elevation-2" style={{padding:0}}>
 					<TodoWrapper onClick={this.onClick}>
-						{connectDragSource(<div className="drag-handle"><div className="inner-icon pt-icon-drag-handle-vertical"></div></div>)}
+						{connectDragSource(
+							<div className="drag-handle">
+								<div className="inner-icon pt-icon-drag-handle-vertical"/>
+							</div>
+						)}
 						<TodoContentWrapper>
 							<EditableText value={this.state.updatedTodo.name}
 														multiline={true}
 														onChange={this.onNameChanged}
 														onConfirm={this.onUpdatedTodo} />
-							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo}></Button>
+							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
 						</TodoContentWrapper>
+						{this.renderSubtasks()}
 					</TodoWrapper>
 				</li>
 			)
 		);
 	}
+
+	renderSubtasks = () => {
+		const subtasks = this.state.updatedTodo.subtasks;
+		if(_.isArray(subtasks) && !_.isEmpty(subtasks)) {
+			return (
+				<SubtasksList>
+					{_.map(this.state.updatedTodo.subtasks, (task, i) => {
+						return (
+							<li key={i} className="subtask-item">
+								<EditableText value={task.name}
+															multiline={true}
+															onChange={(newName) => this.onSubtaskNameChanged(i, task, newName)}
+															onConfirm={() => this.onUpdatedSubtask(task)} />
+								<Button className="close-btn pt-minimal pt-intent-danger" iconName="cross" onClick={() => this.onDeleteSubtask(task, i)} />
+							</li>
+						);
+					})}
+				</SubtasksList>
+			);
+		}
+	};
 
 	onNameChanged = (newName) => {
 		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
@@ -115,6 +216,34 @@ class Todo extends React.Component {
 		if(result){
 			appState.deleteTodo(this.props.todo);
 		}
+	};
+
+	onAddSubtask = async () => {
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		if(_.isUndefined(updatedTodo.subtasks)) {
+			updatedTodo.subtasks = [];
+		}
+		updatedTodo.subtasks.push({name: 'New Task'});
+		appState.updateTodo(updatedTodo);
+		this.setState({updatedTodo});
+	};
+
+	onSubtaskNameChanged = (index, subtask, newName) => {
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		updatedTodo.subtasks[index].name = newName;
+		this.setState({updatedTodo});
+	};
+
+	onUpdatedSubtask = (subtask) => {
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		appState.updateTodo(updatedTodo);
+	};
+
+	onDeleteSubtask = (subtask, index) => {
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		updatedTodo.subtasks.splice(index, 1);
+		appState.updateTodo(updatedTodo);
+		this.setState({updatedTodo});
 	}
 }
 
