@@ -168,6 +168,9 @@ export class AppState {
 			if(_.isUndefined(todoColumn.todos)){
 				todoColumn.todos = observable([]);
 			}
+			if(_.isUndefined(todoColumn.confirmDeletion)){
+				todoColumn.confirmDeletion = true;
+			}
 		}
 	}
 

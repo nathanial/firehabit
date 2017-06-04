@@ -140,6 +140,7 @@ class Todo extends React.Component {
 
 	static propTypes = {
 		todo: PropTypes.object.isRequired,
+		confirmDeletion: PropTypes.bool.isRequired,
 		isDragging: PropTypes.bool.isRequired,
 		connectDragSource: PropTypes.func.isRequired,
 		connectDragPreview: PropTypes.func.isRequired
@@ -212,8 +213,12 @@ class Todo extends React.Component {
 	};
 
 	onDeleteTodo = async () => {
-		const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
-		if(result){
+		if(this.props.confirmDeletion) {
+			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
+			if(result){
+				appState.deleteTodo(this.props.todo);
+			}
+		} else {
 			appState.deleteTodo(this.props.todo);
 		}
 	};

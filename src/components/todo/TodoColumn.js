@@ -113,8 +113,9 @@ export default class TodoColumn extends React.Component {
 	};
 
 	render(){
-		const todos = this.props.column.todos || [];
-		const columnColor = this.props.column.color;
+		const column = this.props.column;
+		const todos = column.todos || [];
+		const columnColor = column.color;
 		const {connectDropTarget} = this.props;
 		return connectDropTarget(
 			<div style={{display:'inline-block'}}>
@@ -128,7 +129,7 @@ export default class TodoColumn extends React.Component {
 							speed={0.8}
 							horizontal={false}>
 							{todos.map((todo) => {
-								return <Todo key={todo.id} todo={todo} />;
+								return <Todo key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
 							})}
 						</ScrollArea>
 					</TodoListWrapper>
