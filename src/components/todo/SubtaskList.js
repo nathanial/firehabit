@@ -28,6 +28,18 @@ const SubtaskListWrapper = styled.ul`
 		
 		& > .close-btn {
 			position: absolute;
+			right: 25px;
+			top: 1px;
+			padding: 0;
+			min-height: 10px;
+			min-width: 10px;
+			font-size: 10px;
+			line-height: 15px;
+			opacity: 0;
+		}
+		
+		& > .complete-subtask-btn {
+			position: absolute;
 			right: 6px;
 			top: 1px;
 			padding: 0;
@@ -35,15 +47,18 @@ const SubtaskListWrapper = styled.ul`
 			min-width: 10px;
 			font-size: 10px;
 			line-height: 15px;
+			opacity: 0;
+		}
+		
+		&.completed {
+			.pt-editable-text:not(.pt-editable-editing) {
+				text-decoration: line-through;
+			}
 		}
 	}
 	
-	.delete-subtask-btn {
-		margin-right: -4px;
-		opacity: 0;
-	}
 	&:hover {
-		.delete-subtask-btn {
+		.delete-subtask-btn, .complete-subtask-btn {
 			opacity: 1 ;
 		}
 	}
@@ -62,13 +77,22 @@ export class SubtaskList extends React.Component {
 			return (
 				<SubtaskListWrapper>
 					{_.map(subtasks, (task, i) => {
+						let classes = "subtask-item";
+						if(task.complete) {
+							classes += ' completed';
+						}
 						return (
-							<li key={i} className="subtask-item">
+							<li key={i} className={classes}>
 								<EditableText value={task.name}
 															multiline={true}
 															onChange={(newName) => this.onSubtaskNameChanged(i, task, newName)}
 															onConfirm={() => this.onUpdatedSubtask(task)} />
-								<Button className="delete-subtask-btn close-btn pt-minimal pt-intent-danger" iconName="cross" onClick={() => this.onDeleteSubtask(task, i)} />
+								<Button className="complete-subtask-btn pt-minimal pt-intent-success"
+												iconName="tick"
+												onClick={() => this.onCompleteSubtask(task, i)} />
+								<Button className="delete-subtask-btn close-btn pt-minimal pt-intent-danger"
+												iconName="cross"
+												onClick={() => this.onDeleteSubtask(task, i)} />
 							</li>
 						);
 					})}
@@ -90,10 +114,17 @@ export class SubtaskList extends React.Component {
 		appState.updateTodo(updatedTodo);
 	};
 
+	onCompleteSubtask = (subtask, index) => {
+		const updatedTodo = _.cloneDeep(this.props.todo);
+		updatedTodo.subtasks[index].complete = !updatedTodo.subtasks[index].complete;
+		appState.updateTodo(updatedTodo);
+		this.props.onChange(updatedTodo);
+	};
+
 	onDeleteSubtask = (subtask, index) => {
 		const updatedTodo = _.cloneDeep(this.props.todo);
 		updatedTodo.subtasks.splice(index, 1);
 		appState.updateTodo(updatedTodo);
 		this.props.onChange(updatedTodo);
-	}
+	};
 }
