@@ -39,14 +39,24 @@ const TodoWrapper = styled.div`
 	}
 	border-radius: 0;
 	
+	&:hover {
+		.todo-controls {
+			opacity: 1;
+		}
+	}
+	
 	.todo-controls {
 		height: 37px;
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		background: #ccc;
+		background: white;
+		border-left: 1px solid #ccc;
+		border-top: 1px solid #ccc;
+		border-bottom: 1px solid #ccc;
 		border-top-left-radius: 3px;
 		border-bottom-left-radius: 3px;
+		opacity: 0;
 		.delete-btn {
 			min-width: 18px;
 			min-height: 18px;
@@ -57,6 +67,8 @@ const TodoWrapper = styled.div`
 				vertical-align: middle;
 			}
 		}
+		
+		transition: opacity 0.2s ease-in-out;
 		
 		.add-subtask-btn {
 			min-width: 18px;
@@ -105,6 +117,12 @@ const SubtasksList = styled.ul`
 	
 	.delete-subtask-btn {
 		margin-right: -4px;
+		opacity: 0;
+	}
+	&:hover {
+		.delete-subtask-btn {
+			opacity: 1 ;
+		}
 	}
 `;
 
