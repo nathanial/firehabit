@@ -16,7 +16,7 @@ const TodoColumnWrapper = styled.div`
 	padding: 20px 10px 10px 10px;
 	width: 280px;
 	text-align: center;
-	height: 500px;
+	height: 600px;
 	position: relative;
 	vertical-align: top;
 	
@@ -138,17 +138,6 @@ export default class TodoColumn extends React.Component {
 		appState.addTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
-	onStartDelete = async () => {
-		const shouldDelete = await DialogService.showDangerDialog(
-			'Are you sure you want to delete this column?',
-			'Delete Column',
-			'Cancel'
-		);
-		if(shouldDelete){
-			appState.deleteTodoColumn(this.props.column);
-		}
-	};
-
 	onChangeColumnName = (newName) => {
 		this.setState({
 			columnName: newName
@@ -157,7 +146,7 @@ export default class TodoColumn extends React.Component {
 
 	onFinishEditingColumnName = () => {
 		appState.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
-	}
+	};
 
 	gotoColumnSettings = () => {
 		history.push(`/todo/column/${this.props.column.id}/settings`);
