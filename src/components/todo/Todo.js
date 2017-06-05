@@ -11,61 +11,22 @@ import DialogService from "../../services/DialogService";
 
 const TodoContentWrapper = styled.div`
 	position: relative;
-	left: 30px;
-	button {
-		position: absolute;
-		top: -5px;
-		right: 20px;
-		padding: 0;
-	}
-	
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	.pt-editable-text {
 		max-width: 180px;
 	}
 	
-	.delete-btn {
-		position: absolute;
-		right: 35px;
-		top: -6px;
-		min-width: 18px;
-		min-height: 18px;
-		line-height: 18px;
-		opacity: 0.2;
-		transition: opacity 0.2s ease-out;
-		&:hover {
-			opacity: 1;
-		}
-		&:before {
-			font-size: 12px;
-			vertical-align: middle;
-		}
-	}
-	
-	.add-subtask-btn {
-		position: absolute;
-		top: 15px;
-		right: 35px;
-		min-width: 18px;
-		min-height: 18px;
-		line-height: 18px
-		opacity: 0.2;
-		&:hover {
-			opacity: 1;
-		}
-		&:before {
-			font-size: 12px;
-			vertical-align: middle;
-		}		
-	}
+	flex: 2 0 0; 
 `;
 
 const TodoWrapper = styled.div`
 	position: relative;
 	padding: 10px 0;
+	display: flex;
+	flex-direction: row;
 	.drag-handle {
-		position: absolute;
-		left: 0;
-		top: 0;
 		bottom: 0;
 		width: 30px;
 		font-size: 24px;
@@ -78,10 +39,34 @@ const TodoWrapper = styled.div`
 	}
 	border-radius: 0;
 	
-	&:hover {
-	 & > ul {
-	 		border-top: 1px solid #999;
-	 }
+	.todo-controls {
+		height: 37px;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		background: #ccc;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+		.delete-btn {
+			min-width: 18px;
+			min-height: 18px;
+			line-height: 18px;
+			transition: opacity 0.2s ease-out;
+			&:before {
+				font-size: 12px;
+				vertical-align: middle;
+			}
+		}
+		
+		.add-subtask-btn {
+			min-width: 18px;
+			min-height: 18px;
+			line-height: 10px;
+			&:before {
+				font-size: 12px;
+				vertical-align: middle;
+			}		
+		}
 	}
 `;
 
@@ -91,10 +76,11 @@ const SubtasksList = styled.ul`
 	padding: 0;
 	font-size: 12px;
 	border-top: 1px solid #ccc;
-	margin-left: 28px;
+	padding-left: 28px;
 	margin-right: 0;
-	margin-top: 10px;
+	margin-top: 0px;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	& > li {
 		position: relative;
 		padding: 2px 0;
@@ -114,12 +100,15 @@ const SubtasksList = styled.ul`
 			min-width: 10px;
 			font-size: 10px;
 			line-height: 15px;
-			opacity: 0.2;
-			&:hover {
-				opacity: 1;
-			}
 		}
 	}
+	
+	.delete-subtask-btn {
+		margin-right: -4px;
+	}
+`;
+
+const OuterTodoWrapper = styled.div`
 `;
 
 
@@ -161,22 +150,26 @@ class Todo extends React.Component {
 		return (
 			connectDragPreview(
 				<li className="pt-card pt-elevation-2" style={{padding:0}}>
-					<TodoWrapper onClick={this.onClick}>
-						{connectDragSource(
-							<div className="drag-handle">
-								<div className="inner-icon pt-icon-drag-handle-vertical"/>
+					<OuterTodoWrapper>
+						<TodoWrapper onClick={this.onClick}>
+							{connectDragSource(
+								<div className="drag-handle">
+									<div className="inner-icon pt-icon-drag-handle-vertical"/>
+								</div>
+							)}
+							<TodoContentWrapper>
+								<EditableText value={this.state.updatedTodo.name}
+															multiline={true}
+															onChange={this.onNameChanged}
+															onConfirm={this.onUpdatedTodo} />
+							</TodoContentWrapper>
+							<div className="todo-controls">
+								<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+								<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
 							</div>
-						)}
-						<TodoContentWrapper>
-							<EditableText value={this.state.updatedTodo.name}
-														multiline={true}
-														onChange={this.onNameChanged}
-														onConfirm={this.onUpdatedTodo} />
-							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-						</TodoContentWrapper>
+						</TodoWrapper>
 						{this.renderSubtasks()}
-					</TodoWrapper>
+					</OuterTodoWrapper>
 				</li>
 			)
 		);
@@ -194,7 +187,7 @@ class Todo extends React.Component {
 															multiline={true}
 															onChange={(newName) => this.onSubtaskNameChanged(i, task, newName)}
 															onConfirm={() => this.onUpdatedSubtask(task)} />
-								<Button className="close-btn pt-minimal pt-intent-danger" iconName="cross" onClick={() => this.onDeleteSubtask(task, i)} />
+								<Button className="delete-subtask-btn close-btn pt-minimal pt-intent-danger" iconName="cross" onClick={() => this.onDeleteSubtask(task, i)} />
 							</li>
 						);
 					})}

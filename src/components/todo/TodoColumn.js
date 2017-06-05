@@ -83,9 +83,6 @@ const TodoListWrapper = styled.ul`
 			margin-top: 0;
 		}
 		
-		&:hover {
-			background: #bbb !important;
-		}
 	}
 `;
 
