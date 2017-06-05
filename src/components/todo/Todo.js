@@ -91,6 +91,7 @@ const SubtasksList = styled.ul`
 	padding: 0;
 	font-size: 12px;
 	border-top: 1px solid #ccc;
+	margin-left: 28px;
 	margin-right: 0;
 	margin-top: 10px;
 	padding-top: 10px;
@@ -98,7 +99,7 @@ const SubtasksList = styled.ul`
 		position: relative;
 		padding: 2px 0;
 		margin: 0;
-		margin-left: 35px;
+		margin-left: 2px;
 		
 		.pt-editable-text {
 			width: 180px;
