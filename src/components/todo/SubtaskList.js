@@ -55,13 +55,15 @@ const SubtaskListWrapper = styled.ul`
 				text-decoration: line-through;
 			}
 		}
-	}
-	
-	&:hover {
-		.delete-subtask-btn, .complete-subtask-btn {
-			opacity: 1 ;
+		
+		&:hover {
+			.delete-subtask-btn, .complete-subtask-btn {
+				opacity: 1 ;
+			}
 		}
 	}
+	
+
 `;
 
 
