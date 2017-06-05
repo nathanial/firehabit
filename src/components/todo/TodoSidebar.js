@@ -5,8 +5,6 @@ import {appState} from "../../util";
 
 const Wrapper = styled.div`
 	margin-left: 10px;
-	& > .add-column-btn {
-	}
 `;
 
 const InnerWrapper = styled.div`
