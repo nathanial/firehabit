@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
-import {appState} from '../../util';
+import {db} from '../../util';
 
 const Wrapper = styled.div`
 	display: block;
@@ -10,15 +10,14 @@ const Wrapper = styled.div`
 	position: relative;
 `;
 
+interface WeightFormProps {
+	date: string;
+}
 
 @observer
-export default class WeightForm extends React.Component {
-	static propTypes = {
-		date: React.PropTypes.string.isRequired
-	};
-
+export default class WeightForm extends React.Component<WeightFormProps, {}> {
 	render(){
-		const day = _.find(appState.days, day => day.date === this.props.date);
+		const day = _.find(db.days, day => day.date === this.props.date);
 		const weight = _.get(day, 'weight', '');
 		return (
 			<Wrapper className="pt-card pt-elevation-2" >
@@ -32,6 +31,6 @@ export default class WeightForm extends React.Component {
 
 	onUpdateWeight = (event) => {
 		const newWeight = parseInt(event.target.value, 10);
-		appState.updateDay(this.props.date, {weight: newWeight});
+		db.updateDay(this.props.date, {weight: newWeight});
 	}
 }

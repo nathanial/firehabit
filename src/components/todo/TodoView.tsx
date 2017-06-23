@@ -1,10 +1,9 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as  _ from 'lodash';
+import * as React from 'react';
 import { DragSource } from 'react-dnd';
 import {EditableText, Button} from "@blueprintjs/core";
-import mobx from 'mobx';
-import {appState} from '../../util';
+import * as mobx from 'mobx';
+import {db} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
@@ -82,38 +81,37 @@ const TodoWrapper = styled.div`
 	}
 `;
 
-@DragSource('todo',{
-		beginDrag(props) {
-			return {
-				todo: props.todo
-			};
-		}
-	},
-	(connect, monitor) => {
-		return {
-			connectDragSource: connect.dragSource(),
-			connectDragPreview: connect.dragPreview(),
-			isDragging: monitor.isDragging()
-		};
-	})
-class Todo extends React.Component {
+interface Props {
+	todo: Todo;
+	confirmDeletion: boolean;
+	isDragging?: boolean;
+	connectDragSource?: any;
+	connectDragPreview?: any;
+}
 
-	static propTypes = {
-		todo: PropTypes.object.isRequired,
-		confirmDeletion: PropTypes.bool.isRequired,
-		isDragging: PropTypes.bool.isRequired,
-		connectDragSource: PropTypes.func.isRequired,
-		connectDragPreview: PropTypes.func.isRequired
+interface State {
+	updatedTodo: Partial<Todo>;
+}
+
+@DragSource('todo',{
+	beginDrag(props) {
+		return {
+			todo: props.todo
+		};
+	}
+},
+(connect, monitor) => {
+	return {
+		connectDragSource: connect.dragSource(),
+		connectDragPreview: connect.dragPreview(),
+		isDragging: monitor.isDragging()
 	};
+})
+class TodoView extends React.Component<Props, State> {
 
 	state = {
-
+		updatedTodo:_.cloneDeep(mobx.toJS(this.props.todo))
 	};
-
-	constructor(){
-		super(...arguments);
-		this.state.updatedTodo = _.cloneDeep(mobx.toJS(this.props.todo));
-	}
 
 	render(){
 		const { connectDragSource, connectDragPreview } = this.props;
@@ -121,7 +119,7 @@ class Todo extends React.Component {
 			connectDragPreview(
 				<li className="pt-card pt-elevation-2" style={{padding:0}}>
 					<div>
-						<TodoWrapper onClick={this.onClick}>
+						<TodoWrapper >
 							{connectDragSource(
 								<div className="drag-handle">
 									<div className="inner-icon pt-icon-drag-handle-vertical"/>
@@ -152,17 +150,17 @@ class Todo extends React.Component {
 	};
 
 	onUpdatedTodo = () =>{
-		appState.updateTodo(this.state.updatedTodo);
+		db.updateTodo(this.state.updatedTodo);
 	};
 
 	onDeleteTodo = async () => {
 		if(this.props.confirmDeletion) {
 			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
 			if(result){
-				appState.deleteTodo(this.props.todo);
+				db.deleteTodo(this.props.todo);
 			}
 		} else {
-			appState.deleteTodo(this.props.todo);
+			db.deleteTodo(this.props.todo);
 		}
 	};
 
@@ -171,12 +169,12 @@ class Todo extends React.Component {
 		if(_.isUndefined(updatedTodo.subtasks)) {
 			updatedTodo.subtasks = [];
 		}
-		updatedTodo.subtasks.push({name: 'New Task'});
-		appState.updateTodo(updatedTodo);
+		updatedTodo.subtasks.push({name: 'New Task'} as any);
+		db.updateTodo(updatedTodo);
 		this.setState({updatedTodo});
 	};
 
 
 }
 
-export default Todo;
+export default TodoView;

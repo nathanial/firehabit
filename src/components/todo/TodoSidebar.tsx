@@ -1,7 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import {Button} from '@blueprintjs/core';
-import {appState} from "../../util";
+import {db} from "../../util";
 
 const Wrapper = styled.div`
 	margin-left: 10px;
@@ -13,7 +13,7 @@ const InnerWrapper = styled.div`
 `;
 
 
-export default class TodoSidebar extends React.Component {
+export default class TodoSidebar extends React.Component<{},{}> {
 	render(){
 		return (
 			<Wrapper>
@@ -25,6 +25,6 @@ export default class TodoSidebar extends React.Component {
 	}
 
 	onAddColumn = () => {
-		appState.addTodoColumn('New Column');
+		db.addTodoColumn('New Column');
 	}
 }

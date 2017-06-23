@@ -1,10 +1,11 @@
-import _ from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as _ from 'lodash';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
-import {appState} from "./util";
-import firebase from 'firebase';
+import {db} from "./util";
+import * as firebase from 'firebase';
+import {state} from './state';
 
 // Initialize Firebase
 var config = {
@@ -21,25 +22,25 @@ async function loginToFirebase(){
 	return new Promise((resolve, reject) => {
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
-				appState.loggedIn = true;
-				appState.user.name = user.name;
-				appState.user.email = user.email;
+				db.loggedIn = true;
+				db.user.name = user.name;
+				db.user.email = user.email;
 				resolve();
 				// User is signed in.
 			} else {
 				if(firebase.auth().currentUser){
-					appState.loggedIn = true;
+					db.loggedIn = true;
 					resolve();
 					return;
 				}
 				const provider = new firebase.auth.GoogleAuthProvider();
 				try {
 					await firebase.auth().signInWithRedirect(provider)
-					appState.loggedIn = true;
+					db.loggedIn = true;
 					resolve();
 				} catch(error){
 					console.error(error);
-					appState.loggedIn = false;
+					db.loggedIn = false;
 					reject();
 				}
 			}
@@ -64,11 +65,15 @@ async function setInitialData(){
 async function init(){
 	await loginToFirebase();
 	await setInitialData();
-	await appState.loadFromDB();
+	await db.loadFromDB();
 	ReactDOM.render(
-		<App />,
+		<App appState={state.get()} />,
 		document.getElementById('root')
 	);
 }
 
 init();
+
+state.on('update', () => {
+	ReactDOM.render(<App appState={state.get()} />, document.getElementById('root'));
+});

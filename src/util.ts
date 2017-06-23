@@ -1,5 +1,5 @@
 import createBrowserHistory from 'history/createBrowserHistory'
-import {AppState} from "./state/AppState";
+import {DB} from "./db/DB";
 
 export const history = createBrowserHistory();
-export const appState = new AppState();
+export const db = new DB();

@@ -1,14 +1,13 @@
 import * as _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import styled from 'styled-components';
-import {appState} from '../../util';
+import {db} from '../../util';
 import {Button} from "@blueprintjs/core";
 import * as colors from '../../theme/colors';
 import {observer} from 'mobx-react';
 import {EditableText} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
-import moment from "moment";
+import * as moment from "moment";
 
 const HabitsPageWrapper = styled.div`
 	& > h1 {
@@ -44,46 +43,45 @@ const DailiesListWrapper = styled.div`
 				top: 10px;
 			}
 		}
-		
-		// & > li:nth-child(odd) {
-		// 	background: #475969;
-		// }
 	}
 `;
 
-const DailyItemWrapper = styled.li`
-	background: ${colors.primaryColor4};
-	color: ${(props) => props.doneToday ? colors.primaryColor3 : 'white' }
-	text-decoration: ${(props) => props.doneToday ? 'line-through' : '' }
-`;
+interface Props {
+	entry: DailyEntry
+}
 
-class DailyItem extends React.Component {
-	static propTypes = {
-		entry: PropTypes.object.isRequired
-	}
+interface State {
+	updatedEntry: DailyEntry;
+}
 
+class DailyItem extends React.Component<Props, State> {
 	state = {
 		updatedEntry: _.cloneDeep(this.props.entry)
 	}
 
 	render(){
-		const entry = this.props.entry;
+		const doneToday = this.dailyWasDoneToday();
+		const style = {
+			background: colors.primaryColor4,
+			color: doneToday ? colors.primaryColor3 : 'white',
+			textDecoration: doneToday ? 'line-through' : ''
+		};
 		return (
-			<DailyItemWrapper doneToday={this.dailyWasDoneToday()}>
+			<li style={style}>
 				<EditableText value={this.state.updatedEntry.name}
-											multiline={true}
-											onChange={this.onNameChanged}
-											onConfirm={this.onUpdatedTodo}  />
+							  multiline={true}
+							  onChange={this.onNameChanged}
+							  onConfirm={this.onUpdatedTodo}  />
 				<div className="daily-buttons pt-button-group">
 					{this.renderStar()}
 					<Button iconName="trash" onClick={this.onRemove} ></Button>
 				</div>
-			</DailyItemWrapper>
+			</li>
 		);
 	}
 
 	renderStar(){
-		if(this.dailyWasDoneToday(this.props.entry)){
+		if(this.dailyWasDoneToday()){
 			return (
 				<Button iconName="star" onClick={this.setUnfinished}></Button>
 			);
@@ -108,7 +106,7 @@ class DailyItem extends React.Component {
 		updatedEntry.records = updatedEntry.records || {};
 		updatedEntry.records[this.today()] = true;
 		this.setState({updatedEntry}, () => {
-			appState.updateDaily(this.state.updatedEntry);
+			db.updateDaily(this.state.updatedEntry);
 		});
 	};
 
@@ -117,7 +115,7 @@ class DailyItem extends React.Component {
 		updatedEntry.records = updatedEntry.records || {};
 		updatedEntry.records[this.today()] = false;
 		this.setState({updatedEntry}, () => {
-			appState.updateDaily(this.state.updatedEntry);
+			db.updateDaily(this.state.updatedEntry);
 		});
 	};
 
@@ -128,7 +126,7 @@ class DailyItem extends React.Component {
 	};
 
 	onUpdatedTodo = () =>{
-		appState.updateDaily(this.state.updatedEntry);
+		db.updateDaily(this.state.updatedEntry);
 	};
 
 	onRemove = async () => {
@@ -138,15 +136,16 @@ class DailyItem extends React.Component {
 			'Cancel'
 		);
 		if(shouldDelete){
-			appState.removeDaily(this.props.entry);
+			db.removeDaily(this.props.entry);
 		}
 	}
 
 }
 
-class DailiesList extends React.Component {
+@observer
+class DailiesList extends React.Component<{},{}> {
 	render(){
-		const dailies = appState.dailies;
+		const dailies = db.dailiesDB.dailies;
 		return (
 			<DailiesListWrapper className="pt-card pt-elevation-1">
 				<h2>Dailies</h2>
@@ -163,12 +162,11 @@ class DailiesList extends React.Component {
 	}
 
 	onAddDaily = () => {
-		appState.addDaily({name: 'New Daily Habit'});
+		db.addDaily({name: 'New Daily Habit'});
 	}
 }
-DailiesList = observer(DailiesList);
 
-export default class HabitsPage extends React.Component {
+export default class HabitsPage extends React.Component<{},{}> {
 	render(){
 		return (
 			<HabitsPageWrapper>

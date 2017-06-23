@@ -1,8 +1,18 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, Intent, Dialog} from "@blueprintjs/core";
 
-class BasicDialog extends React.Component {
+interface Props {
+	title?: string;
+	question?: string;
+	cancelBtn?: string;
+	confirmBtnIntent?: Intent;
+	confirmBtn?: string;
+	onCancel?: () => void;
+	onConfirm?: () => void;
+}
+
+class BasicDialog extends React.Component<Props,{}> {
 	render(){
 		return (
 			<Dialog iconName="inbox"

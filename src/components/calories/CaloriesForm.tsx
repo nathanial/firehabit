@@ -1,11 +1,11 @@
 // Line Limit 100
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import DayPicker from '../DayPicker';
 import NewFoodDialog from './NewFoodDialog';
 import * as _ from 'lodash';
 import SearchResults from './SearchResults';
-import {appState} from '../../util';
+import {db} from '../../util';
 import ConsumedFoodsList from './ConsumedFoodsList';
 import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
@@ -29,8 +29,17 @@ const CaloriesFormOuterWrapper = styled.div`
 	margin: 50px;
 `;
 
+interface CaloriesFormProps {
+	date: string;
+	onChangeDate(newDate: string);
+}
+
+interface CaloriesFormState {
+
+}
+
 @observer
-export default class CaloriesForm extends React.Component {
+export default class CaloriesForm extends React.Component<CaloriesFormProps, CaloriesFormState> {
 
 	static propTypes = {
 		date: React.PropTypes.string.isRequired,
@@ -41,6 +50,8 @@ export default class CaloriesForm extends React.Component {
 		value: ''
 	};
 
+	search: HTMLInputElement;
+
 	render() {
 		return (
 			<CaloriesFormOuterWrapper>
@@ -48,13 +59,13 @@ export default class CaloriesForm extends React.Component {
 				<CaloriesFormWrapper className="pt-card pt-elevation-2">
 					<h2>Calories</h2>
 					<DayPicker date={this.props.date}
-										 onChange={(newDate) => this.props.onChangeDate(newDate)} />
+							 	onChange={(newDate) => this.props.onChangeDate(newDate)} />
 					<div className="pt-input-group">
 						<span className="pt-icon pt-icon-search"/>
-						<input ref="search" value={this.state.value}
-									 className="pt-input" type="search"
-									 placeholder="Add Food" dir="auto"
-									 onChange={this.onChange} />
+						<input ref={(search) => this.search = search} value={this.state.value}
+								 className="pt-input" type="search"
+								 placeholder="Add Food" dir="auto"
+								 onChange={this.onChange} />
 					</div>
 					{this.content()}
 				</CaloriesFormWrapper>
@@ -63,7 +74,7 @@ export default class CaloriesForm extends React.Component {
 	}
 
 	onChange = () => {
-		const value = this.refs.search.value;
+		const value = this.search.value;
 		this.setState({ value });
 	};
 
@@ -72,10 +83,10 @@ export default class CaloriesForm extends React.Component {
 			return (
 				<div>
 					<SearchResults search={this.state.value}
-												 foodDefinitions={appState.foodDefinitions}
-												 onAddFood={this.onAddFood}
-											   onRemoveFoodDefinition={this.onRemoveFoodDefinition}
-												 onEditFoodDefinition={this.onEditFoodDefinition}/>
+								   foodDefinitions={db.foodDefinitions}
+								   onAddFood={this.onAddFood}
+								   onRemoveFoodDefinition={this.onRemoveFoodDefinition}
+								   onEditFoodDefinition={this.onEditFoodDefinition}/>
 					<NewFoodDialog defaultName={this.state.value} />
 				</div>
 			);
@@ -86,14 +97,14 @@ export default class CaloriesForm extends React.Component {
 	};
 
 	onAddFood = async (food) => {
-		await appState.addConsumedFood(this.props.date, food);
+		await db.addConsumedFood(this.props.date, food);
 		this.setState({
 			value: ''
 		});
 	};
 
 	onRemoveFoodDefinition = async (food) => {
-		await appState.removeFoodDefinition(food);
+		await db.removeFoodDefinition(food);
 	};
 
 	onEditFoodDefinition = async (food) => {
@@ -102,10 +113,10 @@ export default class CaloriesForm extends React.Component {
 			updatedFoodDefinition = newValue;
 		}
 		const result = await DialogService.showDialog("Food Definition", "Ok", "Cancel", (
-			<FoodDefinitionForm foodDefinition={food} onChange={onChange}></FoodDefinitionForm>
+			<FoodDefinitionForm foodDefinition={food} onChange={onChange} />
 		));
 		if(result && updatedFoodDefinition){
-			await appState.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
+			await db.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
 		}
 	};
 

@@ -7,3 +7,30 @@ $fh-color-5: #102232;
 
 body {
 }
+//
+//.time-slot-enter {
+//  opacity: 0.01;
+//}
+//
+//.time-slot-enter.time-slot-enter-active {
+//  opacity: 1;
+//  transition: opacity 500ms ease-in;
+//}
+//
+//.time-slot-leave {
+//  opacity: 1;
+//}
+//
+//.time-slot-leave.time-slot-leave-active {
+//  opacity: 0.01;
+//  transition: opacity 300ms ease-in;
+//}
+
+.visible-when-opened {
+  position: absolute;
+  opacity: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}

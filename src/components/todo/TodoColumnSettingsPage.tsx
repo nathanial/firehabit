@@ -1,8 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import {Button, Checkbox} from "@blueprintjs/core";
 import * as _ from 'lodash';
-import {appState, history} from '../../util';
+import {db, history} from '../../util';
 import { SketchPicker } from 'react-color';
 import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
@@ -36,9 +36,14 @@ const SettingsContent = styled.div`
 	position: relative;
 `;
 
-export default observer(class TodoColumnSettingsPage extends React.Component {
+interface Props {
+	match?: any;
+}
+
+@observer
+export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 	render(){
-		const column = _.find(appState.todoColumns, {id: this.props.match.params.columnID});
+		const column = _.find(db.todoColumns, {id: this.props.match.params.columnID});
 		let confirmDeletion = column.confirmDeletion;
 		const color = column.color || '#30404d';
 		return (
@@ -65,24 +70,24 @@ export default observer(class TodoColumnSettingsPage extends React.Component {
 	};
 
 	onResetColor = () => {
-		appState.updateTodoColumn(this.props.match.params.columnID, {color: null});
+		db.updateTodoColumn(this.props.match.params.columnID, {color: null});
 	};
 
 	onChange = (event) => {
-		appState.updateTodoColumn(this.props.match.params.columnID, {color: event.hex});
+		db.updateTodoColumn(this.props.match.params.columnID, {color: event.hex});
 	};
 
 	onChangeConfirmDeletion = (event) => {
-		appState.updateTodoColumn(this.props.match.params.columnID, {confirmDeletion: event.target.checked});
+		db.updateTodoColumn(this.props.match.params.columnID, {confirmDeletion: event.target.checked});
 		this.forceUpdate();
 	};
 
 	onDeleteColumn = async () => {
-		const column = _.find(appState.todoColumns, {id: this.props.match.params.columnID});
+		const column = _.find(db.todoColumns, {id: this.props.match.params.columnID});
 		const result = await DialogService.showDangerDialog(`Are you sure you wan't delete ${column.name}?`, 'Delete', 'Cancel');
 		if(result){
-			appState.deleteTodoColumn(column);
+			db.deleteTodoColumn(column);
 			this.goBack();
 		}
 	}
-})
+}

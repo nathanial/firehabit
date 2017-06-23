@@ -1,8 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 import {observer} from 'mobx-react';
 import styled from 'styled-components';
-import _ from 'lodash';
-import {appState, history} from '../../util';
+import * as _ from 'lodash';
+import {db, history} from '../../util';
 import {Button} from '@blueprintjs/core';
 
 const CalorieStatisticsWrapper = styled.div`
@@ -35,22 +35,21 @@ const CalorieStatisticsWrapper = styled.div`
 	}
 `;
 
+interface CalorieStatisticsProps {
+	date: string;
+}
+
 @observer
-export default class CalorieStatistics extends React.Component {
-
-	static propTypes = {
-		date: React.PropTypes.string.isRequired,
-	};
-
+export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
-		const day = _.find(appState.days, day => day.date === this.props.date);
+		const day = _.find(db.days, day => day.date === this.props.date);
 		if (!day || !day.consumed) {
 			return <div></div>
 		}
-		const goal = appState.calorieSettings.caloricGoal;
+		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
 		const dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
 		const remaining = goal - dailyTotal;
-		const weightStasisGoal = appState.calorieSettings.weightStasisGoal;
+		const weightStasisGoal = db.calorieSettingsDB.calorieSettings.weightStasisGoal;
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
@@ -90,7 +89,7 @@ export default class CalorieStatistics extends React.Component {
 	}
 
 	renderRemaining(remaining) {
-		const style = {};
+		const style = {} as any;
 		if(remaining > 0) {
 			style.color = '#00FF00';
 		} else {
@@ -105,7 +104,7 @@ export default class CalorieStatistics extends React.Component {
 	}
 
 	renderPoundsLost(poundsLost){
-		const style = {};
+		const style = {} as any;
 		if(poundsLost > (2 / 7)){
 			style.color = '#00FF00';
 			style.fontWeight = 'bold';

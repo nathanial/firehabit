@@ -1,10 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import {observer} from 'mobx-react';
-import {appState} from '../../util';
+import {db} from '../../util';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 const CaloriesListWrapper = styled.ul`
 	border: 1px solid #000;
@@ -44,14 +43,15 @@ const CaloriesListWrapper = styled.ul`
 	}
 `;
 
-export default observer(class ConsumedFoodsList extends React.Component {
+interface Props {
+	day: string;
+}
 
-	static propTypes = {
-		day: PropTypes.string.isRequired
-	};
+@observer
+export default class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){
-		const day = _.find(appState.days, day => day.date === this.props.day);
+		const day = _.find(db.days, day => day.date === this.props.day);
 		if(!day || !day.consumed) {
 			return <div></div>
 		}
@@ -78,24 +78,24 @@ export default observer(class ConsumedFoodsList extends React.Component {
 		);
 	}
 
-	getEntryGroups = (day) => {
+	getEntryGroups = (day: Day) => {
 		const pairs = _.toPairs(_.groupBy(day.consumed, 'name'));
 		return _.map(pairs, ([name, group]) => {
 			return {
 				name,
 				count: group.length,
-				calories: _.sumBy(group, e => parseInt(e.calories, 10)),
+				calories: _.sumBy(group, (e: ConsumedFood) => parseInt(e.calories, 10)),
 				group: group
 			};
 		});
 	};
 
 	onRepeatFood = (day, entry) => {
-		appState.addConsumedFood(day, entry);
+		db.addConsumedFood(day, entry);
 	};
 
 	onRemoveFood = (day, entry) => {
-		appState.removeConsumedFood(day, entry);
+		db.removeConsumedFood(day, entry);
 	};
 
-});
+}

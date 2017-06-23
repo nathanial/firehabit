@@ -1,30 +1,28 @@
 // Line Limit 100
-import React from 'react';
-import styled from 'styled-components';
+import * as React from 'react';
 import {observer} from 'mobx-react';
 import CaloriesForm from "./CaloriesForm";
 import CalorieStatistics from "./CaloriesStatistics";
-import moment from 'moment';
+import * as moment from 'moment';
 import {Route} from "react-router-dom";
 import CaloriesSettings from "./CaloriesSettings";
-import WeightForm from "./WeightForm";
 
-const CaloriesPageWrapper = styled.div`
-	margin-left: 20px;
-`;
+interface DataPageState {
+	date: string;
+}
 
 @observer
-class CaloriesDataPage extends React.Component {
+class CaloriesDataPage extends React.Component<{},DataPageState> {
 	state = {
 		date: moment().format('MM/DD/YY')
 	};
 
 	render(){
 		return (
-			<CaloriesPageWrapper>
+			<div style={{marginLeft: 20}}>
 				<CaloriesForm date={this.state.date} onChangeDate={(newDate) => this.setState({date: newDate})} />
 				<CalorieStatistics date={this.state.date} />
-			</CaloriesPageWrapper>
+			</div>
 		);
 	}
 }

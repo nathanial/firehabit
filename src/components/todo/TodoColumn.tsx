@@ -1,11 +1,9 @@
-import * as _ from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import {Button, EditableText} from "@blueprintjs/core";
-import {appState, history} from '../../util';
-import DialogService from "../../services/DialogService";
+import {db, history} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
-import Todo from "./Todo";
+import TodoView from "./TodoView";
 import {DropTarget} from 'react-dnd';
 import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
@@ -86,10 +84,19 @@ const TodoListWrapper = styled.ul`
 	}
 `;
 
+interface Props {
+	column: TodoColumn;
+	connectDropTarget?: any;
+}
+
+interface State {
+	columnName: string;
+}
+
 @DropTarget("todo", {
 	drop(props, monitor) {
 		const {todo} = monitor.getItem();
-		appState.moveTodo(todo, props.column);
+		db.moveTodo(todo, props.column);
 	}
 }, (connect, monitor) => {
 	return {
@@ -98,11 +105,7 @@ const TodoListWrapper = styled.ul`
 	};
 })
 @observer
-export default class TodoColumn extends React.Component {
-
-	static propTypes = {
-		column: React.PropTypes.object.isRequired
-	};
+export default class TodoColumnView extends React.Component<Props, State> {
 
 	state = {
 		columnName: this.props.column.name
@@ -125,7 +128,7 @@ export default class TodoColumn extends React.Component {
 							speed={0.8}
 							horizontal={false}>
 							{todos.map((todo) => {
-								return <Todo key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+								return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
 							})}
 						</ScrollArea>
 					</TodoListWrapper>
@@ -135,7 +138,7 @@ export default class TodoColumn extends React.Component {
 	}
 
 	onAddTodo = async () => {
-		appState.addTodo(this.props.column, {name: 'NEW TODO'});
+		db.addTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
 	onChangeColumnName = (newName) => {
@@ -145,7 +148,7 @@ export default class TodoColumn extends React.Component {
 	};
 
 	onFinishEditingColumnName = () => {
-		appState.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
+		db.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
 	gotoColumnSettings = () => {

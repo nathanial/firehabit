@@ -1,17 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
-export default class FoodDefinitionForm extends React.Component {
+interface Props {
+	foodDefinition: FoodDefinition;
+	onChange(newDefinition: FoodDefinition);
+}
 
-	static propTypes = {
-		foodDefinition: PropTypes.object.isRequired,
-		onChange: PropTypes.func.isRequired
-	};
+interface State {
+	name: string;
+	calories: string;
+}
+
+export default class FoodDefinitionForm extends React.Component<Props, State>{
 
 	state = {
 		name: this.props.foodDefinition.name,
 		calories: this.props.foodDefinition.calories
 	};
+
+	name: HTMLInputElement;
 
 	render(){
 		return (
@@ -19,26 +25,26 @@ export default class FoodDefinitionForm extends React.Component {
 				<label className="pt-label .modifier">
 					Food Name
 					<span className="pt-text-muted">(required)</span>
-					<input ref="name" className="pt-input"
-								 type="text" placeholder="Food Name"
-								 dir="auto"
-								 value={this.state.name}
-								 onChange={this.updateFoodName} />
+					<input ref={(name) => this.name = name} className="pt-input"
+							 type="text" placeholder="Food Name"
+							 dir="auto"
+							 value={this.state.name}
+							 onChange={this.updateFoodName} />
 				</label>
 				<label className="pt-label .modifier">
 					Calories
 					<span className="pt-text-muted">(required)</span>
 					<input ref="calories" className="pt-input" style={{width: 200}}
-								 type="text" placeholder="Calories" dir="auto"
-								 value={this.state.calories}
-								 onChange={this.updateCalories} />
+							 type="text" placeholder="Calories" dir="auto"
+							 value={this.state.calories}
+							 onChange={this.updateCalories} />
 				</label>
 			</div>
 		);
 	}
 
 	updateFoodName = (event) => {
-		const name = this.refs.name.value;
+		const name = this.name.value;
 		this.setState({name}, () => {
 			this.props.onChange(this.state);
 		});
@@ -46,7 +52,7 @@ export default class FoodDefinitionForm extends React.Component {
 
 	updateCalories = (event) => {
 		const calories = parseInt(event.target.value, 10);
-		this.setState({calories}, () => {
+		this.setState({calories: calories.toString()}, () => {
 			this.props.onChange(this.state);
 		});
 	}

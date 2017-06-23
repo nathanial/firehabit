@@ -1,6 +1,5 @@
-import React from 'react';
-import {appState} from '../../util';
-import {Button} from "@blueprintjs/core";
+import * as React from 'react';
+import {db} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoColumn from "./TodoColumn";
@@ -20,19 +19,18 @@ const TodoPageWrapper = styled.div`
 	bottom: 0;
 	padding: 15px;
 	white-space: nowrap;
-
 `;
 
 const ColumnsContainer = styled.div`
 `;
 
 @observer
-class ColumnsPage extends React.Component {
+class ColumnsPage extends React.Component<{},{}> {
 	render(){
-		const todoColumns = appState.todoColumns;
+		const todoColumns = db.todoColumns;
 		return (
 			<TodoPageWrapper>
-				<TodoSidebar/>
+				<TodoSidebar />
 				<ColumnsContainer>
 					{todoColumns.map((column, i) => {
 						return <TodoColumn key={i} column={column} />

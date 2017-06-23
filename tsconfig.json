@@ -1,0 +1,26 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "lib": ["dom", "es2015.promise", "es5", "es2015.symbol", "es2015.iterable"],
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "preserveConstEnums": true,
+    "target": "es5",
+    "allowJs": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "baseUrl": "./public_html",
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude" : [
+    "node_modules"
+  ]
+}

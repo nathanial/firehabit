@@ -1,6 +1,5 @@
 // Line Limit 50
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import {observer} from 'mobx-react';
@@ -40,14 +39,16 @@ const SearchResultsWrapper = styled.ul`
 	
 `;
 
-export default observer(class SearchResults extends React.Component {
+interface SearchResultsProps {
+	search: string;
+	foodDefinitions: FoodDefinition[];
+	onAddFood(foodDefinition: FoodDefinition);
+	onRemoveFoodDefinition(foodDefinition: FoodDefinition);
+	onEditFoodDefinition(foodDefinition: FoodDefinition);
+}
 
-	static propTypes = {
-		foodDefinitions: PropTypes.object.isRequired,
-		onAddFood: PropTypes.func.isRequired,
-		onRemoveFoodDefinition: PropTypes.func.isRequired,
-		onEditFoodDefinition: PropTypes.func.isRequired
-	};
+@observer
+export default class SearchResults extends React.Component<SearchResultsProps, {}> {
 
 	render(){
 		return (
@@ -70,4 +71,4 @@ export default observer(class SearchResults extends React.Component {
 			</SearchResultsWrapper>
 		);
 	}
-})
+}

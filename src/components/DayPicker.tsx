@@ -1,24 +1,22 @@
-import React from 'react';
-import styled from 'styled-components';
-import moment from 'moment';
+import * as React from 'react';
+import * as moment from 'moment';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
+import cxs from 'cxs';
 
-const DayPickerWrapper = styled.div`
-	position: absolute;
-	left: 200px;
-	top: 26px;
-	
-	& > span {
-		font-size: 14px;
+const dayPickerClass = cxs({
+	position: 'absolute',
+	left: 200,
+	top: 26,
+	'> span': {
+		fontSize: 14
+	},
+	'> button:first-child': {
+		marginRight: 10,
+	},
+	'> button:last-child': {
+		marginLeft: 10
 	}
-	
-	& > button:first-child {
-		margin-right: 10px;
-	}
-	& > button:last-child {
-		margin-left: 10px;
-	}
-`;
+});
 
 export default function DayPicker(props){
 	const currentDate = moment(props.date, 'MM/DD/YY');
@@ -36,11 +34,11 @@ export default function DayPicker(props){
 	};
 
 	return (
-		<DayPickerWrapper>
+		<div className={dayPickerClass}>
 			<span>Date</span>
 			<Button iconName="chevron-left" className="pt-minimal" onClick={prevDay} />
 			<span>{props.date}</span>
 			<Button iconName="chevron-right" className="pt-minimal" onClick={nextDay} />
-		</DayPickerWrapper>
+		</div>
 	);
 }

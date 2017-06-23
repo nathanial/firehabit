@@ -1,7 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import {observer} from 'mobx-react';
 import {Button} from '@blueprintjs/core';
-import {history, appState} from '../../util';
+import {history, db} from '../../util';
 import styled from 'styled-components';
 
 const CaloriesSettingsWrapper = styled.div`
@@ -28,9 +28,10 @@ const SettingsForm = styled.div`
 `;
 
 @observer
-export default class CaloriesSettings extends React.Component {
+export default class CaloriesSettings extends React.Component<{},{}> {
 	render(){
-		const {caloricGoal, weightStasisGoal} = appState.calorieSettings;
+		const csdb = db.calorieSettingsDB;
+		const {caloricGoal, weightStasisGoal} = csdb.calorieSettings;
 		return (
 			<CaloriesSettingsWrapper>
 				<h1>Calories Settings</h1>
@@ -40,18 +41,18 @@ export default class CaloriesSettings extends React.Component {
 						<label className="pt-label">
 							Caloric Goal
 							<input className="pt-input"
-										 type="number"
-										 ref="caloricGoal"
-										 value={caloricGoal}
-										 onChange={(event) => appState.updateCalorieSettings({caloricGoal: this.refs.caloricGoal.value})}/>
+									 type="number"
+									 ref="caloricGoal"
+									 value={caloricGoal}
+									 onChange={(event) => csdb.updateCalorieSettings({caloricGoal: this.refs.caloricGoal['value']})}/>
 						</label>
 						<label className="pt-label">
 							Weight Stasis Goal
 							<input className="pt-input"
-										 type="number"
-										 ref="weightStasisGoal"
-										 value={weightStasisGoal}
-										 onChange={(event) => appState.updateCalorieSettings({weightStasisGoal: this.refs.weightStasisGoal.value})}/>
+									 type="number"
+									 ref="weightStasisGoal"
+									 value={weightStasisGoal}
+									 onChange={(event) => csdb.updateCalorieSettings({weightStasisGoal: this.refs.weightStasisGoal['value']})}/>
 						</label>
 					</SettingsForm>
 				</div>
