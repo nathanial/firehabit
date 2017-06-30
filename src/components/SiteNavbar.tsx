@@ -16,7 +16,7 @@ export default class SiteNavbar extends React.Component<Props, {}> {
 		const NavBtn = (props) => {
 			return (
 				<button onClick={() => this.props.onNavigate(props.goto)}
-								className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
+						className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
 					{props.children}
 				</button>
 			);
@@ -28,6 +28,7 @@ export default class SiteNavbar extends React.Component<Props, {}> {
 					<div className="pt-navbar-heading">FireHabit</div>
 					<span className="pt-navbar-divider" />
 					<NavBtn goto="habits" icon="pt-icon-pulse" active={(path === '/' || path === '/habits')}>Habits</NavBtn>
+					<NavBtn goto="today" icon="pt-icon-calendar" active={path === '/today'}>Today</NavBtn>
 					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'}>Calories</NavBtn>
 					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'}>Todo</NavBtn>
 				</div>

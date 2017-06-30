@@ -1,5 +1,6 @@
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/dist/blueprint.css";
+import "codemirror/lib/codemirror.css";
 import * as React from 'react';
 import './App.css';
 import SiteNavbar from "./components/SiteNavbar";
@@ -29,6 +30,7 @@ class App extends React.Component<Props, {}> {
 					<SiteNavbar onNavigate={this.onNavigate} />
 					<div className="app-content">
 						<Route exact path="/" component={HabitsPage}/>
+						<Route exact path="/today" component={TodayPage} />
 						<Route exact path="/habits" component={HabitsPage} />
 						<Route path="/calories" component={CaloriesPage} />
 						<Route path="/todo" component={TodoPage} />

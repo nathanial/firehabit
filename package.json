@@ -5,6 +5,7 @@
   "dependencies": {
     "@blueprintjs/core": "^1.16.0",
     "@types/jquery": "^3.2.4",
+    "codemirror": "^5.27.4",
     "color": "^1.0.3",
     "cxs": "^3.0.4",
     "draft-js": "^0.10.1",
@@ -88,7 +89,7 @@
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/ --include-path=./node_modules/",
     "watch-sass": "node-sass-chokidar src/ -o src/ --include-path=./node_modules/ --watch --recursive",
-    "start-js": "node scripts/start.js", 
+    "start-js": "node scripts/start.js",
     "build-js": "node scripts/build.js",
     "start": "npm-run-all -p build-css watch-sass start-js",
     "build": "npm-run-all build-css build-js",
