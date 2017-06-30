@@ -150,17 +150,17 @@ class TodoView extends React.Component<Props, State> {
 	};
 
 	onUpdatedTodo = () =>{
-		db.updateTodo(this.state.updatedTodo);
+		db.todoColumnsDB.updateTodo(this.state.updatedTodo);
 	};
 
 	onDeleteTodo = async () => {
 		if(this.props.confirmDeletion) {
 			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
 			if(result){
-				db.deleteTodo(this.props.todo);
+				db.todoColumnsDB.deleteTodo(this.props.todo);
 			}
 		} else {
-			db.deleteTodo(this.props.todo);
+			db.todoColumnsDB.deleteTodo(this.props.todo);
 		}
 	};
 
@@ -170,7 +170,7 @@ class TodoView extends React.Component<Props, State> {
 			updatedTodo.subtasks = [];
 		}
 		updatedTodo.subtasks.push({name: 'New Task'} as any);
-		db.updateTodo(updatedTodo);
+		db.todoColumnsDB.updateTodo(updatedTodo);
 		this.setState({updatedTodo});
 	};
 

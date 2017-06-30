@@ -96,7 +96,7 @@ interface State {
 @DropTarget("todo", {
 	drop(props, monitor) {
 		const {todo} = monitor.getItem();
-		db.moveTodo(todo, props.column);
+		db.todoColumnsDB.moveTodo(todo, props.column);
 	}
 }, (connect, monitor) => {
 	return {
@@ -138,7 +138,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	}
 
 	onAddTodo = async () => {
-		db.addTodo(this.props.column, {name: 'NEW TODO'});
+		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
 	onChangeColumnName = (newName) => {
@@ -148,7 +148,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	onFinishEditingColumnName = () => {
-		db.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
+		db.todoColumnsDB.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
 	gotoColumnSettings = () => {

@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import {observable} from 'mobx';
 import * as firebase from 'firebase';
-import * as mobx from "mobx";
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import DailiesDB from "./DailiesDB";
 import {downloadCollection, watchCollection} from "./util";
+import TodoColumnsDB from "./TodoColumnsDB";
 
 export class DB {
 	loggedIn = false;
@@ -16,24 +16,21 @@ export class DB {
 		name: '',
 		email: ''
 	});
-	todoColumns = observable([]);
 
 	db: Database;
 	foodDefinitionsRef: Reference;
 	dailiesRef: Reference;
 	daysRef: Reference;
-	todoColumnsRef: Reference;
 	calorieSettingsDB: CalorieSettingsDB;
 	dailiesDB: DailiesDB;
+	todoColumnsDB: TodoColumnsDB;
 
 	async loadFromDB(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.db = firebase.database();
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
-		await this.initializeColumnsRef()
 		await this.initializeDaysRef();
-		await this.initializeDailiesRef();
 
 		this.calorieSettingsDB = new CalorieSettingsDB(this.db);
 		await this.calorieSettingsDB.setup();
@@ -41,29 +38,11 @@ export class DB {
 		this.dailiesDB = new DailiesDB(this.db);
 		await this.dailiesDB.setup();
 
+		this.todoColumnsDB = new TodoColumnsDB(this.db);
+		await this.todoColumnsDB.setup();
+
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
 		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
-	}
-
-	async initializeDailiesRef(){
-
-	}
-
-	async initializeColumnsRef(){
-		const user = firebase.auth().currentUser;
-		const userId = user.uid;
-
-		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		await downloadCollection(this.todoColumns, this.todoColumnsRef);
-		watchCollection(this.todoColumns, this.todoColumnsRef);
-		for(let todoColumn of this.todoColumns){
-			if(_.isUndefined(todoColumn.todos)){
-				todoColumn.todos = observable([]);
-			}
-			if(_.isUndefined(todoColumn.confirmDeletion)){
-				todoColumn.confirmDeletion = true;
-			}
-		}
 	}
 
 	async initializeDaysRef(){
@@ -120,45 +99,6 @@ export class DB {
 
 	async updateFoodDefinition(definition){
 		this.foodDefinitionsRef.child(definition.id).update(_.omit(definition, 'id'));
-	}
-
-	async addTodoColumn(name) {
-		this.todoColumnsRef.push({
-			name
-		});
-	}
-
-	async deleteTodoColumn(column){
-		this.todoColumnsRef.child(column.id).remove();
-	}
-
-	async updateTodoColumn(id, values) {
-		this.todoColumnsRef.child(id).update(values);
-	}
-
-	async addTodo(column, todo) {
-		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
-	}
-
-	async updateTodo(todo){
-		const column = _.find(this.todoColumns, (column) => {
-			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
-		});
-		this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).update(_.omit(todo, 'id'));
-	}
-
-	async moveTodo(todo, column){
-		await this.deleteTodo(todo);
-		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(mobx.toJS(todo), 'id'));
-	}
-
-	async deleteTodo(todo) {
-		const columns = _.filter(this.todoColumns, (column) => {
-			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
-		});
-		for(let column of columns){
-			await this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
-		}
 	}
 
 	async addDaily(daily) {

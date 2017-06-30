@@ -27,7 +27,7 @@ const ColumnsContainer = styled.div`
 @observer
 class ColumnsPage extends React.Component<{},{}> {
 	render(){
-		const todoColumns = db.todoColumns;
+		const todoColumns = db.todoColumnsDB.todoColumns;
 		return (
 			<TodoPageWrapper>
 				<TodoSidebar />

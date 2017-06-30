@@ -110,20 +110,20 @@ export class SubtaskList extends React.Component<Props, {}> {
 
 	onUpdatedSubtask = () => {
 		const updatedTodo = _.cloneDeep(this.props.todo);
-		db.updateTodo(updatedTodo);
+		db.todoColumnsDB.updateTodo(updatedTodo);
 	};
 
 	onCompleteSubtask = (subtask, index) => {
 		const updatedTodo = _.cloneDeep(this.props.todo);
 		updatedTodo.subtasks[index].complete = !updatedTodo.subtasks[index].complete;
-		db.updateTodo(updatedTodo);
+		db.todoColumnsDB.updateTodo(updatedTodo);
 		this.props.onChange(updatedTodo);
 	};
 
 	onDeleteSubtask = (subtask, index) => {
 		const updatedTodo = _.cloneDeep(this.props.todo);
 		updatedTodo.subtasks.splice(index, 1);
-		db.updateTodo(updatedTodo);
+		db.todoColumnsDB.updateTodo(updatedTodo);
 		this.props.onChange(updatedTodo);
 	};
 }

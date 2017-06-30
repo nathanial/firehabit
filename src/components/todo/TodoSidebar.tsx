@@ -25,6 +25,6 @@ export default class TodoSidebar extends React.Component<{},{}> {
 	}
 
 	onAddColumn = () => {
-		db.addTodoColumn('New Column');
+		db.todoColumnsDB.addTodoColumn('New Column');
 	}
 }
