@@ -42,7 +42,7 @@ interface CalorieStatisticsProps {
 @observer
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
-		const day = _.find(db.days, day => day.date === this.props.date);
+		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
 		if (!day || !day.consumed) {
 			return <div></div>
 		}

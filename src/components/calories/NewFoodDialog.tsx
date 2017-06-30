@@ -72,7 +72,7 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 	openDialog = () => this.setState({ isOpen: true, foodName: this.props.defaultName });
 
 	onAddFood = async () => {
-		await db.addFoodDefinition({
+		await db.foodDefinitionsDB.addFoodDefinition({
 			name: this.foodName.value,
 			calories: this.calories.value
 		});

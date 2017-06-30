@@ -17,7 +17,7 @@ interface WeightFormProps {
 @observer
 export default class WeightForm extends React.Component<WeightFormProps, {}> {
 	render(){
-		const day = _.find(db.days, day => day.date === this.props.date);
+		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
 		const weight = _.get(day, 'weight', '');
 		return (
 			<Wrapper className="pt-card pt-elevation-2" >
@@ -31,6 +31,6 @@ export default class WeightForm extends React.Component<WeightFormProps, {}> {
 
 	onUpdateWeight = (event) => {
 		const newWeight = parseInt(event.target.value, 10);
-		db.updateDay(this.props.date, {weight: newWeight});
+		db.daysDB.updateDay(this.props.date, {weight: newWeight});
 	}
 }

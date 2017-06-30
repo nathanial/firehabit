@@ -51,7 +51,7 @@ interface Props {
 export default class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){
-		const day = _.find(db.days, day => day.date === this.props.day);
+		const day = _.find(db.daysDB.days, day => day.date === this.props.day);
 		if(!day || !day.consumed) {
 			return <div></div>
 		}
@@ -91,11 +91,11 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 	};
 
 	onRepeatFood = (day, entry) => {
-		db.addConsumedFood(day, entry);
+		db.daysDB.addConsumedFood(day, entry);
 	};
 
 	onRemoveFood = (day, entry) => {
-		db.removeConsumedFood(day, entry);
+		db.daysDB.removeConsumedFood(day, entry);
 	};
 
 }

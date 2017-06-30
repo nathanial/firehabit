@@ -106,7 +106,7 @@ class DailyItem extends React.Component<Props, State> {
 		updatedEntry.records = updatedEntry.records || {};
 		updatedEntry.records[this.today()] = true;
 		this.setState({updatedEntry}, () => {
-			db.updateDaily(this.state.updatedEntry);
+			db.dailiesDB.updateDaily(this.state.updatedEntry);
 		});
 	};
 
@@ -115,7 +115,7 @@ class DailyItem extends React.Component<Props, State> {
 		updatedEntry.records = updatedEntry.records || {};
 		updatedEntry.records[this.today()] = false;
 		this.setState({updatedEntry}, () => {
-			db.updateDaily(this.state.updatedEntry);
+			db.dailiesDB.updateDaily(this.state.updatedEntry);
 		});
 	};
 
@@ -126,7 +126,7 @@ class DailyItem extends React.Component<Props, State> {
 	};
 
 	onUpdatedTodo = () =>{
-		db.updateDaily(this.state.updatedEntry);
+		db.dailiesDB.updateDaily(this.state.updatedEntry);
 	};
 
 	onRemove = async () => {
@@ -136,7 +136,7 @@ class DailyItem extends React.Component<Props, State> {
 			'Cancel'
 		);
 		if(shouldDelete){
-			db.removeDaily(this.props.entry);
+			db.dailiesDB.removeDaily(this.props.entry);
 		}
 	}
 
@@ -162,7 +162,7 @@ class DailiesList extends React.Component<{},{}> {
 	}
 
 	onAddDaily = () => {
-		db.addDaily({name: 'New Daily Habit'});
+		db.dailiesDB.addDaily({name: 'New Daily Habit'});
 	}
 }
 

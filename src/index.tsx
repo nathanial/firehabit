@@ -65,7 +65,7 @@ async function setInitialData(){
 async function init(){
 	await loginToFirebase();
 	await setInitialData();
-	await db.loadFromDB();
+	await db.load();
 	ReactDOM.render(
 		<App appState={state.get()} />,
 		document.getElementById('root')

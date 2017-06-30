@@ -41,11 +41,6 @@ interface CaloriesFormState {
 @observer
 export default class CaloriesForm extends React.Component<CaloriesFormProps, CaloriesFormState> {
 
-	static propTypes = {
-		date: React.PropTypes.string.isRequired,
-		onChangeDate: React.PropTypes.func.isRequired
-	}
-
 	state = {
 		value: ''
 	};
@@ -83,7 +78,7 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 			return (
 				<div>
 					<SearchResults search={this.state.value}
-								   foodDefinitions={db.foodDefinitions}
+								   foodDefinitions={db.foodDefinitionsDB.foodDefinitions}
 								   onAddFood={this.onAddFood}
 								   onRemoveFoodDefinition={this.onRemoveFoodDefinition}
 								   onEditFoodDefinition={this.onEditFoodDefinition}/>
@@ -97,14 +92,14 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 	};
 
 	onAddFood = async (food) => {
-		await db.addConsumedFood(this.props.date, food);
+		await db.daysDB.addConsumedFood(this.props.date, food);
 		this.setState({
 			value: ''
 		});
 	};
 
 	onRemoveFoodDefinition = async (food) => {
-		await db.removeFoodDefinition(food);
+		await db.foodDefinitionsDB.removeFoodDefinition(food);
 	};
 
 	onEditFoodDefinition = async (food) => {
@@ -116,7 +111,7 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 			<FoodDefinitionForm foodDefinition={food} onChange={onChange} />
 		));
 		if(result && updatedFoodDefinition){
-			await db.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
+			await db.foodDefinitionsDB.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
 		}
 	};
 
