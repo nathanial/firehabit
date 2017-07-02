@@ -8,6 +8,7 @@ import {DropTarget} from 'react-dnd';
 import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
+import DialogService from "../../services/DialogService";
 
 const todoColumnClass = cxs({
 	display: 'inline-block',
@@ -27,6 +28,12 @@ const columnNameClass = cxs({
 const addTodoBtnClass = cxs({
 	position: 'absolute',
 	left: 0,
+	top: 0
+});
+
+const trashBtnClass = cxs({
+	position: 'absolute',
+	right: 30,
 	top: 0
 });
 
@@ -61,6 +68,10 @@ const TodoListWrapper = styled.ul`
 			padding-left: 10px;
 			padding-right: 10px;
 		}
+		
+		.scrollbar-container {
+			z-index: 1;
+		 }
 		
 		& > .scrollbar-container.vertical {
 			& > .scrollbar {
@@ -133,7 +144,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 					<Button iconName="plus"
 							className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
 							onClick={this.onAddTodo} />
-
+					{this.renderTrashBtn()}
 					<TodoListWrapper>
 						<ScrollArea
 							speed={0.8}
@@ -148,21 +159,39 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		);
 	}
 
-	onAddTodo = async () => {
+	private renderTrashBtn = () => {
+		if(this.props.column.showClearButton){
+			return (
+				<Button iconName="trash"
+						className={`${trashBtnClass} pt-minimal pt-intent-danger`}
+						onClick={this.onClearColumn} />
+			);
+		}
+	};
+
+	private onAddTodo = async () => {
 		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
-	onChangeColumnName = (newName) => {
+	private onChangeColumnName = (newName) => {
 		this.setState({
 			columnName: newName
 		});
 	};
 
-	onFinishEditingColumnName = () => {
+	private onFinishEditingColumnName = () => {
 		db.todoColumnsDB.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
-	gotoColumnSettings = () => {
+	private gotoColumnSettings = () => {
 		history.push(`/todo/column/${this.props.column.id}/settings`);
-	}
+	};
+
+	private onClearColumn = async () => {
+		const column = this.props.column;
+		const result = await DialogService.showDangerDialog(`Clear Column "${column.name}"?`, 'Clear', 'Cancel');
+		if(result){
+			db.todoColumnsDB.updateTodoColumn(column.id, {todos: []});
+		}
+	};
 }
