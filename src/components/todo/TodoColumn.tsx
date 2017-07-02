@@ -7,27 +7,37 @@ import TodoView from "./TodoView";
 import {DropTarget} from 'react-dnd';
 import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
+import cxs from 'cxs';
+import DialogService from "../../services/DialogService";
+
+const todoColumnClass = cxs({
+	display: 'inline-block',
+	margin: '10px',
+	padding: '20px 10px 10px 10px',
+	width: '280px',
+	textAlign: 'center',
+	height: '600px',
+	position: 'relative',
+	verticalAlign: 'top'
+}) ;
+
+const columnNameClass = cxs({
+	marginTop: '-12px'
+});
+
+const addTodoBtnClass = cxs({
+	position: 'absolute',
+	left: 0,
+	top: 0
+});
+
+const trashBtnClass = cxs({
+	position: 'absolute',
+	right: 30,
+	top: 0
+});
 
 const TodoColumnWrapper = styled.div`
-	display: inline-block;
-	margin: 10px;
-	padding: 20px 10px 10px 10px;
-	width: 280px;
-	text-align: center;
-	height: 600px;
-	position: relative;
-	vertical-align: top;
-	
-	& > .column-name {
-		margin-top: -12px;
-	}
-
-	& > .add-todo-btn {
-		position: absolute;
-		top: 0;
-		left: 0;
-	}
-	
 	& > .settings-btn {
 		position: absolute;
 		top: 0;
@@ -58,6 +68,10 @@ const TodoListWrapper = styled.ul`
 			padding-left: 10px;
 			padding-right: 10px;
 		}
+		
+		.scrollbar-container {
+			z-index: 1;
+		 }
 		
 		& > .scrollbar-container.vertical {
 			& > .scrollbar {
@@ -118,11 +132,19 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const {connectDropTarget} = this.props;
 		return connectDropTarget(
 			<div style={{display:'inline-block'}}>
-				<TodoColumnWrapper className="pt-card pt-elevation-2" style={{background: columnColor}}>
-					<EditableText className="column-name" value={this.state.columnName} onChange={this.onChangeColumnName} onConfirm={this.onFinishEditingColumnName} />
-					<Button iconName="settings" className="settings-btn pt-minimal" onClick={this.gotoColumnSettings} />
-					<Button iconName="plus" className="add-todo-btn pt-minimal pt-intent-success" onClick={this.onAddTodo} />
-
+				<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
+								   style={{background: columnColor}}>
+					<EditableText className={columnNameClass}
+								  value={this.state.columnName}
+								  onChange={this.onChangeColumnName}
+								  onConfirm={this.onFinishEditingColumnName} />
+					<Button iconName="settings"
+							className="settings-btn pt-minimal"
+							onClick={this.gotoColumnSettings} />
+					<Button iconName="plus"
+							className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+							onClick={this.onAddTodo} />
+					{this.renderTrashBtn()}
 					<TodoListWrapper>
 						<ScrollArea
 							speed={0.8}
@@ -137,21 +159,39 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		);
 	}
 
-	onAddTodo = async () => {
+	private renderTrashBtn = () => {
+		if(this.props.column.showClearButton){
+			return (
+				<Button iconName="trash"
+						className={`${trashBtnClass} pt-minimal pt-intent-danger`}
+						onClick={this.onClearColumn} />
+			);
+		}
+	};
+
+	private onAddTodo = async () => {
 		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
-	onChangeColumnName = (newName) => {
+	private onChangeColumnName = (newName) => {
 		this.setState({
 			columnName: newName
 		});
 	};
 
-	onFinishEditingColumnName = () => {
+	private onFinishEditingColumnName = () => {
 		db.todoColumnsDB.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
-	gotoColumnSettings = () => {
+	private gotoColumnSettings = () => {
 		history.push(`/todo/column/${this.props.column.id}/settings`);
-	}
+	};
+
+	private onClearColumn = async () => {
+		const column = this.props.column;
+		const result = await DialogService.showDangerDialog(`Clear Column "${column.name}"?`, 'Clear', 'Cancel');
+		if(result){
+			db.todoColumnsDB.updateTodoColumn(column.id, {todos: []});
+		}
+	};
 }
