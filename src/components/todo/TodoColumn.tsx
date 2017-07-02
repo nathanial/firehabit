@@ -228,8 +228,8 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			});
 			const timeline = new TimelineMax({});
 			timeline.to(el, 0.5, {left: this.columnOffsetLeft});
-			timeline.to(elements, 0.5, {opacity: 1});
 			timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
+			timeline.to(elements, 0.5, {opacity: 1});
 		}
 
 	};

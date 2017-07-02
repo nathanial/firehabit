@@ -15,7 +15,7 @@ const settingsContainerClass = cxs({
 });
 
 const deleteColumnBtnClass = cxs({
-	marginTop: '30px'
+	marginTop: '10px'
 });
 
 interface Props {
@@ -36,7 +36,7 @@ export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 					<div style={{position: 'relative'}}>
 						<label className="pt-label">Column Color</label>
 						<SketchPicker color={color} className="sketch-picker" onChange={this.onChange}/>
-						<Button onClick={this.onResetColor}>Reset Color</Button>
+						<Button style={{marginTop: 10, marginBottom: 20}} onClick={this.onResetColor}>Reset Color</Button>
 					</div>
 					<Checkbox checked={confirmDeletion} onChange={this.onChangeConfirmDeletion}>
 						Confirm Todo Deletion
