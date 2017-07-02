@@ -44,6 +44,7 @@ interface TodoColumn {
 	name: string;
 	color: string;
 	confirmDeletion: boolean;
+	showClearButton: boolean;
 	todos: Todo[];
 }
 
