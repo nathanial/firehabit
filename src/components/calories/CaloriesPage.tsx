@@ -28,7 +28,7 @@ class CaloriesDataPage extends React.Component<{},DataPageState> {
 }
 
 @observer
-export default class CaloriesPage extends React.Component {
+export default class CaloriesPage extends React.Component<{},{}> {
 	render() {
 		return (
 			<div>

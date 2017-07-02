@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import * as _ from 'lodash';
 import {db, history} from '../../util';
 import {Button} from '@blueprintjs/core';
+import cxs from 'cxs';
 
 const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
@@ -22,18 +23,18 @@ const CalorieStatisticsWrapper = styled.div`
 		}
 	}
 	
-	.settings-btn {
-		position: absolute;
-		right: 0;
-		top: 0;
-	}
-	
 	.smiley {
 		position: absolute;
 		right: 30px;
 		top: 110px;
 	}
 `;
+
+const settingsBtn = cxs({
+	position: 'absolute',
+	right: 0,
+	top: 0
+});
 
 interface CalorieStatisticsProps {
 	date: string;
@@ -44,10 +45,10 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 	render() {
 		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
 		if (!day || !day.consumed) {
-			return <div></div>
+			return <div />
 		}
-		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
 		const dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
+		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
 		const remaining = goal - dailyTotal;
 		const weightStasisGoal = db.calorieSettingsDB.calorieSettings.weightStasisGoal;
 		const caloriesInPound = 3500;
@@ -56,23 +57,35 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 			<CalorieStatisticsWrapper className="pt-card pt-elevation-1">
 				{this.renderSmileyFace(poundsLost)}
 				<div style={{marginTop: 20}}>
-					<p className="pt-running-text">
-						<span className="total-calories-label">Total Calories: </span>
-						<span>{dailyTotal}</span>
-					</p>
-					<p className="pt-running-text">
-						<span className="goal-label">Goal: </span>
-						<span>{goal}</span>
-					</p>
+					{this.renderDailyTotal(dailyTotal)}
+					{this.renderGoal(goal)}
 					{this.renderRemaining(remaining)}
 					{this.renderPoundsLost(poundsLost)}
 				</div>
-				<Button className="settings-btn pt-minimal" iconName="settings" onClick={this.gotoSettings}></Button>
+				<Button className={`pt-minimal ${settingsBtn}`} iconName="settings" onClick={this.gotoSettings} />
 			</CalorieStatisticsWrapper>
 		);
 	}
 
-	renderSmileyFace(poundsLost) {
+	private renderDailyTotal = (dailyTotal: number) => {
+		return (
+			<p className="pt-running-text">
+				<span className="total-calories-label">Total Calories: </span>
+				<span>{dailyTotal}</span>
+			</p>
+		);
+	};
+
+	private renderGoal = (goal: number) => {
+		return (
+			<p className="pt-running-text">
+				<span className="goal-label">Goal: </span>
+				<span>{goal}</span>
+			</p>
+		);
+	};
+
+	private renderSmileyFace = (poundsLost: number) => {
 		if(poundsLost > (2 / 7)) {
 			return (
 				<img className="smiley" src="icons/happy.png" width="32" />
@@ -86,9 +99,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 				<img className="smiley" src="icons/crying.png" width="32"/>
 			);
 		}
-	}
+	};
 
-	renderRemaining(remaining) {
+	private renderRemaining = (remaining: number) => {
 		const style = {} as any;
 		if(remaining > 0) {
 			style.color = '#00FF00';
@@ -101,9 +114,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 				<span>{remaining}</span>
 			</p>
 		);
-	}
+	};
 
-	renderPoundsLost(poundsLost){
+	private renderPoundsLost = (poundsLost: number) => {
 		const style = {} as any;
 		if(poundsLost > (2 / 7)){
 			style.color = '#00FF00';
@@ -121,9 +134,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 				<span>{poundsLost}</span>
 			</p>
 		);
-	}
+	};
 
-	gotoSettings = () => {
+	private gotoSettings = () => {
 		history.push('/calories/settings');
 	}
 }
