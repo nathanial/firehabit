@@ -13,6 +13,7 @@ import cxs from 'cxs';
 import DialogService from "../../services/DialogService";
 import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
+import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 
 const todoColumnClass = cxs({
 	display: 'inline-block',
@@ -53,6 +54,7 @@ const TodoColumnWrapper = styled.div`
 	}
 	
 	overflow: hidden;
+
 `;
 
 const TodoListWrapper = styled.ul`
@@ -109,6 +111,7 @@ interface Props {
 
 interface State {
 	columnName: string;
+	showSettings: boolean;
 }
 
 @DropTarget("todo", {
@@ -124,44 +127,61 @@ interface State {
 })
 @observer
 export default class TodoColumnView extends React.Component<Props, State> {
-
 	state = {
-		columnName: this.props.column.name
+		columnName: this.props.column.name,
+		showSettings: false
 	};
+	private columnOffsetLeft: number;
 
 	render(){
 		const column = this.props.column;
 		const todos = column.todos || [];
 		const columnColor = column.color;
 		const {connectDropTarget} = this.props;
-		return connectDropTarget(
-			<div className="todo-column" style={{display:'inline-block'}}>
-				<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
-								   style={{background: columnColor}}>
-					<EditableText className={columnNameClass}
-								  value={this.state.columnName}
-								  onChange={this.onChangeColumnName}
-								  onConfirm={this.onFinishEditingColumnName} />
-					<Button iconName="settings"
-							className="settings-btn pt-minimal"
-							onClick={this.gotoColumnSettings} />
-					<Button iconName="plus"
-							className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-							onClick={this.onAddTodo} />
-					{this.renderTrashBtn()}
-					<TodoListWrapper>
-						<ScrollArea
-							speed={0.8}
-							horizontal={false}>
-							{todos.map((todo) => {
-								return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
-							})}
-						</ScrollArea>
-					</TodoListWrapper>
-				</TodoColumnWrapper>
+		return(
+			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
+				{connectDropTarget(
+					<div className="todo-column" style={{display:'inline-block'}}>
+						<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
+										   style={{background: columnColor}}>
+							<EditableText className={columnNameClass}
+										  value={this.state.columnName}
+										  onChange={this.onChangeColumnName}
+										  onConfirm={this.onFinishEditingColumnName} />
+							<Button iconName="settings"
+									className="settings-btn pt-minimal"
+									onClick={this.gotoColumnSettings} />
+							<Button iconName="plus"
+									className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+									onClick={this.onAddTodo} />
+							{this.renderTrashBtn()}
+							<TodoListWrapper>
+								<ScrollArea
+									speed={0.8}
+									horizontal={false}>
+									{todos.map((todo) => {
+										return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+									})}
+								</ScrollArea>
+							</TodoListWrapper>
+						</TodoColumnWrapper>
+					</div>
+				)}
+				{this.renderSettings()}
 			</div>
 		);
 	}
+
+	private renderSettings = () => {
+		if(this.state.showSettings){
+			return (
+				<TodoColumnSettingsPage style={{
+					position: 'absolute',
+					left: 300, top: 0
+				}} column={this.props.column} />
+			);
+		}
+	};
 
 	private renderTrashBtn = () => {
 		if(this.props.column.showClearButton){
@@ -188,16 +208,36 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private gotoColumnSettings = () => {
-		const timeline = new TimelineMax({
-			onComplete(){
-				$(el).css({position: 'absolute'});
-			}
-		});
 		const el = ReactDOM.findDOMNode(this);
-		const elements = _.filter($('.todo-column').toArray(), e => e !== el);
-		timeline.to(elements, 0.5, {opacity: 0});
-		timeline.to(el, 0.0, {position: 'absolute'});
-		timeline.to(el, 0.5, {left: 0});
+		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
+		if(!this.state.showSettings){
+			const timeline = new TimelineMax({
+				onComplete: () =>{
+					$(elements).css({display: 'none'});
+					this.setState({
+						showSettings: true
+					});
+				}
+			});
+			this.columnOffsetLeft = el.offsetLeft;
+			timeline.to(elements, 0.5, {opacity: 0});
+			timeline.to(el, 0.0, {position: 'absolute'});
+			timeline.to(el, 0.5, {left: 10});
+		} else {
+			this.setState({
+				showSettings: false
+			});
+			const timeline = new TimelineMax({
+				onComplete: () =>{
+					$(elements).css({display: 'inline-block'});
+					$(el).css({left: ''});
+				}
+			});
+			timeline.to(el, 0.5, {left: this.columnOffsetLeft});
+			timeline.to(elements, 0.5, {opacity: 1});
+			timeline.to(el, 0.0, {position: 'relative'});
+		}
+
 	};
 
 	private onClearColumn = async () => {
