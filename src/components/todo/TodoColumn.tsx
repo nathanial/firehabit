@@ -1,4 +1,6 @@
+import * as _ from 'lodash';
 import * as React from 'react';
+import * as $ from 'jquery';
 import {Button, EditableText} from "@blueprintjs/core";
 import {db, history} from '../../util';
 import styled from 'styled-components';
@@ -9,6 +11,8 @@ import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
 import DialogService from "../../services/DialogService";
+import {TimelineMax} from 'gsap';
+import * as ReactDOM from "react-dom";
 
 const todoColumnClass = cxs({
 	display: 'inline-block',
@@ -131,7 +135,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const columnColor = column.color;
 		const {connectDropTarget} = this.props;
 		return connectDropTarget(
-			<div style={{display:'inline-block'}}>
+			<div className="todo-column" style={{display:'inline-block'}}>
 				<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
 								   style={{background: columnColor}}>
 					<EditableText className={columnNameClass}
@@ -184,7 +188,16 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private gotoColumnSettings = () => {
-		history.push(`/todo/column/${this.props.column.id}/settings`);
+		const timeline = new TimelineMax({
+			onComplete(){
+				$(el).css({position: 'absolute'});
+			}
+		});
+		const el = ReactDOM.findDOMNode(this);
+		const elements = _.filter($('.todo-column').toArray(), e => e !== el);
+		timeline.to(elements, 0.5, {opacity: 0});
+		timeline.to(el, 0.0, {position: 'absolute'});
+		timeline.to(el, 0.5, {left: 0});
 	};
 
 	private onClearColumn = async () => {
