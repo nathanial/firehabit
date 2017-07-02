@@ -178,7 +178,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 				<TodoColumnSettingsPage style={{
 					position: 'absolute',
 					left: 300, top: 0
-				}} column={this.props.column} />
+				}} column={this.props.column} goBack={() => this.hideSettings()} />
 			);
 		}
 	};
@@ -208,31 +208,47 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private gotoColumnSettings = () => {
+		if(!this.state.showSettings){
+			this.showSettings();
+		} else {
+			this.hideSettings();
+		}
+	};
+
+	private showSettings() {
 		const el = ReactDOM.findDOMNode(this);
 		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
-		if(!this.state.showSettings){
-			const timeline = new TimelineMax({
-				onComplete: () =>{
-					this.setState({
-						showSettings: true
-					});
-				}
-			});
-			this.columnOffsetLeft = el.offsetLeft;
-			timeline.to(elements, 0.5, {opacity: 0});
-			timeline.to(el, 0.0, {position: 'absolute'});
-			timeline.to(el, 0.5, {left: 10, 'z-index': 9});
-		} else {
-			this.setState({
-				showSettings: false
-			});
-			const timeline = new TimelineMax({});
+		const timeline = new TimelineMax({
+			onComplete: () =>{
+				this.setState({
+					showSettings: true
+				});
+			}
+		});
+		this.columnOffsetLeft = el.offsetLeft;
+		timeline.to(elements, 0.5, {opacity: 0});
+		timeline.to(el, 0.0, {position: 'absolute'});
+		timeline.to(el, 0.5, {left: 10, 'z-index': 9});
+	}
+
+	private hideSettings(){
+		let el;
+		try {
+			el = ReactDOM.findDOMNode(this);
+		} catch(error) {
+			console.log(error);
+		}
+		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
+		this.setState({
+			showSettings: false
+		});
+		const timeline = new TimelineMax({});
+		if(el){
 			timeline.to(el, 0.5, {left: this.columnOffsetLeft});
 			timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
-			timeline.to(elements, 0.5, {opacity: 1});
 		}
-
-	};
+		timeline.to(elements, 0.5, {opacity: 1});
+	}
 
 	private onClearColumn = async () => {
 		const column = this.props.column;

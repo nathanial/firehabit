@@ -21,6 +21,7 @@ const deleteColumnBtnClass = cxs({
 interface Props {
 	style?: Object;
 	column: TodoColumn;
+	goBack();
 }
 
 @observer
@@ -50,10 +51,6 @@ export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 		);
 	}
 
-	private goBack = () => {
-		history.push('/todo');
-	};
-
 	private onResetColor = () => {
 		db.todoColumnsDB.updateTodoColumn(this.columnID, {color: null});
 	};
@@ -77,7 +74,9 @@ export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 		const result = await DialogService.showDangerDialog(`Are you sure you wan't delete ${column.name}?`, 'Delete', 'Cancel');
 		if(result){
 			db.todoColumnsDB.deleteTodoColumn(column);
-			this.goBack();
+			if(this.props.goBack){
+				this.props.goBack();
+			}
 		}
 	};
 
