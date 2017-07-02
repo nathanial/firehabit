@@ -213,7 +213,6 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		if(!this.state.showSettings){
 			const timeline = new TimelineMax({
 				onComplete: () =>{
-					$(elements).css({display: 'none'});
 					this.setState({
 						showSettings: true
 					});
@@ -222,20 +221,15 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			this.columnOffsetLeft = el.offsetLeft;
 			timeline.to(elements, 0.5, {opacity: 0});
 			timeline.to(el, 0.0, {position: 'absolute'});
-			timeline.to(el, 0.5, {left: 10});
+			timeline.to(el, 0.5, {left: 10, 'z-index': 9});
 		} else {
 			this.setState({
 				showSettings: false
 			});
-			const timeline = new TimelineMax({
-				onComplete: () =>{
-					$(elements).css({display: 'inline-block'});
-					$(el).css({left: ''});
-				}
-			});
+			const timeline = new TimelineMax({});
 			timeline.to(el, 0.5, {left: this.columnOffsetLeft});
 			timeline.to(elements, 0.5, {opacity: 1});
-			timeline.to(el, 0.0, {position: 'relative'});
+			timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
 		}
 
 	};
