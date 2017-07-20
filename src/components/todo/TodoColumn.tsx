@@ -15,6 +15,23 @@ import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 
+declare class ScrollArea extends React.Component<any, {}>{
+	handleKeyDown(e);
+}
+
+class CustomScrollArea extends ScrollArea {
+	render(){
+		return super.render();
+	}
+	handleKeyDown(e){
+		if (e.target.tagName.toLowerCase() === 'textarea') {
+			return;
+		} else {
+			return super.handleKeyDown(e);
+		}
+	}
+}
+
 const todoColumnClass = cxs({
 	display: 'inline-block',
 	margin: '10px',
@@ -157,13 +174,13 @@ export default class TodoColumnView extends React.Component<Props, State> {
 									onClick={this.onAddTodo} />
 							{this.renderTrashBtn()}
 							<TodoListWrapper>
-								<ScrollArea
+								<CustomScrollArea
 									speed={0.8}
 									horizontal={false}>
 									{todos.map((todo) => {
 										return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
 									})}
-								</ScrollArea>
+								</CustomScrollArea>
 							</TodoListWrapper>
 						</TodoColumnWrapper>
 					</div>
