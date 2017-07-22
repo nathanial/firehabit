@@ -251,9 +251,11 @@ export default class TodoColumnView extends React.Component<Props, State> {
 				}
 			});
 			this.columnOffsetLeft = el.offsetLeft;
+			const width = $(window).outerWidth();
+			const columnWidth = $(el).outerWidth();
 			timeline.to(elements, 0.5, {opacity: 0});
 			timeline.to(el, 0.0, {position: 'absolute'});
-			timeline.to(el, 0.5, {left: 10, 'z-index': 9});
+			timeline.to(el, 0.5, {left: width / 2 - columnWidth + 30, 'z-index': 9});
 			timeline.to(settingsEl, 0.25, {opacity: 1});
 		});
 	}
