@@ -254,6 +254,8 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			const width = $(window).outerWidth();
 			const columnWidth = $(el).outerWidth();
 			timeline.to(elements, 0.5, {opacity: 0});
+			timeline.to(el, 0.0, {left: this.columnOffsetLeft, position: 'absolute'});
+			timeline.to(elements, 0.0, {display: 'none'});
 			timeline.to(el, 0.0, {position: 'absolute'});
 			timeline.to(el, 0.5, {left: width / 2 - columnWidth + 30, 'z-index': 9});
 			timeline.to(settingsEl, 0.25, {opacity: 1});
@@ -262,12 +264,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	private hideSettings(){
 		this.animating = true;
-		let el;
-		try {
-			el = ReactDOM.findDOMNode(this);
-		} catch(error) {
-			console.log(error);
-		}
+		const el = ReactDOM.findDOMNode(this);
 		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
 		const timeline = new TimelineMax({
 			onComplete: () => {
@@ -275,12 +272,12 @@ export default class TodoColumnView extends React.Component<Props, State> {
 				this.setState({showSettings: false});
 			}
 		});
-		if(el){
-			const settingsEl = $(el).find('.todo-column-settings-page')[0];
-			timeline.to(settingsEl, 0.25, {opacity: 0});
-			timeline.to(el, 0.5, {left: this.columnOffsetLeft});
-			timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
-		}
+		const settingsEl = $(el).find('.todo-column-settings-page')[0];
+		timeline.to(settingsEl, 0.25, {opacity: 0});
+		timeline.to(elements, 0.0, {display: 'inline-block'});
+		timeline.to(elements, 0.0, {left: 0, position: 'relative'});
+		timeline.to(el, 0.5, {left: this.columnOffsetLeft});
+		timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
 		timeline.to(elements, 0.5, {opacity: 1});
 	}
 
