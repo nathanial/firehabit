@@ -15,6 +15,15 @@ import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 
+/**
+ * Animation Plan
+ *
+ * 	Step 1. don't display none other columns
+ * 	Step 2. use relative positioning to move column to the right spot
+ * 	Step 3. let is snap back into place by setting left: 0
+ *
+**/
+
 declare class ScrollArea extends React.Component<any, {}>{
 	handleKeyDown(e);
 }
@@ -148,7 +157,6 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		columnName: this.props.column.name,
 		showSettings: false
 	};
-	private columnOffsetLeft: number;
 	private animating: boolean;
 
 	render(){
@@ -250,14 +258,12 @@ export default class TodoColumnView extends React.Component<Props, State> {
 					this.animating = false;
 				}
 			});
-			this.columnOffsetLeft = el.offsetLeft;
-			const width = $(window).outerWidth();
 			const columnWidth = $(el).outerWidth();
+			const width = $(window).outerWidth();
+			const centerX = width / 2 - columnWidth;
+			const actualX = $(el).offset().left;
 			timeline.to(elements, 0.5, {opacity: 0});
-			timeline.to(el, 0.0, {left: this.columnOffsetLeft, position: 'absolute'});
-			timeline.to(elements, 0.0, {display: 'none'});
-			timeline.to(el, 0.0, {position: 'absolute'});
-			timeline.to(el, 0.5, {left: width / 2 - columnWidth + 30, 'z-index': 9});
+			timeline.to(el, 0.5, {position: 'relative', left: centerX - actualX, 'z-index': 9});
 			timeline.to(settingsEl, 0.25, {opacity: 1});
 		});
 	}
@@ -274,10 +280,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		});
 		const settingsEl = $(el).find('.todo-column-settings-page')[0];
 		timeline.to(settingsEl, 0.25, {opacity: 0});
-		timeline.to(elements, 0.0, {display: 'inline-block'});
-		timeline.to(elements, 0.0, {left: 0, position: 'relative'});
-		timeline.to(el, 0.5, {left: this.columnOffsetLeft});
-		timeline.to(el, 0.0, {display: 'inline-block', position: 'static', left: '', 'z-index': 0});
+		timeline.to(el, 0.5, {position: 'relative', left: 0, 'z-index': 0});
 		timeline.to(elements, 0.5, {opacity: 1});
 	}
 
