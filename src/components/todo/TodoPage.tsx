@@ -8,20 +8,25 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoSidebar from "./TodoSidebar";
+import cxs from 'cxs';
 
-const TodoPageWrapper = styled.div`
-	display: block;
-	text-align: left;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	padding: 15px;
-	white-space: nowrap;
-`;
+const todoPageClass = cxs({
+	display: 'block',
+	'text-align': 'left',
+	position: 'absolute',
+	left: 0,
+	right: 0,
+	top: 0,
+	bottom: 0,
+	padding: '15px 0',
+	'white-space': 'nowrap'
+});
 
 const ColumnsContainer = styled.div`
+	width: 100%;
+	height: calc(100% - 37px);
+	overflow-x: auto;
+	padding: 0 20px;
 `;
 
 @observer
@@ -29,14 +34,14 @@ class ColumnsPage extends React.Component<{},{}> {
 	render(){
 		const todoColumns = db.todoColumnsDB.todoColumns;
 		return (
-			<TodoPageWrapper>
+			<div className={todoPageClass}>
 				<TodoSidebar />
 				<ColumnsContainer>
-					{todoColumns.map((column, i) => {
-						return <TodoColumn key={i} column={column} />
+					{todoColumns.map((column) => {
+						return <TodoColumn key={column.id} column={column} />
 					})}
 				</ColumnsContainer>
-			</TodoPageWrapper>
+			</div>
 		);
 	}
 }

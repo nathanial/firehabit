@@ -1,26 +1,24 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import {Button} from '@blueprintjs/core';
 import {db} from "../../util";
+import cxs from 'cxs';
+import * as colors from '../../theme/colors';
 
-const Wrapper = styled.div`
-	margin-left: 10px;
-`;
-
-const InnerWrapper = styled.div`
-	display: inline-block;
-	padding: 2px;
-`;
-
+const todoSidebarClass = cxs({
+	margin: '10px 30px',
+	display: 'inline-block'
+});
 
 export default class TodoSidebar extends React.Component<{},{}> {
 	render(){
 		return (
-			<Wrapper>
-				<InnerWrapper className="pt-card">
-					<Button className="add-column-btn pt-intent-success" iconName="plus" onClick={this.onAddColumn}></Button>
-				</InnerWrapper>
-			</Wrapper>
+			<div className={`${todoSidebarClass}`}>
+				<Button className="add-column-btn pt-intent-success"
+						iconName="plus"
+						onClick={this.onAddColumn}>
+					Add Column
+				</Button>
+			</div>
 		);
 	}
 

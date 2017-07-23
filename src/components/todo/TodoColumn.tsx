@@ -270,7 +270,12 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	private hideSettings(){
 		this.animating = true;
-		const el = ReactDOM.findDOMNode(this);
+		let el = null;
+		try {
+			el = ReactDOM.findDOMNode(this);
+		} catch(err){
+
+		}
 		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
 		const timeline = new TimelineMax({
 			onComplete: () => {
@@ -278,9 +283,13 @@ export default class TodoColumnView extends React.Component<Props, State> {
 				this.setState({showSettings: false});
 			}
 		});
-		const settingsEl = $(el).find('.todo-column-settings-page')[0];
-		timeline.to(settingsEl, 0.25, {opacity: 0});
-		timeline.to(el, 0.5, {position: 'relative', left: 0, 'z-index': 0});
+		if(el){
+			console.log("BAM", el);
+			const settingsEl = $(el).find('.todo-column-settings-page')[0];
+			timeline.to(settingsEl, 0.25, {opacity: 0});
+			timeline.to(el, 0.5, {position: 'relative', left: 0, 'z-index': 0});
+		}
+
 		timeline.to(elements, 0.5, {opacity: 1});
 	}
 
