@@ -284,7 +284,6 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			}
 		});
 		if(el){
-			console.log("BAM", el);
 			const settingsEl = $(el).find('.todo-column-settings-page')[0];
 			timeline.to(settingsEl, 0.25, {opacity: 0});
 			timeline.to(el, 0.5, {position: 'relative', left: 0, 'z-index': 0});
