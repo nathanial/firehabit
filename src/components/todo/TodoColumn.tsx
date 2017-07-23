@@ -6,7 +6,6 @@ import {db, history} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoView from "./TodoView";
-import {DropTarget} from 'react-dnd';
 import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
@@ -14,6 +13,7 @@ import DialogService from "../../services/DialogService";
 import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
+import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 
 /**
  * Animation Plan
@@ -116,23 +116,14 @@ const TodoListWrapper = styled.ul`
 	}
 
 	& > .scrollarea > .scrollarea-content > li {
-		padding: 10px;
-		background: #eee !important;
-		margin: 10px;
-		color: black;
-		text-align: left;
-		cursor: pointer;
-		
 		&:first-child {
 			margin-top: 0;
 		}
-		
 	}
 `;
 
 interface Props {
 	column: TodoColumn;
-	connectDropTarget?: any;
 }
 
 interface State {
@@ -140,17 +131,6 @@ interface State {
 	showSettings: boolean;
 }
 
-@DropTarget("todo", {
-	drop(props, monitor) {
-		const {todo} = monitor.getItem();
-		db.todoColumnsDB.moveTodo(todo, props.column);
-	}
-}, (connect, monitor) => {
-	return {
-		connectDropTarget: connect.dropTarget(),
-		isOver: monitor.isOver()
-	};
-})
 @observer
 export default class TodoColumnView extends React.Component<Props, State> {
 	state = {
@@ -158,44 +138,116 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		showSettings: false
 	};
 	private animating: boolean;
+	private unregisterDropTarget: () => void;
 
 	render(){
 		const column = this.props.column;
-		const todos = column.todos || [];
+		const todos = _.sortBy(column.todos || [], todo => todo.index);
 		const columnColor = column.color;
-		const {connectDropTarget} = this.props;
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
-				{connectDropTarget(
-					<div className="todo-column" style={{display:'inline-block'}}>
-						<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
-										   style={{background: columnColor}}>
-							<EditableText className={columnNameClass}
-										  value={this.state.columnName}
-										  onChange={this.onChangeColumnName}
-										  onConfirm={this.onFinishEditingColumnName} />
-							<Button iconName="settings"
-									className="settings-btn pt-minimal"
-									onClick={this.gotoColumnSettings} />
-							<Button iconName="plus"
-									className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-									onClick={this.onAddTodo} />
-							{this.renderTrashBtn()}
-							<TodoListWrapper>
-								<CustomScrollArea
-									speed={0.8}
-									horizontal={false}>
-									{todos.map((todo) => {
-										return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
-									})}
-								</CustomScrollArea>
-							</TodoListWrapper>
-						</TodoColumnWrapper>
-					</div>
-				)}
+				<div className="todo-column" style={{display:'inline-block'}}>
+					<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
+									   style={{background: columnColor}}>
+						<EditableText className={columnNameClass}
+									  value={this.state.columnName}
+									  onChange={this.onChangeColumnName}
+									  onConfirm={this.onFinishEditingColumnName} />
+						<Button iconName="settings"
+								className="settings-btn pt-minimal"
+								onClick={this.gotoColumnSettings} />
+						<Button iconName="plus"
+								className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+								onClick={this.onAddTodo} />
+						{this.renderTrashBtn()}
+						<TodoListWrapper>
+							<CustomScrollArea
+								speed={0.8}
+								horizontal={false}>
+								{todos.map((todo) => {
+									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+								})}
+							</CustomScrollArea>
+						</TodoListWrapper>
+					</TodoColumnWrapper>
+				</div>
 				{this.renderSettings()}
 			</div>
 		);
+	}
+
+	componentDidMount(){
+		const element = ReactDOM.findDOMNode(this);
+		this.unregisterDropTarget = dndService.addDropTarget({
+			element,
+			onDrop: (draggable: Draggable) => {
+				const {todoID, direction} = this.findNeighbor(draggable);
+				let index = this.props.column.todos.length;
+				if(todoID){
+					index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
+					if(direction === 'above'){
+						index -= 1;
+					}
+				}
+				db.todoColumnsDB.moveTodo(draggable.data, this.props.column, {index});
+			}
+		});
+	}
+
+	componentWillUnmount(){
+		this.unregisterDropTarget();
+		this.unregisterDropTarget = null;
+	}
+
+	private findNeighbor(draggable: Draggable){
+		const $el = $(ReactDOM.findDOMNode(this));
+		const todoViews = $el.find('.todo-view').toArray();
+		if(_.isEmpty(todoViews)){
+			return {
+				todoID: null,
+				direction: 'none'
+			};
+		}
+
+		for(let todoView of todoViews){
+			const rect = todoView.getBoundingClientRect();
+			const upperHalf = {
+				left: rect.left,
+				right: rect.right,
+				top: rect.top,
+				bottom: rect.height / 2 + rect.top
+			};
+			const lowerHalf = {
+				left: rect.left,
+				right: rect.right,
+				top: rect.height / 2 + rect.top,
+				bottom: rect.bottom
+			};
+			if(intersects(draggable, upperHalf)){
+				return {todoID: $(todoView).data('todo-id'), direction:'above'};
+			}
+			if(intersects(draggable, lowerHalf)){
+				return {todoID: $(todoView).data('todo-id'), direction:'below'};
+			}
+		}
+		// above all
+		function lessThanAll(){
+			return !_.some(todoViews, (todoView) => {
+				const rect = todoView.getBoundingClientRect();
+				const draggableBottom = draggable.y + draggable.height;
+				return draggableBottom > rect.top;
+			});
+		}
+		if(lessThanAll()){
+			return {
+				todoID: _.first(todoViews),
+				direction: 'above'
+			};
+		}
+		return {
+			todoID: null,
+			direction: 'none'
+		};
 	}
 
 	private renderSettings = () => {
@@ -299,4 +351,5 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			db.todoColumnsDB.updateTodoColumn(column.id, {todos: []});
 		}
 	};
+
 }

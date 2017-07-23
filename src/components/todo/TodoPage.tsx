@@ -3,12 +3,11 @@ import {db} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoColumn from "./TodoColumn";
-import {DragDropContext} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoSidebar from "./TodoSidebar";
 import cxs from 'cxs';
+import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
 
 const todoPageClass = cxs({
 	display: 'block',
@@ -41,12 +40,12 @@ class ColumnsPage extends React.Component<{},{}> {
 						return <TodoColumn key={column.id} column={column} />
 					})}
 				</ColumnsContainer>
+				<DragAndDropLayer />
 			</div>
 		);
 	}
 }
 
-@DragDropContext(HTML5Backend)
 export default class TodoPage extends React.Component {
 	render(){
 		return (

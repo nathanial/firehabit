@@ -6,6 +6,9 @@ import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import * as mobx from "mobx";
 
+type MoveTodoOptions = {
+	index: number;
+}
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
@@ -29,6 +32,7 @@ export default class TodoColumnsDB implements DBSection {
 			if(_.isUndefined(todoColumn.confirmDeletion)){
 				todoColumn.confirmDeletion = true;
 			}
+			await this.sortColumn(todoColumn);
 		}
 	}
 
@@ -57,9 +61,13 @@ export default class TodoColumnsDB implements DBSection {
 		this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).update(_.omit(todo, 'id'));
 	}
 
-	async moveTodo(todo, column){
+	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
 		await this.deleteTodo(todo);
-		this.todoColumnsRef.child(`${column.id}/todos`).push(_.omit(mobx.toJS(todo), 'id'));
+		this.todoColumnsRef.child(`${column.id}/todos`).push({
+			..._.omit(mobx.toJS(todo), 'id'),
+			index: options.index
+		});
+		await this.sortColumn(column);
 	}
 
 	async deleteTodo(todo) {
@@ -68,6 +76,17 @@ export default class TodoColumnsDB implements DBSection {
 		});
 		for(let column of columns){
 			await this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
+		}
+	}
+
+	async sortColumn(column: TodoColumn) {
+		const todos = _.sortBy(column.todos, (todo) => todo.index);
+		for(let i = 0; i < todos.length; i++){
+			const todo = todos[i];
+			if(todo.index !== i){
+				todo.index = i;
+				await this.updateTodo(todo);
+			}
 		}
 	}
 }

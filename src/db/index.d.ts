@@ -37,6 +37,7 @@ interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
+	index: number;
 }
 
 interface TodoColumn {

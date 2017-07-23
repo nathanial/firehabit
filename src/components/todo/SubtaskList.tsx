@@ -66,16 +66,16 @@ const subtaskListClass = cxs({
 
 interface Props {
 	todo: Todo;
-	onChange(todo: Partial<Todo>);
+	onChange?(todo: Partial<Todo>);
 }
 
 export class SubtaskList extends React.Component<Props, {}> {
 	render(){
 		const subtasks = this.props.todo.subtasks;
-		if(_.isArray(subtasks) && !_.isEmpty(subtasks)) {
+		if(!_.isEmpty(subtasks)) {
 			return (
 				<div className={subtaskListClass}>
-					{_.map(subtasks, (task, i) => {
+					{subtasks.map((task, i) => {
 						let classes = "subtask-item";
 						if(task.complete) {
 							classes += ' ' + subtaskCompleted;

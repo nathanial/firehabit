@@ -1,12 +1,15 @@
+import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
-import { DragSource } from 'react-dnd';
 import {EditableText, Button} from "@blueprintjs/core";
 import * as mobx from 'mobx';
 import {db} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
+import {dndService} from "../dnd/DragAndDropLayer";
+import cxs from 'cxs';
+import * as ReactDOM from "react-dom";
 
 const TodoContentWrapper = styled.div`
 	position: relative;
@@ -20,11 +23,22 @@ const TodoContentWrapper = styled.div`
 	flex: 2 0 0; 
 `;
 
+const todoItemClass = cxs({
+	padding: '10px',
+	margin: '10px',
+	color: 'black',
+	'text-align': 'left',
+	cursor: 'pointer',
+	width: '240px'
+});
+
 const TodoWrapper = styled.div`
 	position: relative;
 	padding: 10px 0;
 	display: flex;
 	flex-direction: row;
+
+	
 	.drag-handle {
 		bottom: 0;
 		width: 30px;
@@ -85,63 +99,98 @@ interface Props {
 	todo: Todo;
 	confirmDeletion: boolean;
 	isDragging?: boolean;
-	connectDragSource?: any;
-	connectDragPreview?: any;
 }
 
 interface State {
 	updatedTodo: Partial<Todo>;
+	dragging: boolean;
 }
 
-@DragSource('todo',{
-	beginDrag(props) {
-		return {
-			todo: props.todo
-		};
+type PreviewProps = {
+	todo: Todo;
+}
+
+class TodoDragPreview extends React.Component<PreviewProps,{}> {
+	render(){
+		return (
+			<div className={`pt-card pt-elevation-2 ${todoItemClass}`}
+				 style={{padding:0, background: '#eee', margin: 0}}>
+				<div>
+					<TodoWrapper >
+						<div className="drag-handle">
+							<div className="inner-icon pt-icon-drag-handle-vertical"/>
+						</div>
+						<TodoContentWrapper>
+							<EditableText value={this.props.todo.name}
+										  multiline={true}/>
+						</TodoContentWrapper>
+						<div className="todo-controls">
+							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
+							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
+						</div>
+					</TodoWrapper>
+					<SubtaskList todo={this.props.todo} />
+				</div>
+			</div>
+		);
 	}
-},
-(connect, monitor) => {
-	return {
-		connectDragSource: connect.dragSource(),
-		connectDragPreview: connect.dragPreview(),
-		isDragging: monitor.isDragging()
-	};
-})
+}
+
 class TodoView extends React.Component<Props, State> {
 
 	state = {
-		updatedTodo:_.cloneDeep(mobx.toJS(this.props.todo))
+		updatedTodo:_.cloneDeep(mobx.toJS(this.props.todo)),
+		dragging: false
 	};
 
 	render(){
-		const { connectDragSource, connectDragPreview } = this.props;
 		return (
-			connectDragPreview(
-				<li className="pt-card pt-elevation-2" style={{padding:0}}>
-					<div>
-						<TodoWrapper >
-							{connectDragSource(
-								<div className="drag-handle">
-									<div className="inner-icon pt-icon-drag-handle-vertical"/>
-								</div>
-							)}
-							<TodoContentWrapper>
-								<EditableText value={this.state.updatedTodo.name}
-															multiline={true}
-															onChange={this.onNameChanged}
-															onConfirm={this.onUpdatedTodo} />
-							</TodoContentWrapper>
-							<div className="todo-controls">
-								<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-								<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-							</div>
-						</TodoWrapper>
-						<SubtaskList todo={this.state.updatedTodo} onChange={(updatedTodo) => this.setState({updatedTodo})} />
-					</div>
-				</li>
-			)
+			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
+				 data-todo-id={this.props.todo.id}
+				style={{
+					padding:0,
+					background: '#eee',
+					opacity: this.state.dragging ? 0 : 1 }}
+				onDragStart={this.onDragStart}>
+				<div>
+					<TodoWrapper >
+						<div className="drag-handle" draggable={true}>
+							<div className="inner-icon pt-icon-drag-handle-vertical"/>
+						</div>
+						<TodoContentWrapper>
+							<EditableText value={this.state.updatedTodo.name}
+														multiline={true}
+														onChange={this.onNameChanged}
+														onConfirm={this.onUpdatedTodo} />
+						</TodoContentWrapper>
+						<div className="todo-controls">
+							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
+						</div>
+					</TodoWrapper>
+					<SubtaskList todo={this.state.updatedTodo} onChange={(updatedTodo) => this.setState({updatedTodo})} />
+				</div>
+			</div>
 		);
 	}
+
+	onDragStart = async (event) => {
+		event.preventDefault();
+		const el = ReactDOM.findDOMNode(this);
+		const $el = $(el);
+		const offset = $el.offset();
+		const x = offset.left;
+		const y = offset.top;
+		this.setState({
+			dragging: true
+		});
+		await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
+			<TodoDragPreview todo={this.props.todo} />
+		);
+		this.setState({
+			dragging: false
+		});
+	};
 
 	onNameChanged = (newName) => {
 		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
@@ -173,7 +222,6 @@ class TodoView extends React.Component<Props, State> {
 		db.todoColumnsDB.updateTodo(updatedTodo);
 		this.setState({updatedTodo});
 	};
-
 
 }
 
