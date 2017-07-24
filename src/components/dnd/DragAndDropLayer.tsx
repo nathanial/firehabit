@@ -173,7 +173,7 @@ class DragAndDropService {
 	}
 
 	addDropTarget(dropTarget: DropTarget): () => void {
-		if(_.isUndefined(this.layer)){
+		if(!this.layer){
 			this.dropTargetBuffer.push(dropTarget);
 		} else {
 			this.layer.addDropTarget(dropTarget);
