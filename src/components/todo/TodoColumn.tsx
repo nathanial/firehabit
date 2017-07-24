@@ -195,8 +195,10 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	}
 
 	componentWillUnmount(){
-		this.unregisterDropTarget();
-		this.unregisterDropTarget = null;
+		if(this.unregisterDropTarget){
+			this.unregisterDropTarget();
+			this.unregisterDropTarget = null;
+		}
 	}
 
 	private findNeighbor(draggable: Draggable){
