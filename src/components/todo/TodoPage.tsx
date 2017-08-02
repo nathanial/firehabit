@@ -5,9 +5,10 @@ import {observer} from 'mobx-react';
 import TodoColumn from "./TodoColumn";
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
-import TodoSidebar from "./TodoSidebar";
+import TodoTopbar from "./TodoTopbar";
 import cxs from 'cxs';
 import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
+import * as mobx from 'mobx';
 
 const todoPageClass = cxs({
 	display: 'block',
@@ -34,7 +35,7 @@ class ColumnsPage extends React.Component<{},{}> {
 		const todoColumns = db.todoColumnsDB.todoColumns;
 		return (
 			<div className={todoPageClass}>
-				<TodoSidebar />
+				<TodoTopbar />
 				<ColumnsContainer>
 					{todoColumns.map((column) => {
 						return <TodoColumn key={column.id} column={column} />

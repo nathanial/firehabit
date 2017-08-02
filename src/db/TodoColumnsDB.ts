@@ -5,9 +5,23 @@ import {observable} from "mobx";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import * as mobx from "mobx";
+import * as uuidv4 from 'uuid/v4';
 
 type MoveTodoOptions = {
 	index: number;
+}
+
+function encode(columns: TodoColumn[]) {
+	const copy = _.cloneDeep(columns);
+	const result = {};
+	for(let column of copy){
+		result[column.id] = _.omit(column, ['id', 'todos']);
+		result[column.id].todos = {};
+		for(let todo of column.todos){
+			result[column.id].todos[todo.id] = _.omit(todo, ['id']);
+		}
+	}
+	return result;
 }
 
 export default class TodoColumnsDB implements DBSection {
@@ -88,5 +102,12 @@ export default class TodoColumnsDB implements DBSection {
 				await this.updateTodo(todo);
 			}
 		}
+	}
+
+	async reset(columns: TodoColumn[]) {
+		console.log('Reset');
+		await this.todoColumnsRef.remove();
+		(this.todoColumns as any).clear();
+		await this.todoColumnsRef.set(encode(columns));
 	}
 }

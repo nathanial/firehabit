@@ -15,6 +15,8 @@ const timeSlots = _.flatten(_.times(24, (hour) => {
 
 export interface AppState {
 	timeSlots: TimeSlot[];
+	showDevTools: boolean;
+	set(name: string, value: any);
 }
 
 interface FreezerData<T> {
