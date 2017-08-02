@@ -1,14 +1,11 @@
 import * as React from 'react';
 import {db} from '../../util';
-import styled from 'styled-components';
-import {observer} from 'mobx-react';
-import TodoColumn from "./TodoColumn";
+import TodoColumnView from "./TodoColumnView";
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoTopbar from "./TodoTopbar";
 import cxs from 'cxs';
 import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
-import * as mobx from 'mobx';
 
 const todoPageClass = cxs({
 	display: 'block',
@@ -22,36 +19,43 @@ const todoPageClass = cxs({
 	'white-space': 'nowrap'
 });
 
-const ColumnsContainer = styled.div`
-	width: 100%;
-	height: calc(100% - 37px);
-	overflow-x: auto;
-	padding: 0 20px;
-`;
+const columnsContainerClass = cxs({
+	width: '100%',
+	height: `calc(100% - 37px)`,
+	'overflow-x': 'auto',
+	'padding': '0 20px'
+});
 
-@observer
-class ColumnsPage extends React.Component<{},{}> {
+type Props = {
+	todoColumns: TodoColumn[];
+}
+
+class ColumnsPage extends React.Component<Props,{}> {
 	render(){
-		const todoColumns = db.todoColumnsDB.todoColumns;
+		const todoColumns = this.props.todoColumns;
 		return (
 			<div className={todoPageClass}>
 				<TodoTopbar />
-				<ColumnsContainer>
+				<div className={columnsContainerClass}>
 					{todoColumns.map((column) => {
-						return <TodoColumn key={column.id} column={column} />
+						return <TodoColumnView key={column.id} column={column} />
 					})}
-				</ColumnsContainer>
+				</div>
 				<DragAndDropLayer />
 			</div>
 		);
 	}
 }
 
-export default class TodoPage extends React.Component {
+type TodoPageProps = {
+	todoColumns: TodoColumn[];
+}
+
+export default class TodoPage extends React.Component<TodoPageProps,{}> {
 	render(){
 		return (
 			<div>
-				<Route exact path="/todo" component={ColumnsPage} />
+				<Route exact path="/todo" component={() => <ColumnsPage todoColumns={this.props.todoColumns} />} />
 				<Route exact path="/todo/column/:columnID/settings" component={TodoColumnSettingsPage} />
 			</div>
 		);

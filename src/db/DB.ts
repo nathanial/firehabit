@@ -1,14 +1,12 @@
-import * as _ from 'lodash';
 import {observable} from 'mobx';
 import * as firebase from 'firebase';
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
-import Reference = firebase.database.Reference;
 import DailiesDB from "./DailiesDB";
-import {downloadCollection, watchCollection} from "./util";
 import TodoColumnsDB from "./TodoColumnsDB";
 import DaysDB from "./DaysDB";
 import FoodDefinitionsDB from "./FoodDefinitionsDB";
+import {state} from '../state';
 
 export class DB {
 	loggedIn = false;
@@ -43,6 +41,10 @@ export class DB {
 		this.foodDefinitionsDB = new FoodDefinitionsDB(this.db);
 		await this.foodDefinitionsDB.setup();
 
+		const appState = state.get();
+		appState.set({
+			todoColumns: this.todoColumnsDB.todoColumns
+		});
 	}
 
 

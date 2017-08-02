@@ -1,22 +1,10 @@
 import * as Freezer from 'freezer-js';
-import * as _ from 'lodash';
-import * as uuidv4 from 'uuid/v4';
-
-const timeSlots = _.flatten(_.times(24, (hour) => {
-	return _.times(2, (minutes) => {
-		return {
-			id: uuidv4(),
-			hour,
-			minutes: minutes * 30,
-			active: false
-		};
-	})
-}));
 
 export interface AppState {
-	timeSlots: TimeSlot[];
+	todoColumns: TodoColumn[];
 	showDevTools: boolean;
 	set(name: string, value: any);
+	set(state: Partial<AppState>);
 }
 
 interface FreezerData<T> {
@@ -25,6 +13,7 @@ interface FreezerData<T> {
 }
 
 export const state = new Freezer({
-	timeSlots
+	showDevTools: false,
+	todoColumns: []
 }) as FreezerData<AppState>;
 

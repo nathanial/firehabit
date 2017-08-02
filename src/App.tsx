@@ -23,6 +23,7 @@ interface Props {
 class App extends React.Component<Props, {}> {
 
 	render() {
+		const appState = this.props.appState;
 		return (
 			<Router history={history}>
 				<div className="App pt-dark">
@@ -31,17 +32,12 @@ class App extends React.Component<Props, {}> {
 						<Route exact path="/" component={HabitsPage}/>
 						<Route exact path="/habits" component={HabitsPage} />
 						<Route path="/calories" component={CaloriesPage} />
-						<Route path="/todo" component={TodoPage} />
+						<Route path="/todo" component={() => <TodoPage todoColumns={appState.todoColumns}/>} />
 					</div>
 				</div>
 			</Router>
 		);
 	}
-
-	renderTodayPage = () => {
-		const {appState} = this.props;
-		return <TodayPage timeSlots={appState.timeSlots}  />;
-	};
 
 	onNavigate = (page) => {
 		history.push('/' + page);
