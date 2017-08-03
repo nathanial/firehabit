@@ -4,7 +4,6 @@ import * as $ from 'jquery';
 import ScrollArea from 'react-scrollbar';
 import {Button, EditableText} from "@blueprintjs/core";
 import styled from 'styled-components';
-import {observer} from 'mobx-react';
 import TodoView from "./TodoView";
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
@@ -132,7 +131,6 @@ interface State {
 	showSettings: boolean;
 }
 
-@observer
 export default class TodoColumnView extends React.Component<Props, State> {
 	state = {
 		columnName: this.props.column.name,

@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
-import {observer} from 'mobx-react';
 const SearchResultsWrapper = styled.ul`
 	list-style-type: none;
 	padding: 20px;
@@ -47,7 +46,6 @@ interface SearchResultsProps {
 	onEditFoodDefinition(foodDefinition: FoodDefinition);
 }
 
-@observer
 export default class SearchResults extends React.Component<SearchResultsProps, {}> {
 
 	render(){

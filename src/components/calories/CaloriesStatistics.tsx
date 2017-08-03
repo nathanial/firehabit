@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import styled from 'styled-components';
 import * as _ from 'lodash';
 import {db, history} from '../../util';
@@ -40,7 +39,6 @@ interface CalorieStatisticsProps {
 	date: string;
 }
 
-@observer
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
 		const day = _.find(db.daysDB.days, day => day.date === this.props.date);

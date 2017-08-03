@@ -2,7 +2,6 @@ import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
 import {EditableText, Button} from "@blueprintjs/core";
-import * as mobx from 'mobx';
 import {db} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
@@ -140,7 +139,7 @@ class TodoDragPreview extends React.Component<PreviewProps,{}> {
 export default class TodoView extends React.Component<Props, State> {
 
 	state = {
-		updatedTodo:_.cloneDeep(mobx.toJS(this.props.todo)),
+		updatedTodo:_.cloneDeep(this.props.todo),
 		dragging: false
 	};
 

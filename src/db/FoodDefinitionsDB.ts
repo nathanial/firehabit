@@ -1,13 +1,12 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
 import Reference = firebase.database.Reference;
-import {observable} from "mobx";
 import {downloadCollection, watchCollection} from "./util";
 import Database = firebase.database.Database;
 
 export default class FoodDefinitionsDB implements DBSection {
 	foodDefinitionsRef: Reference;
-	foodDefinitions: FoodDefinition[] = observable([]);
+	foodDefinitions: FoodDefinition[] = [];
 
 	constructor(private readonly db: Database){
 

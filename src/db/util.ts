@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import {observable} from "mobx";
 
 function allKeysBeginWithDash(value){
 	return !_.some(_.keys(value), k => k[0] !== '-');
@@ -57,7 +56,7 @@ export function watchCollection(dst, ref){
 				const newValue = changedChild[key];
 				if(_.isArray(newValue)) {
 					if(_.isUndefined(dstItem[key])) {
-						dstItem[key] = observable([]);
+						dstItem[key] = [];
 					}
 					dstItem[key].splice(0, dstItem[key].length);
 					pushAll(dstItem[key], newValue);

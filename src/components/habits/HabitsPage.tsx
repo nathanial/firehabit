@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import {db} from '../../util';
 import {Button} from "@blueprintjs/core";
 import * as colors from '../../theme/colors';
-import {observer} from 'mobx-react';
 import {EditableText} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import * as moment from "moment";
@@ -142,7 +141,6 @@ class DailyItem extends React.Component<Props, State> {
 
 }
 
-@observer
 class DailiesList extends React.Component<{},{}> {
 	render(){
 		const dailies = db.dailiesDB.dailies;

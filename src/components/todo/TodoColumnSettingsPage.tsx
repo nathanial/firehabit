@@ -3,7 +3,6 @@ import {Button, Checkbox} from "@blueprintjs/core";
 import * as _ from 'lodash';
 import {db} from '../../util';
 import { SketchPicker } from 'react-color';
-import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
 import cxs from 'cxs';
 
@@ -25,7 +24,6 @@ interface Props {
 	onDelete(column: TodoColumn);
 }
 
-@observer
 export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 	render(){
 		const column = this.props.column;

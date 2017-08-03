@@ -3,11 +3,10 @@ import {downloadCollection, watchCollection} from "./util";
 import * as firebase from "firebase/app";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
-import {observable} from "mobx";
 
 export default class DaysDB implements DBSection {
 	daysRef: Reference;
-	days: Day[] = observable([]);
+	days: Day[] = [];
 
 	constructor(private readonly db: Database) {
 

@@ -1,6 +1,5 @@
 // Line Limit 100
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import CaloriesForm from "./CaloriesForm";
 import CalorieStatistics from "./CaloriesStatistics";
 import * as moment from 'moment';
@@ -11,7 +10,6 @@ interface DataPageState {
 	date: string;
 }
 
-@observer
 class CaloriesDataPage extends React.Component<{},DataPageState> {
 	state = {
 		date: moment().format('MM/DD/YY')
@@ -27,7 +25,6 @@ class CaloriesDataPage extends React.Component<{},DataPageState> {
 	}
 }
 
-@observer
 export default class CaloriesPage extends React.Component<{},{}> {
 	render() {
 		return (

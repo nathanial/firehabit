@@ -1,4 +1,3 @@
-import {observable} from 'mobx';
 import * as firebase from 'firebase';
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
@@ -10,10 +9,10 @@ import TodoColumnsDB from "./TodoColumnsDB";
 
 export class DB {
 	loggedIn = false;
-	user = observable({
+	user = {
 		name: '',
 		email: ''
-	});
+	};
 
 	db: Database;
 	calorieSettingsDB: CalorieSettingsDB;

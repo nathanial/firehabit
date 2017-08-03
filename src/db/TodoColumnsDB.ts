@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
 import {downloadCollection, watchCollection} from "./util";
-import {observable} from "mobx";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 
@@ -24,7 +23,7 @@ function encode(columns: TodoColumn[]) {
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
-	todoColumns: TodoColumn[] = observable([]);
+	todoColumns: TodoColumn[] = [];
 
 	constructor(private readonly db: Database) {
 
@@ -39,7 +38,7 @@ export default class TodoColumnsDB implements DBSection {
 		watchCollection(this.todoColumns, this.todoColumnsRef);
 		for(let todoColumn of this.todoColumns){
 			if(_.isUndefined(todoColumn.todos)){
-				todoColumn.todos = observable([]);
+				todoColumn.todos = [];
 			}
 			if(_.isUndefined(todoColumn.confirmDeletion)){
 				todoColumn.confirmDeletion = true;
