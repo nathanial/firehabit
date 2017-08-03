@@ -12,7 +12,7 @@ import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
-import uuidv4 from 'uuid/v4';
+import * as uuidv4 from 'uuid/v4';
 
 /**
  * Animation Plan
@@ -167,7 +167,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 									return <TodoView key={todo.id}
 													 todo={todo}
 													 confirmDeletion={column.confirmDeletion}
-													 onDelete={(todo) => column.todos.splice(column.todos.indexOf(todo), 1)} />;
+													 onDelete={(todo) => {console.log("Delete Me"); column.todos.splice(column.todos.indexOf(todo), 1)}} />;
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
@@ -192,7 +192,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 						index -= 1;
 					}
 				}
-				todos.splice(index, 0, draggable.data);
+				return {column: this.props.column, index};
 			}
 		});
 	}
@@ -257,12 +257,17 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	private renderSettings = () => {
 		if(this.state.showSettings){
+			const style = {
+				position: 'absolute',
+				left: 300, top: 0,
+				opacity: 0
+			};
 			return (
-				<TodoColumnSettingsPage style={{
-					position: 'absolute',
-					left: 300, top: 0,
-					opacity: 0
-				}} column={this.props.column} goBack={() => this.hideSettings()} onDelete={() => this.props.onDelete(this.props.column)} />
+				<TodoColumnSettingsPage
+					style={style}
+					column={this.props.column}
+					goBack={() => this.hideSettings()}
+					onDelete={() => this.props.onDelete(this.props.column)} />
 			);
 		}
 	};

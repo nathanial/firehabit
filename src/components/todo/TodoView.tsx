@@ -9,6 +9,7 @@ import {SubtaskList} from "./SubtaskList";
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
+import * as uuidv4 from 'uuid/v4';
 
 const TodoContentWrapper = styled.div`
 	position: relative;
@@ -184,11 +185,18 @@ export default class TodoView extends React.Component<Props, State> {
 		this.setState({
 			dragging: true
 		});
-		const complete = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
+		const result = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
 			<TodoDragPreview todo={this.props.todo} />
-		);
-		if(complete){
-			this.props.onDelete(this.props.todo);
+		) as {column: TodoColumn, index: number};
+		if(result){
+			const {column, index} = result;
+			if(_.some(column.todos, todo => todo.id === this.props.todo.id)){
+				console.log("Same Column")
+				this.props.todo.set({index});
+			} else {
+				column.todos.push({...this.props.todo, index, id: uuidv4()} as Todo);
+				this.props.onDelete(this.props.todo);
+			}
 		}
 		this.setState({
 			dragging: false

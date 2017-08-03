@@ -21,7 +21,7 @@ export type Draggable = {
 	height: number;
 	data: any;
 	onCancel();
-	onDrop();
+	onDrop(value: any);
 }
 
 type State = {
@@ -111,15 +111,13 @@ export class DragAndDropLayer extends React.Component<{},State>{
 			let dropped = false;
 			for(let dropTarget of dropTargets){
 				if(intersects(draggable, dropTarget.element.getBoundingClientRect())){
-					dropTarget.onDrop(draggable);
+					draggable.onDrop(dropTarget.onDrop(draggable));
 					dropped = true;
 					break;
 				}
 			}
 			if(!dropped){
 				draggable.onCancel();
-			} else {
-				draggable.onDrop();
 			}
 		}
 	};
@@ -136,8 +134,8 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					height,
 					element,
 					data,
-					onDrop: () => {
-						resolve(true);
+					onDrop: (value: any) => {
+						resolve(value);
 					},
 					onCancel: () => {
 						resolve(false);
