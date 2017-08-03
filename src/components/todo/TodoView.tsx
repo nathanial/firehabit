@@ -99,6 +99,7 @@ interface Props {
 	todo: Todo;
 	confirmDeletion: boolean;
 	isDragging?: boolean;
+	onDelete(todo: Todo);
 }
 
 interface State {
@@ -136,7 +137,7 @@ class TodoDragPreview extends React.Component<PreviewProps,{}> {
 	}
 }
 
-class TodoView extends React.Component<Props, State> {
+export default class TodoView extends React.Component<Props, State> {
 
 	state = {
 		updatedTodo:_.cloneDeep(mobx.toJS(this.props.todo)),
@@ -147,11 +148,11 @@ class TodoView extends React.Component<Props, State> {
 		return (
 			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
 				 data-todo-id={this.props.todo.id}
-				style={{
+				 style={{
 					padding:0,
 					background: '#eee',
 					opacity: this.state.dragging ? 0 : 1 }}
-				onDragStart={this.onDragStart}>
+				 onDragStart={this.onDragStart}>
 				<div>
 					<TodoWrapper >
 						<div className="drag-handle" draggable={true}>
@@ -198,18 +199,18 @@ class TodoView extends React.Component<Props, State> {
 		this.setState({updatedTodo});
 	};
 
-	onUpdatedTodo = () =>{
-		db.todoColumnsDB.updateTodo(this.state.updatedTodo);
+	onUpdatedTodo = () => {
+		this.props.todo.set(this.state.updatedTodo);
 	};
 
 	onDeleteTodo = async () => {
 		if(this.props.confirmDeletion) {
 			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
 			if(result){
-				db.todoColumnsDB.deleteTodo(this.props.todo);
+				this.props.onDelete(this.props.todo);
 			}
 		} else {
-			db.todoColumnsDB.deleteTodo(this.props.todo);
+			this.props.onDelete(this.props.todo);
 		}
 	};
 
@@ -219,10 +220,9 @@ class TodoView extends React.Component<Props, State> {
 			updatedTodo.subtasks = [];
 		}
 		updatedTodo.subtasks.push({name: 'New Task'} as any);
-		db.todoColumnsDB.updateTodo(updatedTodo);
+		this.props.todo.set(updatedTodo);
 		this.setState({updatedTodo});
 	};
 
 }
 
-export default TodoView;

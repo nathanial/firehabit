@@ -38,6 +38,7 @@ interface Todo {
 	name: string;
 	subtasks: Subtask[];
 	index: number;
+	set(updatedTodo: Partial<Todo>);
 }
 
 interface TodoColumn {

@@ -4,8 +4,6 @@ import {downloadCollection, watchCollection} from "./util";
 import {observable} from "mobx";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
-import * as mobx from "mobx";
-import * as uuidv4 from 'uuid/v4';
 
 type MoveTodoOptions = {
 	index: number;
@@ -78,7 +76,7 @@ export default class TodoColumnsDB implements DBSection {
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
 		await this.deleteTodo(todo);
 		this.todoColumnsRef.child(`${column.id}/todos`).push({
-			..._.omit(mobx.toJS(todo), 'id'),
+			..._.omit(todo, 'id'),
 			index: options.index
 		});
 		await this.sortColumn(column);

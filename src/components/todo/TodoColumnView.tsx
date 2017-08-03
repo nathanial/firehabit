@@ -122,8 +122,13 @@ const TodoListWrapper = styled.ul`
 	}
 `;
 
+type MoveOptions = {
+	index: number;
+}
+
 interface Props {
 	column: TodoColumn;
+	onMoveTodo(todo: Todo, column: TodoColumn, options: MoveOptions);
 }
 
 interface State {
@@ -165,7 +170,10 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								speed={0.8}
 								horizontal={false}>
 								{todos.map((todo) => {
-									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+									return <TodoView key={todo.id}
+													 todo={todo}
+													 confirmDeletion={column.confirmDeletion}
+													 onDelete={(todo) => column.todos.splice(column.todos.indexOf(todo), 1)} />;
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
@@ -189,7 +197,8 @@ export default class TodoColumnView extends React.Component<Props, State> {
 						index -= 1;
 					}
 				}
-				db.todoColumnsDB.moveTodo(draggable.data, this.props.column, {index});
+
+				this.props.onMoveTodo(draggable.data, this.props.column, {index});
 			}
 		});
 	}

@@ -7,6 +7,13 @@ export interface AppState {
 	set(state: Partial<AppState>);
 }
 
+declare global {
+	interface Array<T> {
+		reset(newValue: T[]);
+		toJS(): Array<T>;
+	}
+}
+
 interface FreezerData<T> {
 	get(): T;
 	on(eventName: string, callback: () => void);

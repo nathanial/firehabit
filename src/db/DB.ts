@@ -18,7 +18,7 @@ export class DB {
 	db: Database;
 	calorieSettingsDB: CalorieSettingsDB;
 	dailiesDB: DailiesDB;
-	todoColumnsDB: TodoColumnsDB;
+	private todoColumnsDB: TodoColumnsDB;
 	daysDB: DaysDB;
 	foodDefinitionsDB: FoodDefinitionsDB;
 

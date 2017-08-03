@@ -10,17 +10,14 @@ import {
 import HabitsPage from './components/habits/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoPage from './components/todo/TodoPage';
-import TodayPage from './components/today/TodayPage';
 import {history} from './util';
-import {observer} from 'mobx-react';
 import {AppState} from "./state";
 
 interface Props {
 	appState: AppState
 };
 
-@observer
-class App extends React.Component<Props, {}> {
+export default class App extends React.Component<Props, {}> {
 
 	render() {
 		const appState = this.props.appState;
@@ -44,4 +41,3 @@ class App extends React.Component<Props, {}> {
 	};
 }
 
-export default observer(App);

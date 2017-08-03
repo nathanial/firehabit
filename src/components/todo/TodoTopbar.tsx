@@ -2,8 +2,9 @@ import * as React from 'react';
 import {Button} from '@blueprintjs/core';
 import {db} from "../../util";
 import cxs from 'cxs';
-import {state} from "../../state";
+import {AppState, state} from "../../state";
 import * as FileSaver from 'file-saver';
+import uuidv4 from 'uuid/v4';
 
 const todoTopbarClass = cxs({
 	margin: '10px 30px',
@@ -23,7 +24,11 @@ const devtoolsClass = cxs({
 	margin: '0 10px'
 });
 
-export default class TodoTopbar extends React.Component<{},{}> {
+type Props = {
+	appState: AppState;
+}
+
+export default class TodoTopbar extends React.Component<Props,{}> {
 	private fileInput: HTMLInputElement;
 
 	render(){
@@ -78,7 +83,7 @@ export default class TodoTopbar extends React.Component<{},{}> {
 		reader.onload = (e: any) => {
 			const contents = e.target.result;
 			const todos = JSON.parse(contents);
-			db.todoColumnsDB.reset(todos)
+			this.props.appState.todoColumns.reset(todos);
 		};
 		reader.readAsText(file);
 		console.log("File Input Changed", this.fileInput.files[0]);
@@ -90,13 +95,13 @@ export default class TodoTopbar extends React.Component<{},{}> {
 
 	private onExportTodos = () => {
 		const blob = new Blob([
-			[JSON.stringify(db.todoColumnsDB.todoColumns, undefined, 4)]
+			[JSON.stringify(this.props.appState.todoColumns.toJS(), undefined, 4)]
 		], {type: 'application/json;charset=utf-8'})
 		FileSaver.saveAs(blob, 'todos.json');
 	};
 
 	private onDeleteTodos = () => {
-		db.todoColumnsDB.reset([]);
+		this.props.appState.todoColumns.reset([]);
 	}
 
 	private onKeyDown = (event) => {
@@ -107,6 +112,13 @@ export default class TodoTopbar extends React.Component<{},{}> {
 	};
 
 	private onAddColumn = () => {
-		db.todoColumnsDB.addTodoColumn('New Column');
+		this.props.appState.todoColumns.push({
+			id: uuidv4() as string,
+			name: 'New Column',
+			color: '#000',
+			confirmDeletion: true,
+			showClearButton: false,
+			todos: []
+		});
 	};
 }
