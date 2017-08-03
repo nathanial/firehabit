@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {Button} from '@blueprintjs/core';
-import {db} from "../../util";
 import cxs from 'cxs';
-import {AppState, state} from "../../state";
+import {state} from "../../state";
 import * as FileSaver from 'file-saver';
 import uuidv4 from 'uuid/v4';
 
@@ -25,7 +24,7 @@ const devtoolsClass = cxs({
 });
 
 type Props = {
-	appState: AppState;
+	todoColumns: TodoColumn[];
 }
 
 export default class TodoTopbar extends React.Component<Props,{}> {
@@ -83,7 +82,7 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 		reader.onload = (e: any) => {
 			const contents = e.target.result;
 			const todos = JSON.parse(contents);
-			this.props.appState.todoColumns.reset(todos);
+			this.props.todoColumns.reset(todos);
 		};
 		reader.readAsText(file);
 		console.log("File Input Changed", this.fileInput.files[0]);
@@ -95,13 +94,13 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 
 	private onExportTodos = () => {
 		const blob = new Blob([
-			[JSON.stringify(this.props.appState.todoColumns.toJS(), undefined, 4)]
+			[JSON.stringify(this.props.todoColumns.toJS(), undefined, 4)]
 		], {type: 'application/json;charset=utf-8'})
 		FileSaver.saveAs(blob, 'todos.json');
 	};
 
 	private onDeleteTodos = () => {
-		this.props.appState.todoColumns.reset([]);
+		this.props.todoColumns.reset([]);
 	}
 
 	private onKeyDown = (event) => {
@@ -112,7 +111,7 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 	};
 
 	private onAddColumn = () => {
-		this.props.appState.todoColumns.push({
+		this.props.todoColumns.push({
 			id: uuidv4() as string,
 			name: 'New Column',
 			color: '#000',

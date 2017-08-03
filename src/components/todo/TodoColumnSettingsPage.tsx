@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button, Checkbox} from "@blueprintjs/core";
 import * as _ from 'lodash';
-import {db, history} from '../../util';
+import {db} from '../../util';
 import { SketchPicker } from 'react-color';
 import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";

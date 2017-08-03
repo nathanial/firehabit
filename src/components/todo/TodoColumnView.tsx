@@ -14,6 +14,7 @@ import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
+import uuidv4 from 'uuid/v4';
 
 /**
  * Animation Plan
@@ -128,7 +129,6 @@ type MoveOptions = {
 
 interface Props {
 	column: TodoColumn;
-	onMoveTodo(todo: Todo, column: TodoColumn, options: MoveOptions);
 }
 
 interface State {
@@ -197,8 +197,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 						index -= 1;
 					}
 				}
-
-				this.props.onMoveTodo(draggable.data, this.props.column, {index});
+				this.props.column.todos.splice(index, 0, draggable.data);
 			}
 		});
 	}
@@ -284,7 +283,12 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onAddTodo = async () => {
-		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
+		this.props.column.todos.push({
+			id: uuidv4(),
+			name: 'NEW TODO',
+			subtasks: [],
+			index: this.props.column.todos.length
+		});
 	};
 
 	private onChangeColumnName = (newName) => {
@@ -294,7 +298,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onFinishEditingColumnName = () => {
-		db.todoColumnsDB.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
+		this.props.column.set({name: this.state.columnName});
 	};
 
 	private gotoColumnSettings = () => {
@@ -359,7 +363,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const column = this.props.column;
 		const result = await DialogService.showDangerDialog(`Clear Column "${column.name}"?`, 'Clear', 'Cancel');
 		if(result){
-			db.todoColumnsDB.updateTodoColumn(column.id, {todos: []});
+			column.todos.reset([]);
 		}
 	};
 

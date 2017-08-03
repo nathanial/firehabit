@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {db} from '../../util';
 import TodoColumnView from "./TodoColumnView";
 import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
@@ -35,7 +34,7 @@ class ColumnsPage extends React.Component<Props,{}> {
 		const todoColumns = this.props.todoColumns;
 		return (
 			<div className={todoPageClass}>
-				<TodoTopbar />
+				<TodoTopbar todoColumns={todoColumns} />
 				<div className={columnsContainerClass}>
 					{todoColumns.map((column) => {
 						return <TodoColumnView key={column.id} column={column} />
