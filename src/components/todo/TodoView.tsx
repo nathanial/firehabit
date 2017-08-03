@@ -185,9 +185,12 @@ export default class TodoView extends React.Component<Props, State> {
 		this.setState({
 			dragging: true
 		});
-		await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
+		const complete = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
 			<TodoDragPreview todo={this.props.todo} />
 		);
+		if(complete){
+			this.props.onDelete(this.props.todo);
+		}
 		this.setState({
 			dragging: false
 		});

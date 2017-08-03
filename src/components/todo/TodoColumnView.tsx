@@ -186,14 +186,15 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			element,
 			onDrop: (draggable: Draggable) => {
 				const {todoID, direction} = this.findNeighbor(draggable);
-				let index = this.props.column.todos.length;
+				const todos = this.props.column.todos;
+				let index = todos.length;
 				if(todoID){
-					index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
+					index = _.findIndex(todos, (todo: Todo) => todo.id === todoID);
 					if(direction === 'above'){
 						index -= 1;
 					}
 				}
-				this.props.column.todos.splice(index, 0, draggable.data);
+				todos.splice(index, 0, draggable.data);
 			}
 		});
 	}

@@ -24,3 +24,6 @@ export const state = new Freezer({
 	todoColumns: []
 }) as FreezerData<AppState>;
 
+state.on('update', (...args: any[]) => {
+	console.log("State Changed", args);
+});

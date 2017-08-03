@@ -21,6 +21,7 @@ export type Draggable = {
 	height: number;
 	data: any;
 	onCancel();
+	onDrop();
 }
 
 type State = {
@@ -103,6 +104,8 @@ export class DragAndDropLayer extends React.Component<{},State>{
 				}
 				if(!dropped){
 					draggable.onCancel();
+				} else {
+					draggable.onDrop();
 				}
 			}
 			this.setState({draggables: []});
@@ -126,8 +129,11 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					height,
 					element,
 					data,
+					onDrop: () => {
+						resolve(true);
+					},
 					onCancel: () => {
-						resolve();
+						resolve(false);
 					}
 				})
 			});
