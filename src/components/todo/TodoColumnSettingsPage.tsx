@@ -22,6 +22,7 @@ interface Props {
 	style?: Object;
 	column: TodoColumn;
 	goBack();
+	onDelete(column: TodoColumn);
 }
 
 @observer
@@ -52,35 +53,26 @@ export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 	}
 
 	private onResetColor = () => {
-		db.todoColumnsDB.updateTodoColumn(this.columnID, {color: null});
+		this.props.column.set({color: null});
 	};
 
 	private onChange = (event) => {
-		db.todoColumnsDB.updateTodoColumn(this.columnID, {color: event.hex});
+		this.props.column.set({color: event.hex});
 	};
 
 	private onChangeConfirmDeletion = (event) => {
-		db.todoColumnsDB.updateTodoColumn(this.columnID, {confirmDeletion: event.target.checked});
-		this.forceUpdate();
+		this.props.column.set({confirmDeletion: event.target.checked});
 	};
 
 	private onChangeShowClearButton = (event) => {
-		db.todoColumnsDB.updateTodoColumn(this.columnID, {showClearButton: event.target.checked});
-		this.forceUpdate();
+		this.props.column.set({showClearButton: event.target.checked});
 	};
 
 	private onDeleteColumn = async () => {
-		const column = _.find(db.todoColumnsDB.todoColumns, {id: this.columnID});
+		const column = this.props.column;
 		const result = await DialogService.showDangerDialog(`Are you sure you wan't delete ${column.name}?`, 'Delete', 'Cancel');
 		if(result){
-			db.todoColumnsDB.deleteTodoColumn(column);
-			if(this.props.goBack){
-				this.props.goBack();
-			}
+			this.props.onDelete(column);
 		}
 	};
-
-	private get columnID(){
-		return this.props.column.id;
-	}
 }

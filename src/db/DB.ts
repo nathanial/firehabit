@@ -3,10 +3,10 @@ import * as firebase from 'firebase';
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
 import DailiesDB from "./DailiesDB";
-import TodoColumnsDB from "./TodoColumnsDB";
 import DaysDB from "./DaysDB";
 import FoodDefinitionsDB from "./FoodDefinitionsDB";
 import {state} from '../state';
+import TodoColumnsDB from "./TodoColumnsDB";
 
 export class DB {
 	loggedIn = false;

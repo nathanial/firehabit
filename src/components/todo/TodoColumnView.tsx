@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as $ from 'jquery';
+import ScrollArea from 'react-scrollbar';
 import {Button, EditableText} from "@blueprintjs/core";
-import {db, history} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoView from "./TodoView";
-import ScrollArea from 'react-scrollbar';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
 import DialogService from "../../services/DialogService";
@@ -123,12 +122,9 @@ const TodoListWrapper = styled.ul`
 	}
 `;
 
-type MoveOptions = {
-	index: number;
-}
-
 interface Props {
 	column: TodoColumn;
+	onDelete(column: TodoColumn);
 }
 
 interface State {
@@ -267,7 +263,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 					position: 'absolute',
 					left: 300, top: 0,
 					opacity: 0
-				}} column={this.props.column} goBack={() => this.hideSettings()} />
+				}} column={this.props.column} goBack={() => this.hideSettings()} onDelete={() => this.props.onDelete(this.props.column)} />
 			);
 		}
 	};

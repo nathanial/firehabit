@@ -37,7 +37,7 @@ class ColumnsPage extends React.Component<Props,{}> {
 				<TodoTopbar todoColumns={todoColumns} />
 				<div className={columnsContainerClass}>
 					{todoColumns.map((column) => {
-						return <TodoColumnView key={column.id} column={column} />
+						return <TodoColumnView key={column.id} column={column} onDelete={() => todoColumns.splice(todoColumns.indexOf(column), 1)} />
 					})}
 				</div>
 				<DragAndDropLayer />

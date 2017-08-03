@@ -100,6 +100,7 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 	};
 
 	private onDeleteTodos = () => {
+		console.log("Todo Columns", this.props.todoColumns);
 		this.props.todoColumns.reset([]);
 	}
 
