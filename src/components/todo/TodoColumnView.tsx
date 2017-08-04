@@ -67,20 +67,11 @@ const trashBtnClass = cxs({
 	top: 0
 });
 
-const TodoColumnWrapper = styled.div`
-	& > .settings-btn {
-		position: absolute;
-		top: 0;
-		right: 0;
-	}
-	
-	& > h4 {
-		margin-top: 0;
-	}
-	
-	overflow: hidden;
-
-`;
+const settingsBtnClass = cxs({
+	position: 'absolute',
+	top: 0,
+	right: 0
+});
 
 const TodoListWrapper = styled.ul`
 	list-style-type: none;
@@ -146,14 +137,13 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
 				<div className="todo-column" style={{display:'inline-block'}}>
-					<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
-									   style={{background: columnColor}}>
+					<div style={{overflow: 'hidden', background: columnColor}} className={`pt-card pt-elevation-2 ${todoColumnClass}`}>
 						<EditableText className={columnNameClass}
 									  value={this.state.columnName}
 									  onChange={this.onChangeColumnName}
 									  onConfirm={this.onFinishEditingColumnName} />
 						<Button iconName="settings"
-								className="settings-btn pt-minimal"
+								className={`${settingsBtnClass} pt-minimal`}
 								onClick={this.gotoColumnSettings} />
 						<Button iconName="plus"
 								className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
@@ -171,7 +161,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
-					</TodoColumnWrapper>
+					</div>
 				</div>
 				{this.renderSettings()}
 			</div>
