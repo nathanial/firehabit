@@ -1,6 +1,5 @@
 import * as React from 'react';
 import TodoColumnView from "./TodoColumnView";
-import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoTopbar from "./TodoTopbar";
 import cxs from 'cxs';
@@ -29,7 +28,7 @@ type Props = {
 	todoColumns: TodoColumn[];
 }
 
-class ColumnsPage extends React.Component<Props,{}> {
+class ColumnsPage extends React.PureComponent<Props> {
 	render(){
 		const todoColumns = this.props.todoColumns;
 		return (
@@ -37,26 +36,25 @@ class ColumnsPage extends React.Component<Props,{}> {
 				<TodoTopbar todoColumns={todoColumns} />
 				<div className={columnsContainerClass}>
 					{todoColumns.map((column) => {
-						return <TodoColumnView key={column.id} column={column} onDelete={() => todoColumns.splice(todoColumns.indexOf(column), 1)} />
+						return <TodoColumnView key={column.id} column={column} onDelete={this.onDeleteColumn} />
 					})}
 				</div>
 				<DragAndDropLayer />
 			</div>
 		);
 	}
+
+	onDeleteColumn = (column) => this.props.todoColumns.splice(this.props.todoColumns.indexOf(column), 1);
 }
 
 type TodoPageProps = {
 	todoColumns: TodoColumn[];
 }
 
-export default class TodoPage extends React.Component<TodoPageProps,{}> {
+export default class TodoPage extends React.PureComponent<TodoPageProps> {
 	render(){
 		return (
-			<div>
-				<Route exact path="/todo" component={() => <ColumnsPage todoColumns={this.props.todoColumns} />} />
-				<Route exact path="/todo/column/:columnID/settings" component={TodoColumnSettingsPage} />
-			</div>
+			<ColumnsPage todoColumns={this.props.todoColumns} />
 		);
 	}
 }

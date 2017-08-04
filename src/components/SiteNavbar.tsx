@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {db, history} from '../util';
+import {db} from '../util';
 import {Button, Menu, MenuDivider, MenuItem, Popover, Position} from '@blueprintjs/core';
 import * as firebase from 'firebase';
 
@@ -11,7 +11,7 @@ interface Props {
 
 export default class SiteNavbar extends React.Component<Props, {}> {
 	render(){
-		const path = history.location.pathname;
+		const path = window.location.pathname;
 
 		const NavBtn = (props) => {
 			return (

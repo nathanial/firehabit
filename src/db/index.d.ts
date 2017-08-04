@@ -37,7 +37,7 @@ interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
-	index: number;
+	dragging?: boolean;
 	set?(updatedTodo: Partial<Todo>);
 }
 
@@ -48,6 +48,7 @@ interface TodoColumn {
 	confirmDeletion: boolean;
 	showClearButton: boolean;
 	todos: Todo[];
+	showSettings?: boolean;
 
 	set?(column: Partial<TodoColumn>);
 }

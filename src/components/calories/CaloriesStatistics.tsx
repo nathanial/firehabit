@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import * as _ from 'lodash';
-import {db, history} from '../../util';
+import {db} from '../../util';
 import {Button} from '@blueprintjs/core';
 import cxs from 'cxs';
 
@@ -135,6 +135,5 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 	};
 
 	private gotoSettings = () => {
-		history.push('/calories/settings');
 	}
 }

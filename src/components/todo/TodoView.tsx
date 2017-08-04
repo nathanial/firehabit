@@ -137,21 +137,17 @@ class TodoDragPreview extends React.Component<PreviewProps,{}> {
 	}
 }
 
-export default class TodoView extends React.Component<Props, State> {
-
-	state = {
-		updatedTodo:_.cloneDeep(this.props.todo),
-		dragging: false
-	};
+export default class TodoView extends React.PureComponent<Props> {
 
 	render(){
+		console.log("TODO VIEW", this.props.todo);
 		return (
 			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
 				 data-todo-id={this.props.todo.id}
 				 style={{
 					padding:0,
 					background: '#eee',
-					opacity: this.state.dragging ? 0 : 1 }}
+					opacity: this.props.todo.dragging ? 0 : 1 }}
 				 onDragStart={this.onDragStart}>
 				<div>
 					<TodoWrapper >
@@ -159,20 +155,27 @@ export default class TodoView extends React.Component<Props, State> {
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
 						<TodoContentWrapper>
-							<EditableText value={this.state.updatedTodo.name}
-														multiline={true}
-														onChange={this.onNameChanged}
-														onConfirm={this.onUpdatedTodo} />
+							<EditableText value={this.props.todo.name}
+										  multiline={true}
+										  onChange={this.onNameChange} />
 						</TodoContentWrapper>
 						<div className="todo-controls">
 							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
 						</div>
 					</TodoWrapper>
-					<SubtaskList todo={this.state.updatedTodo} onChange={(updatedTodo) => this.setState({updatedTodo})} />
+					<SubtaskList todo={this.props.todo} />
 				</div>
 			</div>
 		);
+	}
+
+	onAddSubtask = () => {
+		this.props.todo.subtasks.push({name: 'New Subtask', complete: false});
+	}
+
+	onNameChange = (name) => {
+		this.props.todo.set({name});
 	}
 
 	onDragStart = async (event) => {
@@ -190,27 +193,12 @@ export default class TodoView extends React.Component<Props, State> {
 		) as {column: TodoColumn, index: number};
 		if(result){
 			const {column, index} = result;
-			if(_.some(column.todos, todo => todo.id === this.props.todo.id)){
-				console.log("Same Column")
-				this.props.todo.set({index});
-			} else {
-				column.todos.push({...this.props.todo, index, id: uuidv4()} as Todo);
-				this.props.onDelete(this.props.todo);
-			}
+			column.todos.push({...this.props.todo, id: uuidv4()} as Todo);
+			this.props.onDelete(this.props.todo);
 		}
 		this.setState({
 			dragging: false
 		});
-	};
-
-	onNameChanged = (newName) => {
-		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
-		updatedTodo.name = newName;
-		this.setState({updatedTodo});
-	};
-
-	onUpdatedTodo = () => {
-		this.props.todo.set(this.state.updatedTodo);
 	};
 
 	onDeleteTodo = async () => {
@@ -222,16 +210,6 @@ export default class TodoView extends React.Component<Props, State> {
 		} else {
 			this.props.onDelete(this.props.todo);
 		}
-	};
-
-	onAddSubtask = async () => {
-		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
-		if(_.isUndefined(updatedTodo.subtasks)) {
-			updatedTodo.subtasks = [];
-		}
-		updatedTodo.subtasks.push({name: 'New Task'} as any);
-		this.props.todo.set(updatedTodo);
-		this.setState({updatedTodo});
 	};
 
 }

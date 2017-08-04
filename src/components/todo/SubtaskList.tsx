@@ -69,7 +69,7 @@ interface Props {
 	onChange?(todo: Partial<Todo>);
 }
 
-export class SubtaskList extends React.Component<Props, {}> {
+export class SubtaskList extends React.PureComponent<Props> {
 	render(){
 		const subtasks = this.props.todo.subtasks;
 		if(!_.isEmpty(subtasks)) {

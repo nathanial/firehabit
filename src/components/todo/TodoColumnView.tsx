@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as $ from 'jquery';
-import ScrollArea from 'react-scrollbar';
 import {Button, EditableText} from "@blueprintjs/core";
 import styled from 'styled-components';
 import TodoView from "./TodoView";
@@ -13,6 +12,7 @@ import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 import * as uuidv4 from 'uuid/v4';
+import TodoList from "./TodoList";
 
 /**
  * Animation Plan
@@ -23,22 +23,6 @@ import * as uuidv4 from 'uuid/v4';
  *
 **/
 
-declare class ScrollArea extends React.Component<any, {}>{
-	handleKeyDown(e);
-}
-
-class CustomScrollArea extends ScrollArea {
-	render(){
-		return super.render();
-	}
-	handleKeyDown(e){
-		if (e.target.tagName.toLowerCase() === 'textarea') {
-			return;
-		} else {
-			return super.handleKeyDown(e);
-		}
-	}
-}
 
 const todoColumnClass = cxs({
 	display: 'inline-block',
@@ -73,73 +57,27 @@ const settingsBtnClass = cxs({
 	right: 0
 });
 
-const TodoListWrapper = styled.ul`
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow-y: auto;
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 40px;
-	
-	& > .scrollarea {
-		height: 100%;
-		& > .scrollarea-content {
-			padding-left: 10px;
-			padding-right: 10px;
-		}
-		
-		.scrollbar-container {
-			z-index: 1;
-		 }
-		
-		& > .scrollbar-container.vertical {
-			& > .scrollbar {
-				background: ${colors.primaryColor2};
-			}
-			&:hover {
-				background: ${colors.primaryColor1};
-			}
-		}
-	}
-
-	& > .scrollarea > .scrollarea-content > li {
-		&:first-child {
-			margin-top: 0;
-		}
-	}
-`;
 
 interface Props {
 	column: TodoColumn;
 	onDelete(column: TodoColumn);
 }
 
-interface State {
-	columnName: string;
-	showSettings: boolean;
-}
-
-export default class TodoColumnView extends React.Component<Props, State> {
-	state = {
-		columnName: this.props.column.name,
-		showSettings: false
-	};
+export default class TodoColumnView extends React.PureComponent<Props> {
 	private animating: boolean;
 	private unregisterDropTarget: () => void;
 
 	render(){
 		const column = this.props.column;
-		const todos = _.sortBy(column.todos || [], todo => todo.index);
+		const todos = column.todos;
 		const columnColor = column.color;
+		console.log("RENDER");
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
 				<div className="todo-column" style={{display:'inline-block'}}>
 					<div style={{overflow: 'hidden', background: columnColor}} className={`pt-card pt-elevation-2 ${todoColumnClass}`}>
 						<EditableText className={columnNameClass}
-									  value={this.state.columnName}
+									  value={column.name}
 									  onChange={this.onChangeColumnName}
 									  onConfirm={this.onFinishEditingColumnName} />
 						<Button iconName="settings"
@@ -149,18 +87,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
 								onClick={this.onAddTodo} />
 						{this.renderTrashBtn()}
-						<TodoListWrapper>
-							<CustomScrollArea
-								speed={0.8}
-								horizontal={false}>
-								{todos.map((todo) => {
-									return <TodoView key={todo.id}
-													 todo={todo}
-													 confirmDeletion={column.confirmDeletion}
-													 onDelete={(todo) => {console.log("Delete Me"); column.todos.splice(column.todos.indexOf(todo), 1)}} />;
-								})}
-							</CustomScrollArea>
-						</TodoListWrapper>
+						<TodoList column={this.props.column} />
 					</div>
 				</div>
 				{this.renderSettings()}
@@ -246,7 +173,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	}
 
 	private renderSettings = () => {
-		if(this.state.showSettings){
+		if(this.props.column.showSettings){
 			const style = {
 				position: 'absolute',
 				left: 300, top: 0,
@@ -276,8 +203,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		this.props.column.todos.push({
 			id: uuidv4(),
 			name: 'NEW TODO',
-			subtasks: [],
-			index: this.props.column.todos.length
+			subtasks: []
 		});
 	};
 
@@ -288,14 +214,14 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onFinishEditingColumnName = () => {
-		this.props.column.set({name: this.state.columnName});
+		this.props.column.set({name: this.props.column.name});
 	};
 
 	private gotoColumnSettings = () => {
 		if(this.animating){
 			return;
 		}
-		if(!this.state.showSettings){
+		if(!this.props.column.showSettings){
 			this.showSettings();
 		} else {
 			this.hideSettings();

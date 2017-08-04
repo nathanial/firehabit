@@ -43,7 +43,6 @@ export default class TodoColumnsDB implements DBSection {
 			if(_.isUndefined(todoColumn.confirmDeletion)){
 				todoColumn.confirmDeletion = true;
 			}
-			await this.sortColumn(todoColumn);
 		}
 	}
 
@@ -75,10 +74,8 @@ export default class TodoColumnsDB implements DBSection {
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
 		await this.deleteTodo(todo);
 		this.todoColumnsRef.child(`${column.id}/todos`).push({
-			..._.omit(todo, 'id'),
-			index: options.index
+			..._.omit(todo, 'id')
 		});
-		await this.sortColumn(column);
 	}
 
 	async deleteTodo(todo) {
@@ -87,17 +84,6 @@ export default class TodoColumnsDB implements DBSection {
 		});
 		for(let column of columns){
 			await this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
-		}
-	}
-
-	async sortColumn(column: TodoColumn) {
-		const todos = _.sortBy(column.todos, (todo) => todo.index);
-		for(let i = 0; i < todos.length; i++){
-			const todo = todos[i];
-			if(todo.index !== i){
-				todo.index = i;
-				await this.updateTodo(todo);
-			}
 		}
 	}
 

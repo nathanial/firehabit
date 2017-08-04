@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Button} from '@blueprintjs/core';
-import {history, db} from '../../util';
+import {db} from '../../util';
 import styled from 'styled-components';
 
 const CaloriesSettingsWrapper = styled.div`
@@ -59,6 +59,5 @@ export default class CaloriesSettings extends React.Component<{},{}> {
 	}
 
 	onGoBack = () => {
-		history.push('/calories');
 	}
 }
