@@ -147,11 +147,11 @@ export default class TodoView extends React.PureComponent<Props> {
 				 style={{
 					padding:0,
 					background: '#eee',
-					opacity: this.props.todo.dragging ? 0 : 1 }}
-				 onDragStart={this.onDragStart}>
+					opacity: this.props.todo.dragging ? 0 : 1 }}>
 				<div>
 					<TodoWrapper  className={todoWrapperClass} >
-						<div className="drag-handle" draggable={true}>
+						<div className="drag-handle" draggable={true} 
+					 		 onMouseDown={this.onDragStart}>
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
 						<TodoContentWrapper>
@@ -191,7 +191,7 @@ export default class TodoView extends React.PureComponent<Props> {
 		) as {column: TodoColumn, index: number};
 		if(result){
 			const {column, index} = result;
-			column.todos.push({...this.props.todo, id: uuidv4()} as Todo);
+			column.todos.push({...this.props.todo, id: uuidv4(), dragging: false} as Todo);
 			this.props.onDelete(this.props.todo);
 		}
 		this.props.todo.set({dragging: false});
