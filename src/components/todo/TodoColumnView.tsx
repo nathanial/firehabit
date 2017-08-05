@@ -27,7 +27,7 @@ import TodoList from "./TodoList";
 const todoColumnClass = cxs({
 	display: 'inline-block',
 	margin: '10px',
-	padding: '20px 10px 10px 10px',
+	padding: '20px 0px 10px 10px',
 	width: '280px',
 	textAlign: 'center',
 	height: '600px',

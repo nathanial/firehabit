@@ -43,12 +43,12 @@ type Dimensions = {
 
 function intersectRect(r1: Dimensions, r2: Dimensions): boolean {
 	return !(r2.left > r1.right ||
-	r2.right < r1.left ||
-	r2.top > r1.bottom ||
-	r2.bottom < r1.top);
+		r2.right < r1.left ||
+		r2.top > r1.bottom ||
+		r2.bottom < r1.top);
 }
 
-export function intersects(draggable: Draggable, rect: Dimensions){
+export function intersects(draggable: Draggable, rect: Dimensions) {
 	return intersectRect({
 		left: draggable.x,
 		top: draggable.y,
@@ -57,21 +57,21 @@ export function intersects(draggable: Draggable, rect: Dimensions){
 	}, rect);
 }
 
-export class DragAndDropLayer extends React.Component<{},State>{
+export class DragAndDropLayer extends React.Component<{}, State>{
 
 	state = {
 		draggables: [],
 		dropTargets: []
 	} as State;
 
-	render(){
+	render() {
 		return (
 			<div className={dndClass}>
 				{this.state.draggables.map((draggable, i) => {
 					const left = draggable.x;
 					const top = draggable.y;
 					return (
-						<div key={i} style={{left, top, position: 'fixed'}}>
+						<div key={i} style={{ left, top, position: 'fixed' }}>
 							{draggable.element}
 						</div>
 					);
@@ -80,21 +80,21 @@ export class DragAndDropLayer extends React.Component<{},State>{
 		);
 	}
 
-	componentDidMount(){
+	componentDidMount() {
 		dndService.registerLayer(this);
 		document.addEventListener('mousemove', this.onMouseMove);
 		document.addEventListener('mouseup', this.onMouseUp, true);
 	}
 
-	componentWillUnmount(){
+	componentWillUnmount() {
 		dndService.layer = null;
 		document.removeEventListener('mousemove', this.onMouseMove);
 		document.removeEventListener('mouseup', this.onMouseUp);
 	}
 
 	onMouseMove = (event) => {
-		if(!_.isEmpty(this.state.draggables)){
-			for(let draggable of this.state.draggables){
+		if (!_.isEmpty(this.state.draggables)) {
+			for (let draggable of this.state.draggables) {
 				draggable.x = event.pageX - 10;
 				draggable.y = event.pageY - 30;
 				this.forceUpdate();
@@ -104,24 +104,24 @@ export class DragAndDropLayer extends React.Component<{},State>{
 
 	onMouseUp = (event) => {
 		event.preventDefault();
-		const {draggables, dropTargets} = this.state;
-		this.setState({draggables: []});
-		for(let draggable of draggables){
+		const { draggables, dropTargets } = this.state;
+		this.setState({ draggables: [] });
+		for (let draggable of draggables) {
 			let dropped = false;
-			for(let dropTarget of dropTargets){
-				if(intersects(draggable, dropTarget.element.getBoundingClientRect())){
+			for (let dropTarget of dropTargets) {
+				if (intersects(draggable, dropTarget.element.getBoundingClientRect())) {
 					draggable.onDrop(dropTarget.onDrop(draggable));
 					dropped = true;
 					break;
 				}
 			}
-			if(!dropped){
+			if (!dropped) {
 				draggable.onCancel();
 			}
 		}
 	};
 
-	async startDrag(pageX: number, pageY: number, width: number, height: number, data:any, element: React.ReactElement<any>){
+	async startDrag(pageX: number, pageY: number, width: number, height: number, data: any, element: React.ReactElement<any>) {
 		return new Promise((resolve) => {
 			this.setState({
 				draggables: this.state.draggables.concat({
@@ -170,20 +170,20 @@ class DragAndDropService {
 	public layer: DragAndDropLayer;
 	private dropTargetBuffer = [];
 
-	registerLayer(layer: DragAndDropLayer){
+	registerLayer(layer: DragAndDropLayer) {
 		this.layer = layer;
-		for(let element of this.dropTargetBuffer){
+		for (let element of this.dropTargetBuffer) {
 			this.layer.addDropTarget(element);
 		}
 		this.dropTargetBuffer = [];
 	}
 
-	async startDrag(position: DndPosition, data:any, element: React.ReactElement<any>){
+	async startDrag(position: DndPosition, data: any, element: React.ReactElement<any>) {
 		return await this.layer.startDrag(position.x, position.y, position.width, position.height, data, element);
 	}
 
 	addDropTarget(dropTarget: DropTarget): () => void {
-		if(!this.layer){
+		if (!this.layer) {
 			this.dropTargetBuffer.push(dropTarget);
 		} else {
 			this.layer.addDropTarget(dropTarget);

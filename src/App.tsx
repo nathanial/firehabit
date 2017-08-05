@@ -42,7 +42,7 @@ export default class App extends React.Component<Props, {}> {
 			return <HabitsPage />
 		} else if(location === '/calories'){
 			return <CaloriesPage />
-		} else if(location === '/todo'){
+		} else if(location === '/todo' || location === '/'){
 			return <TodoPage todoColumns={this.props.appState.todoColumns} />
 		} else {
 			throw new Error(`Unknown location ${location}`);

@@ -10,6 +10,7 @@ import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
 import * as uuidv4 from 'uuid/v4';
+import {Motion, spring} from 'react-motion';
 
 const TodoContentWrapper = styled.div`
 	position: relative;
@@ -141,32 +142,45 @@ class TodoDragPreview extends React.PureComponent<PreviewProps,{}> {
 export default class TodoView extends React.PureComponent<Props> {
 
 	render(){
+		const height = this.props.todo.dragging ? spring(0) : spring(500);
 		return (
-			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
-				 data-todo-id={this.props.todo.id}
-				 style={{
-					padding:0,
-					background: '#eee',
-					opacity: this.props.todo.dragging ? 0 : 1 }}>
-				<div>
-					<TodoWrapper  className={todoWrapperClass} >
-						<div className="drag-handle" draggable={true} 
-					 		 onMouseDown={this.onDragStart}>
-							<div className="inner-icon pt-icon-drag-handle-vertical"/>
+			<Motion defaultStyle={{maxHeight: 500, margin: 10}} style={{
+				maxHeight: height
+			}}>				
+				{value => {
+					const margin = (value.maxHeight / 500) * 15 - 5;
+					return (
+						<div style={{maxHeight: value.maxHeight, margin, overflow: 'hidden'}}>
+							<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
+								data-todo-id={this.props.todo.id}
+								style={{
+									padding:0,
+									background: '#eee',
+									margin: 0,
+									opacity: this.props.todo.dragging ? 0 : 1 }}>
+								<div>
+									<TodoWrapper  className={todoWrapperClass} >
+										<div className="drag-handle" draggable={true} 
+											onMouseDown={this.onDragStart}>
+											<div className="inner-icon pt-icon-drag-handle-vertical"/>
+										</div>
+										<TodoContentWrapper>
+											<EditableText value={this.props.todo.name}
+														multiline={true}
+														onChange={this.onNameChange} />
+										</TodoContentWrapper>
+										<div className="todo-controls">
+											<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+											<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
+										</div>
+									</TodoWrapper>
+									<SubtaskList todo={this.props.todo} />
+								</div>
+							</div>
 						</div>
-						<TodoContentWrapper>
-							<EditableText value={this.props.todo.name}
-										  multiline={true}
-										  onChange={this.onNameChange} />
-						</TodoContentWrapper>
-						<div className="todo-controls">
-							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-						</div>
-					</TodoWrapper>
-					<SubtaskList todo={this.props.todo} />
-				</div>
-			</div>
+					);
+				}}
+			</Motion>
 		);
 	}
 

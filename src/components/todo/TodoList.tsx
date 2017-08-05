@@ -30,7 +30,7 @@ const TodoListWrapper = styled.ul`
 	left: 0;
 	right: 0;
 	bottom: 0;
-	top: 40px;
+	top: 30px;
 	
 	& > .scrollarea {
 		height: 100%;
@@ -71,6 +71,7 @@ export default class TodoList extends React.PureComponent<Props> {
                 <CustomScrollArea
                     speed={0.8}
                     horizontal={false}>
+					<div style={{margin: '10px 0'}}></div>
                     {this.props.column.todos.map((todo) => {
                         return <TodoView key={todo.id}
                                          todo={todo}
