@@ -185,9 +185,7 @@ export default class TodoView extends React.PureComponent<Props> {
 		const offset = $el.offset();
 		const x = offset.left;
 		const y = offset.top;
-		this.setState({
-			dragging: true
-		});
+		this.props.todo.set({dragging: true});
 		const result = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
 			<TodoDragPreview todo={this.props.todo} />
 		) as {column: TodoColumn, index: number};
@@ -196,9 +194,7 @@ export default class TodoView extends React.PureComponent<Props> {
 			column.todos.push({...this.props.todo, id: uuidv4()} as Todo);
 			this.props.onDelete(this.props.todo);
 		}
-		this.setState({
-			dragging: false
-		});
+		this.props.todo.set({dragging: false});
 	};
 
 	onDeleteTodo = async () => {

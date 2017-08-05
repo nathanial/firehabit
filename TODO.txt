@@ -2,7 +2,7 @@ Make Site Navbar Navigation Work
     1. X Match current URL with highlighted navbar item
 
 Correct Dragging
-    1. When drag preview is shown, disappear actual item (remove from list)
+    1. X When drag preview is shown, disappear actual item (remove from list)
         a. Animate removal process (slide todo items into the new order)
         b. Animate insertion process (including when the item is hovered over its new spot)
         c. sync changes with server

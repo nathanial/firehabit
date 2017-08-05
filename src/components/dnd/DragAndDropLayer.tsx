@@ -84,7 +84,6 @@ export class DragAndDropLayer extends React.Component<{},State>{
 		dndService.registerLayer(this);
 		document.addEventListener('mousemove', this.onMouseMove);
 		document.addEventListener('mouseup', this.onMouseUp, true);
-
 	}
 
 	componentWillUnmount(){
