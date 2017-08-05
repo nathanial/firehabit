@@ -26,13 +26,36 @@ export default class App extends React.Component<Props, {}> {
 		);
 	}
 
-	renderContent = () => {
-		return (
-			<TodoPage todoColumns={this.props.appState.todoColumns}/>
-		);
+	componentDidMount() {
+		window.onpopstate = (event) => {
+			this.forceUpdate();
+		};
+	}
+
+	componentWillUnmount(){
+		window.onpopstate = null;
+	}
+
+	private renderContent = () => {
+		const location = this.getLocation();
+		if(location === '/habits') {
+			return <HabitsPage />
+		} else if(location === '/calories'){
+			return <CaloriesPage />
+		} else if(location === '/todo'){
+			return <TodoPage todoColumns={this.props.appState.todoColumns} />
+		} else {
+			throw new Error(`Unknown location ${location}`);
+		}
 	};
 
-	onNavigate = (page) => {
+	private onNavigate = (page) => {
+		history.pushState(null, page, `/${page}`);
+		this.forceUpdate();
+	};
+
+	private getLocation = () => {
+		return window.location.pathname;
 	};
 }
 

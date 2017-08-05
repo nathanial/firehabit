@@ -32,13 +32,14 @@ const todoItemClass = cxs({
 	width: '240px'
 });
 
-const TodoWrapper = styled.div`
-	position: relative;
-	padding: 10px 0;
-	display: flex;
-	flex-direction: row;
+const todoWrapperClass = cxs({
+	position: 'relative',
+	padding: '10px 0',
+	display: 'flex',
+	'flex-direction': 'row'
+});
 
-	
+const TodoWrapper = styled.div`
 	.drag-handle {
 		bottom: 0;
 		width: 30px;
@@ -111,13 +112,13 @@ type PreviewProps = {
 	todo: Todo;
 }
 
-class TodoDragPreview extends React.Component<PreviewProps,{}> {
+class TodoDragPreview extends React.PureComponent<PreviewProps,{}> {
 	render(){
 		return (
 			<div className={`pt-card pt-elevation-2 ${todoItemClass}`}
 				 style={{padding:0, background: '#eee', margin: 0}}>
 				<div>
-					<TodoWrapper >
+					<TodoWrapper className={todoWrapperClass} >
 						<div className="drag-handle">
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
@@ -140,7 +141,6 @@ class TodoDragPreview extends React.Component<PreviewProps,{}> {
 export default class TodoView extends React.PureComponent<Props> {
 
 	render(){
-		console.log("TODO VIEW", this.props.todo);
 		return (
 			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
 				 data-todo-id={this.props.todo.id}
@@ -150,7 +150,7 @@ export default class TodoView extends React.PureComponent<Props> {
 					opacity: this.props.todo.dragging ? 0 : 1 }}
 				 onDragStart={this.onDragStart}>
 				<div>
-					<TodoWrapper >
+					<TodoWrapper  className={todoWrapperClass} >
 						<div className="drag-handle" draggable={true}>
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
