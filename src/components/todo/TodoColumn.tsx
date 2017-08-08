@@ -49,7 +49,16 @@ const todoColumnClass = cxs({
 	textAlign: 'center',
 	height: '100%',
 	position: 'relative',
-	verticalAlign: 'top'
+	verticalAlign: 'top',
+	overflow: 'hidden',
+	'.settings-btn': {
+		position: 'absolute',
+		top: 0,
+		right: 0
+	},
+	'h4' : {
+		'margin-top': '4px'
+	}
 }) ;
 
 const columnNameClass = cxs({
@@ -67,21 +76,6 @@ const trashBtnClass = cxs({
 	right: 30,
 	top: 0
 });
-
-const TodoColumnWrapper = styled.div`
-	& > .settings-btn {
-		position: absolute;
-		top: 0;
-		right: 0;
-	}
-	
-	& > h4 {
-		margin-top: 0;
-	}
-	
-	overflow: hidden;
-
-`;
 
 const TodoListWrapper = styled.ul`
 	list-style-type: none;
@@ -147,7 +141,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
 				<div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
-					<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
+					<div className={`pt-card pt-elevation-2 ${todoColumnClass}`}
 									   style={{background: columnColor}}>
 						<EditableText className={columnNameClass}
 									  value={this.state.columnName}
@@ -169,7 +163,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
-					</TodoColumnWrapper>
+					</div>
 				</div>
 				{this.renderSettings()}
 			</div>
