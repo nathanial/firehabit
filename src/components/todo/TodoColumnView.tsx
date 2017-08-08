@@ -71,7 +71,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 		const column = this.props.column;
 		const todos = column.todos;
 		const columnColor = column.color;
-		console.log("RENDER");
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
 				<div className="todo-column" style={{display:'inline-block'}}>
@@ -103,6 +102,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 				const {todoID, direction} = this.findNeighbor(draggable);
 				const todos = this.props.column.todos;
 				let index = todos.length;
+				console.log("Drop", todoID, direction);
 				if(todoID){
 					index = _.findIndex(todos, (todo: Todo) => todo.id === todoID);
 					if(direction === 'above'){
@@ -110,6 +110,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 					}
 				}
 				return {column: this.props.column, index};
+			},
+			onHover: (draggable: Draggable) => {
+				const {todoID, direction} = this.findNeighbor(draggable);
+				this.showPreviewOfDrop(todoID, direction, draggable);
 			}
 		});
 	}
@@ -119,6 +123,11 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 			this.unregisterDropTarget();
 			this.unregisterDropTarget = null;
 		}
+	}
+
+	private showPreviewOfDrop(todoID: string, direction: string, draggable: Draggable) {
+		
+		console.log("Show Preview of Drop", todoID, direction, draggable);
 	}
 
 	private findNeighbor(draggable: Draggable){

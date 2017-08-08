@@ -32,6 +32,7 @@ type State = {
 type DropTarget = {
 	element: HTMLElement;
 	onDrop(draggable: Draggable);
+	onHover(draggable: Draggable);
 };
 
 type Dimensions = {
@@ -40,6 +41,8 @@ type Dimensions = {
 	right: number;
 	bottom: number;
 }
+
+type SendToDraggableCallback = (draggable: Draggable, dropTarget: DropTarget) => boolean;
 
 function intersectRect(r1: Dimensions, r2: Dimensions): boolean {
 	return !(r2.left > r1.right ||
@@ -93,13 +96,16 @@ export class DragAndDropLayer extends React.Component<{}, State>{
 	}
 
 	onMouseMove = (event) => {
-		if (!_.isEmpty(this.state.draggables)) {
-			for (let draggable of this.state.draggables) {
+		const {draggables, dropTargets} = this.state;
+		if (!_.isEmpty(draggables)) {
+			for (let draggable of draggables) {
 				draggable.x = event.pageX - 10;
 				draggable.y = event.pageY - 30;
-				this.forceUpdate();
 			}
 		}
+
+		this.triggerHover(draggables, dropTargets);
+		this.forceUpdate();
 	};
 
 	onMouseUp = (event) => {
@@ -156,6 +162,16 @@ export class DragAndDropLayer extends React.Component<{}, State>{
 			})
 		});
 	}
+
+	private triggerHover = _.throttle((draggables: Draggable[], dropTargets: DropTarget[]) => {
+		for (let draggable of draggables) {
+			for (let dropTarget of dropTargets) {
+				if (intersects(draggable, dropTarget.element.getBoundingClientRect())) {
+					dropTarget.onHover(draggable);
+				}
+			}
+		}
+	}, 100);
 
 }
 
