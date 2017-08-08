@@ -13,6 +13,7 @@ import ScrollArea from 'react-scrollbar';
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 import * as uuidv4 from 'uuid/v4';
+import DraggableList from '../list/DraggableList';
 
 /**
  * Animation Plan
@@ -143,12 +144,11 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 								speed={0.8}
 								horizontal={false}>
 								<div style={{margin: '10px 0'}}></div>
-								{this.props.column.todos.map((todo) => {
-									return <TodoView key={todo.id}
-													todo={todo}
-													confirmDeletion={this.props.column.confirmDeletion}
-													onDelete={this.onDelete} />;
-								})}
+								<DraggableList>
+									{todos.map((todo) => 
+										<TodoView key={todo.id} todo={todo} confirmDeletion={this.props.column.confirmDeletion} onDelete={this.onDelete} />
+									)}
+								</DraggableList>								
 							</CustomScrollArea>
 						</div>
 					</div>
