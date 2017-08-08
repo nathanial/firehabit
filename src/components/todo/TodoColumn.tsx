@@ -142,7 +142,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	render(){
 		const column = this.props.column;
-		const todos = _.sortBy(column.todos || [], todo => todo.index);
+		const todos = _.sortBy(column.todos, todo => todo.index);
 		const columnColor = column.color;
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
@@ -276,6 +276,8 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	private onAddTodo = async () => {
 		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
+		// filthy hack to fix initial addition of columns
+		this.forceUpdate();
 	};
 
 	private onChangeColumnName = (newName) => {

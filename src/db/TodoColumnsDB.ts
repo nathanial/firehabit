@@ -52,7 +52,8 @@ export default class TodoColumnsDB implements DBSection {
 
 	async addTodoColumn(name) {
 		this.todoColumnsRef.push({
-			name
+			name,
+			todos: []
 		});
 	}
 
