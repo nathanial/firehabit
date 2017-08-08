@@ -47,7 +47,7 @@ const todoColumnClass = cxs({
 	padding: '20px 10px 10px 10px',
 	width: '280px',
 	textAlign: 'center',
-	height: '600px',
+	height: '100%',
 	position: 'relative',
 	verticalAlign: 'top'
 }) ;
@@ -145,8 +145,8 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const todos = _.sortBy(column.todos, todo => todo.index);
 		const columnColor = column.color;
 		return(
-			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative'}}>
-				<div className="todo-column" style={{display:'inline-block'}}>
+			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
+				<div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
 					<TodoColumnWrapper className={`pt-card pt-elevation-2 ${todoColumnClass}`}
 									   style={{background: columnColor}}>
 						<EditableText className={columnNameClass}
