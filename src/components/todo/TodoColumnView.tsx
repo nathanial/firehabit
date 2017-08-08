@@ -9,10 +9,10 @@ import cxs from 'cxs';
 import DialogService from "../../services/DialogService";
 import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
+import ScrollArea from 'react-scrollbar';
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 import * as uuidv4 from 'uuid/v4';
-import TodoList from "./TodoList";
 
 /**
  * Animation Plan
@@ -22,6 +22,58 @@ import TodoList from "./TodoList";
  * 	Step 3. let is snap back into place by setting left: 0
  *
 **/
+
+
+declare class ScrollArea extends React.Component<any, {}>{
+	handleKeyDown(e);
+}
+
+class CustomScrollArea extends ScrollArea {
+	render(){
+		return super.render();
+	}
+	handleKeyDown(e){
+		if (e.target.tagName.toLowerCase() === 'textarea') {
+			return;
+		} else {
+			return super.handleKeyDown(e);
+		}
+	}
+}
+
+const todoListClass = cxs({
+	'list-style-type': 'none',
+	'margin': 0,
+	'padding': 0,
+	'overflow-y': 'auto',
+	'position': 'absolute',
+	'left': 0,
+	'right': 0,
+	'bottom': 0,
+	'top': 30,
+
+	'.scrollarea': {
+		height: '100%',
+		'.scrollarea-content': {
+			'padding-left': '10px',
+			'padding-right': '10px',
+			'li:first-child': {
+				'margin-top': 0
+			}
+		},
+		'.scrollbar-container': {
+			'z-index': 1
+		 },
+		'.scrollbar-container.vertical': {
+			'.scrollbar': {
+				background: colors.primaryColor2
+			},
+			'&:hover': {
+				background: colors.primaryColor1
+			}
+		}
+	}
+});
 
 
 const todoColumnClass = cxs({
@@ -86,7 +138,19 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 								className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
 								onClick={this.onAddTodo} />
 						{this.renderTrashBtn()}
-						<TodoList column={this.props.column} />
+						<div className={todoListClass}>
+							<CustomScrollArea
+								speed={0.8}
+								horizontal={false}>
+								<div style={{margin: '10px 0'}}></div>
+								{this.props.column.todos.map((todo) => {
+									return <TodoView key={todo.id}
+													todo={todo}
+													confirmDeletion={this.props.column.confirmDeletion}
+													onDelete={this.onDelete} />;
+								})}
+							</CustomScrollArea>
+						</div>
 					</div>
 				</div>
 				{this.renderSettings()}
@@ -125,8 +189,12 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 		}
 	}
 
+    private onDelete = (todo) => {
+		this.props.column.todos.splice(this.props.column.todos.indexOf(todo), 1)
+	};
+
 	private showPreviewOfDrop(todoID: string, direction: string, draggable: Draggable) {
-		
+
 		console.log("Show Preview of Drop", todoID, direction, draggable);
 	}
 
