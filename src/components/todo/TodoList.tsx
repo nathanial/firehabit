@@ -1,8 +1,8 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import * as colors from '../../theme/colors';
 import TodoView from "./TodoView";
 import ScrollArea from 'react-scrollbar';
+import cxs from 'cxs';
 
 declare class ScrollArea extends React.Component<any, {}>{
 	handleKeyDown(e);
@@ -21,44 +21,39 @@ class CustomScrollArea extends ScrollArea {
 	}
 }
 
-const TodoListWrapper = styled.ul`
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow-y: auto;
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 30px;
-	
-	& > .scrollarea {
-		height: 100%;
-		& > .scrollarea-content {
-			padding-left: 10px;
-			padding-right: 10px;
-		}
-		
-		.scrollbar-container {
-			z-index: 1;
-		 }
-		
-		& > .scrollbar-container.vertical {
-			& > .scrollbar {
-				background: ${colors.primaryColor2};
-			}
-			&:hover {
-				background: ${colors.primaryColor1};
-			}
-		}
-	}
+const todoListClass = cxs({
+	'list-style-type': 'none',
+	'margin': 0,
+	'padding': 0,
+	'overflow-y': 'auto',
+	'position': 'absolute',
+	'left': 0,
+	'right': 0,
+	'bottom': 0,
+	'top': 30,
 
-	& > .scrollarea > .scrollarea-content > li {
-		&:first-child {
-			margin-top: 0;
+	'.scrollarea': {
+		height: '100%',
+		'.scrollarea-content': {
+			'padding-left': '10px',
+			'padding-right': '10px',
+			'li:first-child': {
+				'margin-top': 0
+			}
+		},
+		'.scrollbar-container': {
+			'z-index': 1
+		 },
+		'.scrollbar-container.vertical': {
+			'.scrollbar': {
+				background: colors.primaryColor2
+			},
+			'&:hover': {
+				background: colors.primaryColor1
+			}
 		}
 	}
-`;
+});
 
 type Props = {
     column: TodoColumn;
@@ -67,7 +62,7 @@ type Props = {
 export default class TodoList extends React.PureComponent<Props> {
     render(){
         return (
-            <TodoListWrapper>
+            <div className={todoListClass}>
                 <CustomScrollArea
                     speed={0.8}
                     horizontal={false}>
@@ -79,7 +74,7 @@ export default class TodoList extends React.PureComponent<Props> {
                                          onDelete={this.onDelete} />;
                     })}
                 </CustomScrollArea>
-            </TodoListWrapper>
+            </div>
         );
     }
 
