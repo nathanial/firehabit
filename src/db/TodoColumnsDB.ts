@@ -62,7 +62,14 @@ export default class TodoColumnsDB implements DBSection {
 	}
 
 	async updateTodoColumn(id, values) {
-		this.todoColumnsRef.child(id).update(values);
+		values = _.cloneDeep(mobx.toJS(values));
+		const todos = values.todos;
+		const newTodos = {};
+		for(const todo of todos){
+			newTodos[todo.id] = _.omit(todo, ['id']);
+		}
+		values.todos = newTodos;
+		this.todoColumnsRef.child(id).update(_.omit(values, ['id']));
 	}
 
 	async addTodo(column, todo) {
@@ -73,7 +80,7 @@ export default class TodoColumnsDB implements DBSection {
 		const column = _.find(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
-		this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).update(_.omit(todo, 'id'));
+		this.todoColumnsRef.child(column.id).update(column);
 	}
 
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
@@ -100,13 +107,12 @@ export default class TodoColumnsDB implements DBSection {
 			const todo = todos[i];
 			if(todo.index !== i){
 				todo.index = i;
-				await this.updateTodo(todo);
 			}
 		}
+		await this.updateTodoColumn(column.id, column);
 	}
 
 	async reset(columns: TodoColumn[]) {
-		console.log('Reset');
 		await this.todoColumnsRef.remove();
 		(this.todoColumns as any).clear();
 		await this.todoColumnsRef.set(encode(columns));
