@@ -38,18 +38,29 @@ const todoWrapperClass = cxs({
 	'flex-direction': 'row'
 });
 
-const TodoWrapper = styled.div`
-	.drag-handle {
-		bottom: 0;
-		width: 30px;
-		font-size: 24px;
-		
-		.inner-icon {
-			position: absolute;
-			top: 50%;
-			margin-top: -17px;
-		}
+const deleteButtonClass = cxs({
+	'min-width': '18px',
+	'min-height': '18px',
+	'line-height': '18px',
+	'transition': 'opacity 0.2s ease-out',
+	':before': {
+		'font-size': '12px',
+		'vertical-align': 'middle'
 	}
+});
+
+const dragHandleClass = cxs({
+	bottom: 0,
+	width: '30px',
+	'font-size': '24px',
+	'.inner-icon': {
+		position: 'absolute',
+		top: '50%',
+		'margin-top': '-17px'
+	}
+});
+
+const TodoWrapper = styled.div`
 	border-radius: 0;
 	
 	&:hover {
@@ -70,16 +81,7 @@ const TodoWrapper = styled.div`
 		border-top-left-radius: 3px;
 		border-bottom-left-radius: 3px;
 		opacity: 0;
-		.delete-btn {
-			min-width: 18px;
-			min-height: 18px;
-			line-height: 18px;
-			transition: opacity 0.2s ease-out;
-			&:before {
-				font-size: 12px;
-				vertical-align: middle;
-			}
-		}
+	
 		
 		transition: opacity 0.2s ease-in-out;
 		
@@ -117,7 +119,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
 				 style={{padding:0, background: '#eee', margin: 0}}>
 				<div>
 					<TodoWrapper className={todoWrapperClass} >
-						<div className="drag-handle">
+						<div className={dragHandleClass}>
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
 						<div className={todoContentWrapperClass}>
@@ -125,7 +127,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
 										  multiline={true}/>
 						</div>
 						<div className="todo-controls">
-							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
+							<Button className={`${deleteButtonClass} pt-intent-danger pt-minimal`} iconName="trash" />
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
 						</div>
 					</TodoWrapper>
@@ -155,7 +157,7 @@ class TodoView extends React.Component<Props, State> {
 				 onDragStart={this.onDragStart}>
 				<div>
 					<TodoWrapper className={todoWrapperClass} >
-						<div className="drag-handle" draggable={true}>
+						<div className={dragHandleClass} draggable={true}>
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
 						<div className={todoContentWrapperClass}>
