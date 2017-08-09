@@ -35,7 +35,7 @@ function pushAll(dst, src){
 export async function downloadCollection(dst, ref){
 	const data = await ref.once('value');
 	if(data.val()){
-		pushAll(dst, flattenKeys(data.val()));
+		dst.replace(flattenKeys(data.val()));
 	}
 }
 
@@ -59,8 +59,7 @@ export function watchCollection(dst, ref){
 					if(_.isUndefined(dstItem[key])) {
 						dstItem[key] = observable([]);
 					}
-					dstItem[key].splice(0, dstItem[key].length);
-					pushAll(dstItem[key], newValue);
+					dstItem[key].replace(newValue);
 				} else {
 					dstItem[key] = newValue;
 				}

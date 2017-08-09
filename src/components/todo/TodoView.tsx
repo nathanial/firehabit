@@ -11,17 +11,16 @@ import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
 
-const TodoContentWrapper = styled.div`
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	.pt-editable-text {
-		max-width: 180px;
-	}
-	
-	flex: 2 0 0; 
-`;
+const todoContentWrapperClass = cxs({
+	position: 'relative',
+	display: 'flex',
+	'flex-direction': 'column',
+	'justify-content': 'center',
+	'.pt-editable-text': {
+		'max-width': '180px'
+	},
+	flex: '2 0 0' 
+});
 
 const todoItemClass = cxs({
 	padding: '10px',
@@ -32,13 +31,14 @@ const todoItemClass = cxs({
 	width: '240px'
 });
 
-const TodoWrapper = styled.div`
-	position: relative;
-	padding: 10px 0;
-	display: flex;
-	flex-direction: row;
+const todoWrapperClass = cxs({
+	position: 'relative',
+	padding: '10px 0',
+	display: 'flex',
+	'flex-direction': 'row'
+});
 
-	
+const TodoWrapper = styled.div`
 	.drag-handle {
 		bottom: 0;
 		width: 30px;
@@ -110,20 +110,20 @@ type PreviewProps = {
 	todo: Todo;
 }
 
-class TodoDragPreview extends React.Component<PreviewProps,{}> {
+class TodoDragPreview extends React.PureComponent<PreviewProps> {
 	render(){
 		return (
 			<div className={`pt-card pt-elevation-2 ${todoItemClass}`}
 				 style={{padding:0, background: '#eee', margin: 0}}>
 				<div>
-					<TodoWrapper >
+					<TodoWrapper className={todoWrapperClass} >
 						<div className="drag-handle">
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
-						<TodoContentWrapper>
+						<div className={todoContentWrapperClass}>
 							<EditableText value={this.props.todo.name}
 										  multiline={true}/>
-						</TodoContentWrapper>
+						</div>
 						<div className="todo-controls">
 							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
@@ -147,22 +147,23 @@ class TodoView extends React.Component<Props, State> {
 		return (
 			<div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
 				 data-todo-id={this.props.todo.id}
-				style={{
+				 style={{
 					padding:0,
 					background: '#eee',
-					opacity: this.state.dragging ? 0 : 1 }}
-				onDragStart={this.onDragStart}>
+					opacity: this.state.dragging ? 0 : 1 }
+				 }
+				 onDragStart={this.onDragStart}>
 				<div>
-					<TodoWrapper >
+					<TodoWrapper className={todoWrapperClass} >
 						<div className="drag-handle" draggable={true}>
 							<div className="inner-icon pt-icon-drag-handle-vertical"/>
 						</div>
-						<TodoContentWrapper>
+						<div className={todoContentWrapperClass}>
 							<EditableText value={this.state.updatedTodo.name}
 														multiline={true}
 														onChange={this.onNameChanged}
 														onConfirm={this.onUpdatedTodo} />
-						</TodoContentWrapper>
+						</div>
 						<div className="todo-controls">
 							<Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
