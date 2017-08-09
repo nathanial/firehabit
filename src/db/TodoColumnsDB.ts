@@ -80,7 +80,12 @@ export default class TodoColumnsDB implements DBSection {
 		const column = _.find(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
-		this.todoColumnsRef.child(column.id).update(column);
+		for(let t of column.todos){
+			if(t.id === todo.id){
+				_.extend(t, todo);
+			}
+		}
+		await this.updateTodoColumn(column.id, column);
 	}
 
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
