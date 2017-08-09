@@ -1,6 +1,5 @@
 // Line Limit 100
 import * as React from 'react';
-import styled from 'styled-components';
 import DayPicker from '../DayPicker';
 import NewFoodDialog from './NewFoodDialog';
 import * as _ from 'lodash';
@@ -11,23 +10,24 @@ import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
 import FoodDefinitionForm from "./FoodDefinitionForm";
 import WeightForm from "./WeightForm";
+import cxs from 'cxs';
 
-const CaloriesFormWrapper = styled.div`
-	position: relative;
-	& > h2 {
-		text-align: left;
-		margin-bottom: 20px;
-		margin-top: 10px;
-	}
-	min-width: 540px;
-	margin-top: 30px;
-`;
+const caloriesFormWrapperClass = cxs({
+	position: 'relative',
+	'h2': {
+		'text-align': 'left',
+		'margin-bottom': '20px',
+		'margin-top': '10px'
+	},
+	'min-width': '540px',
+	'margin-top': '30px'
+});
 
-const CaloriesFormOuterWrapper = styled.div`
-	display: inline-block;
-	position: relative;
-	margin: 50px;
-`;
+const caloriesFormOuterWrapperClass = cxs({
+	display: 'inline-block',
+	position: 'relative',
+	margin: '50px'
+});
 
 interface CaloriesFormProps {
 	date: string;
@@ -35,7 +35,7 @@ interface CaloriesFormProps {
 }
 
 interface CaloriesFormState {
-
+	value: string;
 }
 
 @observer
@@ -49,9 +49,9 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 
 	render() {
 		return (
-			<CaloriesFormOuterWrapper>
+			<div className={caloriesFormOuterWrapperClass}>
 				<WeightForm date={this.props.date} />
-				<CaloriesFormWrapper className="pt-card pt-elevation-2">
+				<div className={`pt-card pt-elevation-2 ${caloriesFormWrapperClass}`}>
 					<h2>Calories</h2>
 					<DayPicker date={this.props.date}
 							 	onChange={(newDate) => this.props.onChangeDate(newDate)} />
@@ -63,8 +63,8 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 								 onChange={this.onChange} />
 					</div>
 					{this.content()}
-				</CaloriesFormWrapper>
-			</CaloriesFormOuterWrapper>
+				</div>
+			</div>
 		);
 	}
 
