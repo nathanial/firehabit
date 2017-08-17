@@ -26,7 +26,7 @@ class App extends React.Component<Props, {}> {
 				<div className="App pt-dark">
 					<SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
 					<div className="app-content">
-						<Route path="/" component={TodoPage} />
+						<Route exact path="/" component={TodoPage} />
 						<Route path="/calories" component={CaloriesPage} />
 					</div>
 				</div>

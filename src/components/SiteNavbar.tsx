@@ -37,8 +37,8 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading">FireHabit</div>
 					<span className="pt-navbar-divider" />
-					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/' || path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+					<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
 				</div>
 				<div className="pt-navbar-group pt-align-right">
 					{this.renderUserDropdown()}

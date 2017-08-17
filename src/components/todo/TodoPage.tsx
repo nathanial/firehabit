@@ -51,7 +51,7 @@ export default class TodoPage extends React.Component {
 	render(){
 		return (
 			<div>
-				<Route exact path="/todo" component={ColumnsPage} />
+				<Route exact path="/" component={ColumnsPage} />
 				<Route exact path="/todo/column/:columnID/settings" component={TodoColumnSettingsPage} />
 			</div>
 		);
