@@ -10,14 +10,17 @@ const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	width: 250px;
-	height: 200px;
+	width: 700px;
+	max-width: 700px;
+	min-width: 700px;
 	vertical-align: top;
-	margin-top: 50px;
+	margin-top: 20px;
+	padding-left: 40px;
 
-	& > .pt-running-text {
-		margin-top: 5px;
-		margin-bottom: 0;
+	& .pt-running-text {
+		display: inline-block;
+		margin: 10px;
+		text-align: left;
 		& > .total-calories-label {
 			margin-right: 10px;
 		}
@@ -25,15 +28,15 @@ const CalorieStatisticsWrapper = styled.div`
 	
 	.smiley {
 		position: absolute;
-		right: 30px;
-		top: 110px;
+		left: -100px;
+		top:80px;
 	}
 `;
 
 const settingsBtn = cxs({
 	position: 'absolute',
-	right: 0,
-	top: 0
+	right: '0px',
+	top: '7px'
 });
 
 interface CalorieStatisticsProps {
@@ -44,25 +47,33 @@ interface CalorieStatisticsProps {
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
 		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
-		if (!day || !day.consumed) {
-			return <div />
+		let dailyTotal;
+		if(day){
+			dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
+		} else {
+			dailyTotal = 0;
 		}
-		const dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
+
 		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
 		const remaining = goal - dailyTotal;
 		const weightStasisGoal = db.calorieSettingsDB.calorieSettings.weightStasisGoal;
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
-			<CalorieStatisticsWrapper className="pt-card pt-elevation-1">
+			<CalorieStatisticsWrapper>
 				{this.renderSmileyFace(poundsLost)}
-				<div style={{marginTop: 20}}>
+				<div>
 					{this.renderDailyTotal(dailyTotal)}
+					<span>|</span>
 					{this.renderGoal(goal)}
+					<span>|</span>
 					{this.renderRemaining(remaining)}
+					<span>|</span>
 					{this.renderPoundsLost(poundsLost)}
 				</div>
-				<Button className={`pt-minimal ${settingsBtn}`} iconName="settings" onClick={this.gotoSettings} />
+				<Button className={`pt-minimal ${settingsBtn}`}
+						iconName="settings"
+						onClick={this.gotoSettings} />
 			</CalorieStatisticsWrapper>
 		);
 	}
@@ -88,15 +99,15 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 	private renderSmileyFace = (poundsLost: number) => {
 		if(poundsLost > (2 / 7)) {
 			return (
-				<img className="smiley" src="icons/happy.png" width="32" />
+				<img className="smiley" src="icons/happy.png" width="128" />
 			);
 		} else if(poundsLost > 0) {
 			return (
-				<img className="smiley" src="icons/dread.png" width="32"  />
+				<img className="smiley" src="icons/dread.png" width="128"  />
 			);
 		} else {
 			return (
-				<img className="smiley" src="icons/crying.png" width="32"/>
+				<img className="smiley" src="icons/crying.png" width="128"/>
 			);
 		}
 	};

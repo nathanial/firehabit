@@ -15,8 +15,8 @@ class CaloriesDataPage extends React.PureComponent<CaloriesDataPageProps, {}> {
 		const {selectedDate} = this.props.caloriesState;
 		return (
 			<div style={{marginLeft: 20}}>
-				<CaloriesForm date={selectedDate} onChangeDate={this.onChangeDate} />
 				<CalorieStatistics date={selectedDate} />
+				<CaloriesForm date={selectedDate} onChangeDate={this.onChangeDate} />
 			</div>
 		);
 	}
@@ -34,7 +34,7 @@ export default class CaloriesPage extends React.Component<CaloriesPageProps,{}> 
 	render() {
 		const caloriesState = this.props.caloriesState;
 		return (
-			<div>
+			<div style={{width: 800, minWidth: 800, maxWidth: 800, marginLeft: '-400px', left: '50%', position:'absolute'}}>
 				<Route exact path="/calories" render={() => <CaloriesDataPage caloriesState={caloriesState} />} />
 				<Route exact path="/calories/settings" component={CaloriesSettings} />
 			</div>

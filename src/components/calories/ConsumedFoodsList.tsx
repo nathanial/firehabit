@@ -7,7 +7,9 @@ import * as _ from 'lodash';
 
 const CaloriesListWrapper = styled.ul`
 	border: 1px solid #000;
-	width: 500px;
+	width: 600px;
+	max-width: 600px;
+	min-width: 600px;
 	min-height: 100px;
 	max-height: 500px;
 	overflow-y: scroll;
@@ -52,10 +54,10 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){
 		const day = _.find(db.daysDB.days, day => day.date === this.props.day);
-		if(!day || !day.consumed) {
-			return <div></div>
+		let groups = [];
+		if(day){
+			groups = this.getEntryGroups(day);
 		}
-		const groups = this.getEntryGroups(day);
 		return (
 			<CaloriesListWrapper>
 				{groups.map((entry, index) => {

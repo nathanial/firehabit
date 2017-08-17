@@ -6,7 +6,7 @@ import cxs from 'cxs';
 
 const weightFormClass = cxs({
 	display: 'block',
-	width: '300px',
+	width: '100%',
 	position: 'relative'
 });
 

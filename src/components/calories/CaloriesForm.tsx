@@ -14,19 +14,21 @@ import cxs from 'cxs';
 
 const caloriesFormWrapperClass = cxs({
 	position: 'relative',
+	opacity: 0.95,
 	'h2': {
 		'text-align': 'left',
 		'margin-bottom': '20px',
 		'margin-top': '10px'
 	},
-	'min-width': '540px',
+	'min-width': '610px',
 	'margin-top': '30px'
 });
 
 const caloriesFormOuterWrapperClass = cxs({
 	display: 'inline-block',
 	position: 'relative',
-	margin: '50px'
+	margin: '10px',
+	opacity: 0.95
 });
 
 interface CaloriesFormProps {
