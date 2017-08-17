@@ -5,31 +5,40 @@ import {db, history} from '../util';
 import {Button, Menu, MenuDivider, MenuItem, Popover, Position} from '@blueprintjs/core';
 import * as firebase from 'firebase';
 
-interface Props {
+type Props = {
+	path: string;
+	onNavigate(path: string)
+};
+
+type NavProps = {
+	goto: string;
+	icon: string;
+	active: boolean;
 	onNavigate(path: string);
+};
+
+class NavBtn extends React.PureComponent<NavProps, {}> {
+	render(){
+		const props = this.props;
+		return (
+			<button onClick={() => props.onNavigate(props.goto)}
+					className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
+				{props.children}
+			</button>
+		);
+	}
 }
 
-export default class SiteNavbar extends React.Component<Props, {}> {
+export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
-		const path = history.location.pathname;
-
-		const NavBtn = (props) => {
-			return (
-				<button onClick={() => this.props.onNavigate(props.goto)}
-								className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
-					{props.children}
-				</button>
-			);
-		};
-
+		const {path} = this.props;
 		return (
-			<nav className="pt-navbar pt-dark" {..._.omit(this.props, ['onNavigate'])}>
+			<nav className="pt-navbar pt-dark" {..._.omit(this.props, ['onNavigate', 'path'])}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading">FireHabit</div>
 					<span className="pt-navbar-divider" />
-					<NavBtn goto="habits" icon="pt-icon-pulse" active={(path === '/' || path === '/habits')}>Habits</NavBtn>
-					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'}>Calories</NavBtn>
-					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'}>Todo</NavBtn>
+					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/' || path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+					<NavBtn goto="todo" icon="pt-icon-th" active={path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
 				</div>
 				<div className="pt-navbar-group pt-align-right">
 					{this.renderUserDropdown()}
@@ -38,7 +47,7 @@ export default class SiteNavbar extends React.Component<Props, {}> {
 		);
 	}
 
-	renderUserDropdown(){
+	private renderUserDropdown(){
 		const logout = async () => {
 			await firebase.auth().signOut();
 			window.location.reload();

@@ -7,10 +7,8 @@ import {
 	Router,
 	Route
 } from 'react-router-dom'
-import HabitsPage from './components/habits/HabitsPage';
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoPage from './components/todo/TodoPage';
-import TodayPage from './components/today/TodayPage';
 import {history} from './util';
 import {observer} from 'mobx-react';
 import {AppState} from "./state";
@@ -26,25 +24,19 @@ class App extends React.Component<Props, {}> {
 		return (
 			<Router history={history}>
 				<div className="App pt-dark">
-					<SiteNavbar onNavigate={this.onNavigate} />
+					<SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
 					<div className="app-content">
-						<Route exact path="/" component={HabitsPage}/>
-						<Route exact path="/habits" component={HabitsPage} />
+						<Route path="/" component={TodoPage} />
 						<Route path="/calories" component={CaloriesPage} />
-						<Route path="/todo" component={TodoPage} />
 					</div>
 				</div>
 			</Router>
 		);
 	}
 
-	renderTodayPage = () => {
-		const {appState} = this.props;
-		return <TodayPage timeSlots={appState.timeSlots}  />;
-	};
-
 	onNavigate = (page) => {
 		history.push('/' + page);
+		this.forceUpdate();
 	};
 }
 
