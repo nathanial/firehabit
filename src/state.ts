@@ -1,22 +1,19 @@
 import * as Freezer from 'freezer-js';
 import * as _ from 'lodash';
 import * as uuidv4 from 'uuid/v4';
+import moment = require("moment");
 
-const timeSlots = _.flatten(_.times(24, (hour) => {
-	return _.times(2, (minutes) => {
-		return {
-			id: uuidv4(),
-			hour,
-			minutes: minutes * 30,
-			active: false
-		};
-	})
-}));
+export interface CaloriesState {
+	selectedDate: string;
+	set?(name: string, value: any);
+	set?(newState: Partial<CaloriesState>);
+}
 
 export interface AppState {
-	timeSlots: TimeSlot[];
 	showDevTools: boolean;
-	set(name: string, value: any);
+	calories: CaloriesState;
+	set?(name: string, value: any);
+	set?(newState: Partial<AppState>);
 }
 
 interface FreezerData<T> {
@@ -24,7 +21,12 @@ interface FreezerData<T> {
 	on(eventName: string, callback: () => void);
 }
 
-export const state = new Freezer({
-	timeSlots
-}) as FreezerData<AppState>;
+const initialAppState: AppState = {
+	showDevTools: false,
+	calories: {
+		selectedDate: moment().format('MM/DD/YY')
+	}
+};
+
+export const state = new Freezer(initialAppState);
 

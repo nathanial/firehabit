@@ -1,38 +1,41 @@
 // Line Limit 100
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import CaloriesForm from "./CaloriesForm";
 import CalorieStatistics from "./CaloriesStatistics";
-import * as moment from 'moment';
 import {Route} from "react-router-dom";
 import CaloriesSettings from "./CaloriesSettings";
+import {CaloriesState} from "../../state";
 
-interface DataPageState {
-	date: string;
+type CaloriesDataPageProps = {
+	caloriesState: CaloriesState;
 }
 
-@observer
-class CaloriesDataPage extends React.Component<{},DataPageState> {
-	state = {
-		date: moment().format('MM/DD/YY')
-	};
-
+class CaloriesDataPage extends React.PureComponent<CaloriesDataPageProps, {}> {
 	render(){
+		const {selectedDate} = this.props.caloriesState;
 		return (
 			<div style={{marginLeft: 20}}>
-				<CaloriesForm date={this.state.date} onChangeDate={(newDate) => this.setState({date: newDate})} />
-				<CalorieStatistics date={this.state.date} />
+				<CaloriesForm date={selectedDate} onChangeDate={this.onChangeDate} />
+				<CalorieStatistics date={selectedDate} />
 			</div>
 		);
 	}
+
+	onChangeDate = (newDate: string) => {
+		this.props.caloriesState.set({selectedDate: newDate});
+	}
 }
 
-@observer
-export default class CaloriesPage extends React.Component<{},{}> {
+type CaloriesPageProps = {
+	caloriesState: CaloriesState;
+}
+
+export default class CaloriesPage extends React.Component<CaloriesPageProps,{}> {
 	render() {
+		const caloriesState = this.props.caloriesState;
 		return (
 			<div>
-				<Route exact path="/calories" render={() => <CaloriesDataPage />} />
+				<Route exact path="/calories" render={() => <CaloriesDataPage caloriesState={caloriesState} />} />
 				<Route exact path="/calories/settings" component={CaloriesSettings} />
 			</div>
 		);

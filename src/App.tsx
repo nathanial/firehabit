@@ -27,7 +27,7 @@ class App extends React.Component<Props, {}> {
 					<SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
 					<div className="app-content">
 						<Route exact path="/" component={TodoPage} />
-						<Route path="/calories" component={CaloriesPage} />
+						<Route path="/calories" component={() => <CaloriesPage caloriesState={this.props.appState.calories} />} />
 					</div>
 				</div>
 			</Router>
