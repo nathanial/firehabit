@@ -18,7 +18,7 @@ export default class FoodDefinitionsDB implements DBSection {
 		const userId = user.uid;
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
 		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
-		watchCollection(this.foodDefinitions, this.foodDefinitionsRef);
+		watchCollection(this.foodDefinitions, this.foodDefinitionsRef, () => ({}));
 	}
 
 	async addFoodDefinition(definition){

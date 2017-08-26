@@ -4,7 +4,6 @@ import * as firebase from 'firebase';
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
-import DailiesDB from "./DailiesDB";
 import {downloadCollection, watchCollection} from "./util";
 import TodoColumnsDB from "./TodoColumnsDB";
 import DaysDB from "./DaysDB";
@@ -19,7 +18,6 @@ export class DB {
 
 	db: Database;
 	calorieSettingsDB: CalorieSettingsDB;
-	dailiesDB: DailiesDB;
 	todoColumnsDB: TodoColumnsDB;
 	daysDB: DaysDB;
 	foodDefinitionsDB: FoodDefinitionsDB;
@@ -30,9 +28,6 @@ export class DB {
 
 		this.calorieSettingsDB = new CalorieSettingsDB(this.db);
 		await this.calorieSettingsDB.setup();
-
-		this.dailiesDB = new DailiesDB(this.db);
-		await this.dailiesDB.setup();
 
 		this.todoColumnsDB = new TodoColumnsDB(this.db);
 		await this.todoColumnsDB.setup();

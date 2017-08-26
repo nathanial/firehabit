@@ -38,7 +38,9 @@ export default class TodoColumnsDB implements DBSection {
 
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		await downloadCollection(this.todoColumns, this.todoColumnsRef);
-		watchCollection(this.todoColumns, this.todoColumnsRef);
+		watchCollection(this.todoColumns, this.todoColumnsRef, () => {
+			return {todos: observable([])};
+		});
 		for(let todoColumn of this.todoColumns){
 			if(_.isUndefined(todoColumn.todos)){
 				todoColumn.todos = observable([]);
@@ -53,7 +55,7 @@ export default class TodoColumnsDB implements DBSection {
 	async addTodoColumn(name) {
 		this.todoColumnsRef.push({
 			name,
-			todos: []
+			todos: {}
 		});
 	}
 

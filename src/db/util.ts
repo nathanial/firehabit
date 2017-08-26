@@ -39,11 +39,11 @@ export async function downloadCollection(dst, ref){
 	}
 }
 
-export function watchCollection(dst, ref){
+export function watchCollection(dst, ref, createDefaults: () => Object){
 	ref.on('child_added', (snapshot) => {
 		const existingIDs = _.map(dst, 'id');
 		if(!_.includes(existingIDs, snapshot.key)){
-			dst.push({id: snapshot.key, ...snapshot.val()});
+			dst.push({id: snapshot.key, ...createDefaults(), ...snapshot.val()});
 		}
 	});
 	ref.on('child_changed', (snapshot) => {

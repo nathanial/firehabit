@@ -18,7 +18,7 @@ export default class DaysDB implements DBSection {
 		const userId = user.uid;
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
 		await downloadCollection(this.days, this.daysRef);
-		watchCollection(this.days, this.daysRef);
+		watchCollection(this.days, this.daysRef, () => ({}));
 	}
 
 
