@@ -61,14 +61,16 @@ export default class TodoColumnsDB implements DBSection {
 		this.todoColumnsRef.child(column.id).remove();
 	}
 
-	async updateTodoColumn(id, values) {
+	async updateTodoColumn(id: string, values: Partial<TodoColumn>) {
 		values = _.cloneDeep(mobx.toJS(values));
-		const todos = values.todos;
-		const newTodos = {};
-		for(const todo of todos){
-			newTodos[todo.id] = _.omit(todo, ['id']);
+		if(values.todos){
+			const todos = values.todos;
+			const newTodos = {} as any;
+			for(const todo of todos){
+				newTodos[todo.id] = _.omit(todo, ['id']);
+			}
+			values.todos = newTodos;
 		}
-		values.todos = newTodos;
 		this.todoColumnsRef.child(id).update(_.omit(values, ['id']));
 	}
 
