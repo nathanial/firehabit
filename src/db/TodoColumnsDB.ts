@@ -6,6 +6,8 @@ import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import * as mobx from "mobx";
 import * as uuidv4 from 'uuid/v4';
+import {TodoColumn} from '../types/TodoColumn';
+import {Todo} from '../types/Todo';
 
 type MoveTodoOptions = {
 	index: number;

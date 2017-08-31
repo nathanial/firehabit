@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import {EditableText, Button} from '@blueprintjs/core';
 import {db} from '../../util';
 import cxs from 'cxs';
+import {Todo, updateSubtask} from '../../types/Todo';
 
 const subtaskCompleted = cxs({
 	'.pt-editable-text:not(.pt-editable-editing)': {
@@ -103,9 +104,7 @@ export class SubtaskList extends React.Component<Props, {}> {
 	}
 
 	onSubtaskNameChanged = (index, subtask, newName) => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		updatedTodo.subtasks[index].name = newName;
-		this.props.onChange(updatedTodo);
+		this.props.onChange(updateSubtask(this.props.todo, index, {name: newName}));
 	};
 
 	onUpdatedSubtask = () => {
@@ -114,8 +113,7 @@ export class SubtaskList extends React.Component<Props, {}> {
 	};
 
 	onCompleteSubtask = (subtask, index) => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		updatedTodo.subtasks[index].complete = !updatedTodo.subtasks[index].complete;
+		const updatedTodo = updateSubtask(this.props.todo, index, {complete: !subtask.complete});
 		db.todoColumnsDB.updateTodo(updatedTodo);
 		this.props.onChange(updatedTodo);
 	};

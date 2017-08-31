@@ -14,6 +14,8 @@ import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
+import {TodoColumn} from '../../types/TodoColumn';
+import {Todo} from '../../types/Todo';
 
 /**
  * Animation Plan

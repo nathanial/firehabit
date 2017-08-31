@@ -10,6 +10,7 @@ import {SubtaskList} from "./SubtaskList";
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
+import {Todo} from '../../types/Todo';
 
 const todoContentWrapperClass = cxs({
 	position: 'relative',

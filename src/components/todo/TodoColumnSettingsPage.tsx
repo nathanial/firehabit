@@ -6,6 +6,7 @@ import { SketchPicker } from 'react-color';
 import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
 import cxs from 'cxs';
+import {TodoColumn} from '../../types/TodoColumn';
 
 const settingsContainerClass = cxs({
 	marginTop: '10px',
