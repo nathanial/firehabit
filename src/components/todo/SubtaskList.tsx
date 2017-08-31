@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import {EditableText, Button} from '@blueprintjs/core';
-import {db} from '../../util';
 import cxs from 'cxs';
 
 const subtaskCompleted = cxs({
@@ -65,17 +64,18 @@ const subtaskListClass = cxs({
 });
 
 interface Props {
-	todo: Todo;
-	onChange?(todo: Partial<Todo>);
+	subtasks: Subtask[];
+	onChange(index: number, subtask: Partial<Subtask>);
+	onDelete(index: number, subtask: Subtask);
 }
 
 export class SubtaskList extends React.Component<Props, {}> {
 	render(){
-		const subtasks = this.props.todo.subtasks;
+		const subtasks = this.props.subtasks;
 		if(!_.isEmpty(subtasks)) {
 			return (
 				<div className={subtaskListClass}>
-					{subtasks.map((task, i) => {
+					{subtasks.map((task: Subtask, i: number) => {
 						let classes = "subtask-item";
 						if(task.complete) {
 							classes += ' ' + subtaskCompleted;
@@ -84,14 +84,13 @@ export class SubtaskList extends React.Component<Props, {}> {
 							<li key={i} className={classes}>
 								<EditableText value={task.name}
 											  multiline={true}
-											  onChange={(newName) => this.onSubtaskNameChanged(i, task, newName)}
-											  onConfirm={() => this.onUpdatedSubtask()} />
+											  onChange={(newName) => this.props.onChange(i, {name: newName})} />
 								<Button className="complete-subtask-btn pt-minimal pt-intent-success"
 												iconName="tick"
-												onClick={() => this.onCompleteSubtask(task, i)} />
+												onClick={() => this.props.onChange(i, {complete: !task.complete})} />
 								<Button className="delete-subtask-btn close-btn pt-minimal pt-intent-danger"
 												iconName="cross"
-												onClick={() => this.onDeleteSubtask(task, i)} />
+												onClick={() => this.props.onDelete(i, task)} />
 							</li>
 						);
 					})}
@@ -101,29 +100,6 @@ export class SubtaskList extends React.Component<Props, {}> {
 			return <div></div>;
 		}
 	}
+	
 
-	onSubtaskNameChanged = (index, subtask, newName) => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		updatedTodo.subtasks[index].name = newName;
-		this.props.onChange(updatedTodo);
-	};
-
-	onUpdatedSubtask = () => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		db.todoColumnsDB.updateTodo(updatedTodo);
-	};
-
-	onCompleteSubtask = (subtask, index) => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		updatedTodo.subtasks[index].complete = !updatedTodo.subtasks[index].complete;
-		db.todoColumnsDB.updateTodo(updatedTodo);
-		this.props.onChange(updatedTodo);
-	};
-
-	onDeleteSubtask = (subtask, index) => {
-		const updatedTodo = _.cloneDeep(this.props.todo);
-		updatedTodo.subtasks.splice(index, 1);
-		db.todoColumnsDB.updateTodo(updatedTodo);
-		this.props.onChange(updatedTodo);
-	};
 }

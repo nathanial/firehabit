@@ -129,7 +129,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
 						</div>
 					</TodoWrapper>
-					<SubtaskList todo={this.props.todo} />
+					<SubtaskList subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  />
 				</div>
 			</div>
 		);
@@ -169,13 +169,29 @@ class TodoView extends React.Component<Props, State> {
 							<Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
 						</div>
 					</TodoWrapper>
-					<SubtaskList todo={this.state.updatedTodo} onChange={(updatedTodo) => this.setState({updatedTodo})} />
+					<SubtaskList subtasks={this.state.updatedTodo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
 				</div>
 			</div>
 		);
 	}
 
-	onDragStart = async (event) => {
+	private onSubtaskChanged(index: number, changes: Partial<Subtask>){
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		_.extend(updatedTodo.subtasks[index], changes);
+		this.setState({updatedTodo}, () => {
+			this.onUpdatedTodo();
+		});
+	}
+
+	private onDeleteSubtask(index: number) {
+		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
+		updatedTodo.subtasks.splice(index, 1);
+		this.setState({updatedTodo}, () => {
+			this.onUpdatedTodo();
+		});
+	}
+
+	private onDragStart = async (event) => {
 		event.preventDefault();
 		const el = ReactDOM.findDOMNode(this);
 		const $el = $(el);
@@ -193,17 +209,17 @@ class TodoView extends React.Component<Props, State> {
 		});
 	};
 
-	onNameChanged = (newName) => {
+	private onNameChanged = (newName) => {
 		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
 		updatedTodo.name = newName;
 		this.setState({updatedTodo});
 	};
 
-	onUpdatedTodo = () =>{
+	private onUpdatedTodo = () =>{
 		db.todoColumnsDB.updateTodo(this.state.updatedTodo);
 	};
 
-	onDeleteTodo = async () => {
+	private onDeleteTodo = async () => {
 		if(this.props.confirmDeletion) {
 			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
 			if(result){
@@ -214,7 +230,7 @@ class TodoView extends React.Component<Props, State> {
 		}
 	};
 
-	onAddSubtask = async () => {
+	private onAddSubtask = async () => {
 		const updatedTodo = _.cloneDeep(this.state.updatedTodo);
 		if(_.isUndefined(updatedTodo.subtasks)) {
 			updatedTodo.subtasks = [];
