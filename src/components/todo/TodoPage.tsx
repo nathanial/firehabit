@@ -33,6 +33,8 @@ type Props = {
 	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
     onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
     onDeleteColumn(columnID: string);
+    onAddColumn(column: Partial<TodoColumn>);
+    onResetColumns(todoData: any);
 }
 
 export default class TodoPage extends React.Component<Props, {}> {
@@ -40,7 +42,9 @@ export default class TodoPage extends React.Component<Props, {}> {
         const {todoColumns} = this.props;
         return (
             <div className={todoPageClass}>
-                <TodoTopbar />
+                <TodoTopbar todoColumns={todoColumns}
+                            onAddColumn={this.props.onAddColumn} 
+                            onResetColumns={this.props.onResetColumns} />
                 <ColumnsContainer>
                     {todoColumns.map((column) => {
                         return <TodoColumnView key={column.id} column={column} 
@@ -56,4 +60,6 @@ export default class TodoPage extends React.Component<Props, {}> {
             </div>
         );
     }
+
+
 }

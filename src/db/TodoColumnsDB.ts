@@ -50,10 +50,10 @@ export default class TodoColumnsDB implements DBSection {
 		}
 	}
 
-	async addTodoColumn(name: string) {
+	async addTodoColumn(attrs: Partial<TodoColumn>) {
 		await this.todoColumnsRef.push({
-			name,
-			todos: {}
+			todos: {},
+			...attrs
 		});
 	}
 
