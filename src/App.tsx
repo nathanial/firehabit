@@ -19,7 +19,7 @@ export default class App extends React.Component<Props, {}> {
     render() {
         return (
             <div className="App pt-dark">
-                <SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
+                <SiteNavbar user={db.user} path={history.location.pathname} onNavigate={this.onNavigate} />
                 <div className="app-content">
                     {this.renderPage()}
                 </div>

@@ -33,7 +33,6 @@ function pushAll(dst, src){
 
 export async function downloadCollection(dst, ref){
 	const data = await ref.once('value');
-	console.log("Dst", dst);
 	if(data.val()){
 		dst.length = 0;
 		for(let element of flattenKeys(data.val())){

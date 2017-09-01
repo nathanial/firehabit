@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import {db, history} from '../util';
+import {history} from '../util';
 import {Button, Menu, MenuDivider, MenuItem, Popover, Position} from '@blueprintjs/core';
 import * as firebase from 'firebase';
 
 type Props = {
 	path: string;
+	user: any;
 	onNavigate(path: string)
 };
 
@@ -33,7 +34,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
 		const {path} = this.props;
 		return (
-			<nav className="pt-navbar pt-dark" {..._.omit(this.props, ['onNavigate', 'path'])}>
+			<nav className="pt-navbar pt-dark" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading">FireHabit</div>
 					<span className="pt-navbar-divider" />
@@ -60,7 +61,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 		);
 		return (
 			<Popover content={compassMenu} position={Position.BOTTOM}>
-				<button className="pt-button pt-minimal pt-icon-user" type="button">{db.user.email}</button>
+				<button className="pt-button pt-minimal pt-icon-user" type="button">{this.props.user.email}</button>
 			</Popover>
 		);
 	}
