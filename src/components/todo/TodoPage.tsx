@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoColumnView from "./TodoColumnView";
-import {Route} from "react-router-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoTopbar from "./TodoTopbar";
 import cxs from 'cxs';

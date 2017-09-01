@@ -3,10 +3,6 @@ import "@blueprintjs/core/dist/blueprint.css";
 import * as React from 'react';
 import './App.css';
 import SiteNavbar from "./components/SiteNavbar";
-import {
-	Router,
-	Route
-} from 'react-router-dom'
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoPage from './components/todo/TodoPage';
 import {history,db} from './util';
@@ -14,33 +10,48 @@ import {observer} from 'mobx-react';
 import {AppState} from "./state";
 
 interface Props {
-	appState: AppState
+    appState: AppState
 };
 
-@observer
-class App extends React.Component<Props, {}> {
 
-	render() {
-		const todoColumns = db.todoColumnsDB.todoColumns;
-		return (
-			<Router history={history}>
-				<div className="App pt-dark">
-					<SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
-					<div className="app-content">
-						<Route exact path="/" component={() => <TodoPage todoColumns={todoColumns} onUpdateColumn={this.onUpdateColumn} onAddTodo={this.onAddTodo} onDeleteTodo={this.onDeleteTodo} onTodoDropped={this.onTodoDropped} onUpdateTodo={this.onUpdateTodo} />} />
-						<Route path="/calories" component={() => <CaloriesPage caloriesState={this.props.appState.calories} />} />
-					</div>
-				</div>
-			</Router>
-		);
-	}
 
-	onNavigate = (page) => {
-		history.push('/' + page);
-		this.forceUpdate();
-	};
+export default class App extends React.Component<Props, {}> {
 
-	private onUpdateColumn = async (columnID: string, column: Partial<TodoColumn>) => {
+    render() {
+        return (
+            <div className="App pt-dark">
+                <SiteNavbar path={history.location.pathname} onNavigate={this.onNavigate} />
+                <div className="app-content">
+                    {this.renderPage()}
+                </div>
+            </div>
+        );
+    }
+
+    private renderPage(){
+        if(history.location.pathname === '/') {
+            const todoColumns = db.todoColumnsDB.todoColumns;
+            return 	(
+                <TodoPage todoColumns={todoColumns}
+                          onUpdateColumn={this.onUpdateColumn}
+                          onAddTodo={this.onAddTodo}
+                          onDeleteTodo={this.onDeleteTodo}
+                          onTodoDropped={this.onTodoDropped}
+                          onUpdateTodo={this.onUpdateTodo} />
+            );
+        } else {
+            return (
+                <CaloriesPage caloriesState={this.props.appState.calories} />
+            );
+        }
+    }
+
+    private onNavigate = (page) => {
+        history.push('/' + page);
+        this.forceUpdate();
+    };
+
+    private onUpdateColumn = async (columnID: string, column: Partial<TodoColumn>) => {
         await db.todoColumnsDB.updateTodoColumn(columnID, column);
         this.forceUpdate();
     }
@@ -66,4 +77,3 @@ class App extends React.Component<Props, {}> {
     }
 }
 
-export default observer(App);

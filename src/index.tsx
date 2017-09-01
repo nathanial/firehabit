@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
-import {db} from "./util";
+import {db, history} from "./util";
 import * as firebase from 'firebase';
 import {state} from './state';
 
@@ -75,5 +75,9 @@ async function init(){
 init();
 
 state.on('update', () => {
+	ReactDOM.render(<App appState={state.get()} />, document.getElementById('root'));
+});
+
+history.listen(() =>{
 	ReactDOM.render(<App appState={state.get()} />, document.getElementById('root'));
 });
