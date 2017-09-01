@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as $ from 'jquery';
 import {Button, EditableText} from "@blueprintjs/core";
-import {db, history} from '../../util';
+import {history} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoView from "./TodoView";
@@ -118,6 +118,11 @@ const TodoListWrapper = styled.ul`
 
 interface Props {
 	column: TodoColumn;
+	onTodoDropped(todo: Todo, column: TodoColumn, index: number);
+	onUpdateTodo(column: TodoColumn, todo: Todo);
+	onDeleteTodo(column: TodoColumn, todo: Todo);
+	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
+	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
 }
 
 interface State {
@@ -159,7 +164,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								speed={0.8}
 								horizontal={false}>
 								{todos.map((todo) => {
-									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onUpdate={this.onUpdateTodo} onDelete={this.onDeleteTodo} />;
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
@@ -184,7 +189,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 						index -= 1;
 					}
 				}
-				db.todoColumnsDB.moveTodo(draggable.data, this.props.column, {index});
+				this.props.onTodoDropped(draggable.data, this.props.column,index);
 			}
 		});
 	}
@@ -195,6 +200,14 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			this.unregisterDropTarget = null;
 		}
 	}
+
+	private onUpdateTodo = (todo: Todo) => {
+		this.props.onUpdateTodo(this.props.column, todo);
+	};
+
+	private onDeleteTodo = (todo: Todo) => {
+		this.props.onDeleteTodo(this.props.column, todo);
+	};
 
 	private findNeighbor(draggable: Draggable){
 		const $el = $(ReactDOM.findDOMNode(this));
@@ -270,9 +283,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onAddTodo = async () => {
-		db.todoColumnsDB.addTodo(this.props.column, {name: 'NEW TODO'});
-		// filthy hack to fix initial addition of columns
-		this.forceUpdate();
+		this.props.onAddTodo(this.props.column, {name: 'NEW TODO'});
 	};
 
 	private onChangeColumnName = (newName) => {
@@ -282,7 +293,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onFinishEditingColumnName = () => {
-		db.todoColumnsDB.updateTodoColumn(this.props.column.id, {name: this.state.columnName});
+		this.props.onUpdateColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
 	private gotoColumnSettings = () => {
@@ -347,7 +358,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const column = this.props.column;
 		const result = await DialogService.showDangerDialog(`Clear Column "${column.name}"?`, 'Clear', 'Cancel');
 		if(result){
-			db.todoColumnsDB.updateTodoColumn(column.id, {todos: []});
+			this.props.onUpdateColumn(column.id, {todos: []});
 		}
 	};
 

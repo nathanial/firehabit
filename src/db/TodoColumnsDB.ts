@@ -42,7 +42,7 @@ export default class TodoColumnsDB implements DBSection {
 			return {todos: observable([])};
 		});
 		for(let todoColumn of this.todoColumns){
-			if(_.isUndefined(todoColumn.todos)){
+			if(_.isUndefined(todoColumn.todos) || !todoColumn.todos.length){
 				todoColumn.todos = observable([]);
 			}
 			if(_.isUndefined(todoColumn.confirmDeletion)){
@@ -52,15 +52,15 @@ export default class TodoColumnsDB implements DBSection {
 		}
 	}
 
-	async addTodoColumn(name) {
-		this.todoColumnsRef.push({
+	async addTodoColumn(name: string) {
+		await this.todoColumnsRef.push({
 			name,
 			todos: {}
 		});
 	}
 
-	async deleteTodoColumn(column){
-		this.todoColumnsRef.child(column.id).remove();
+	async deleteTodoColumn(column: TodoColumn){
+		await this.todoColumnsRef.child(column.id).remove();
 	}
 
 	async updateTodoColumn(id: string, values: Partial<TodoColumn>) {
@@ -73,14 +73,14 @@ export default class TodoColumnsDB implements DBSection {
 			}
 			values.todos = newTodos;
 		}
-		this.todoColumnsRef.child(id).update(_.omit(values, ['id']));
+		await this.todoColumnsRef.child(id).update(_.omit(values, ['id']));
 	}
 
-	async addTodo(column, todo) {
-		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
+	async addTodo(column: TodoColumn, todo: Partial<Todo>) {
+		await this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
 	}
 
-	async updateTodo(todo){
+	async updateTodo(todo: Todo){
 		const column = _.find(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
@@ -94,14 +94,14 @@ export default class TodoColumnsDB implements DBSection {
 
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
 		await this.deleteTodo(todo);
-		this.todoColumnsRef.child(`${column.id}/todos`).push({
+		await this.todoColumnsRef.child(`${column.id}/todos`).push({
 			..._.omit(mobx.toJS(todo), 'id'),
 			index: options.index
 		});
 		await this.sortColumn(column);
 	}
 
-	async deleteTodo(todo) {
+	async deleteTodo(todo: Todo) {
 		const columns = _.filter(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
