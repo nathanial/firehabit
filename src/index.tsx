@@ -3,9 +3,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
-import {db} from "./util";
+import {db, history} from "./util";
+import {generatePushID} from './db/util';
 import * as firebase from 'firebase';
-import {state} from './state';
+import {state, AppState} from './state';
 
 // Initialize Firebase
 var config = {
@@ -61,13 +62,20 @@ async function setInitialData(){
 	}
 }
 
+function loadDay(appState: AppState){
+	if(!_.some(appState.calories.days, d => d.date ===  appState.calories.selectedDate)){
+		appState.calories.days.push({id: generatePushID(), date: appState.calories.selectedDate, consumed: [], weight: 0});
+	}
+}
 
 async function init(){
 	await loginToFirebase();
 	await setInitialData();
 	await db.load();
+	const appState = state.get();
+	loadDay(appState);
 	ReactDOM.render(
-		<App appState={state.get()} />,
+		<App appState={appState} />,
 		document.getElementById('root')
 	);
 }
@@ -75,5 +83,13 @@ async function init(){
 init();
 
 state.on('update', () => {
-	ReactDOM.render(<App appState={state.get()} />, document.getElementById('root'));
+	const appState = state.get();
+	loadDay(appState);
+	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
+});
+
+history.listen(() =>{
+	const appState = state.get();
+	loadDay(appState);
+	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
 });

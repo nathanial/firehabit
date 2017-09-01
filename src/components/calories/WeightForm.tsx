@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import {db} from '../../util';
 import cxs from 'cxs';
 
@@ -12,12 +11,13 @@ const weightFormClass = cxs({
 
 interface WeightFormProps {
 	date: string;
+	days: Day[];
 }
 
-@observer
 export default class WeightForm extends React.Component<WeightFormProps, {}> {
 	render(){
-		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
+		const days = this.props.days;
+		const day = _.find(days, day => day.date === this.props.date);
 		const weight = _.get(day, 'weight', '');
 		return (
 			<div className={`pt-card pt-elevation-2 ${weightFormClass}`} >
@@ -31,7 +31,8 @@ export default class WeightForm extends React.Component<WeightFormProps, {}> {
 
 	onUpdateWeight = (event) => {
 		const newWeight = parseInt(event.target.value, 10);
-		db.daysDB.updateDay(this.props.date, {weight: newWeight});
+		const day = _.find(this.props.days, {date: this.props.date});
+		day.set({weight: newWeight});
 		this.forceUpdate();
 	}
 }

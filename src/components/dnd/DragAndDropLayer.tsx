@@ -20,6 +20,7 @@ export type Draggable = {
 	width: number;
 	height: number;
 	data: any;
+	onDrop(dropTarget: DropTarget);
 	onCancel();
 }
 
@@ -30,7 +31,9 @@ type State = {
 
 type DropTarget = {
 	element: HTMLElement;
+	canDrop(draggable: Draggable): boolean;
 	onDrop(draggable: Draggable);
+	onHover(draggable: Draggable);
 };
 
 type Dimensions = {
@@ -87,6 +90,14 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					draggable.x = event.pageX - 10;
 					draggable.y = event.pageY - 30;
 					this.forceUpdate();
+
+					for(let dropTarget of this.state.dropTargets){
+						if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
+							dropTarget.onHover(draggable);
+							// draggable.onHover(dropTarget);
+							break;
+						}
+					}
 				}
 			}
 		});
@@ -95,8 +106,9 @@ export class DragAndDropLayer extends React.Component<{},State>{
 			for(let draggable of this.state.draggables){
 				let dropped = false;
 				for(let dropTarget of this.state.dropTargets){
-					if(intersects(draggable, dropTarget.element.getBoundingClientRect())){
+					if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
 						dropTarget.onDrop(draggable);
+						draggable.onDrop(dropTarget);
 						dropped = true;
 						break;
 					}
@@ -126,8 +138,11 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					height,
 					element,
 					data,
+					onDrop: () => {
+						resolve(true);
+					},
 					onCancel: () => {
-						resolve();
+						resolve(false);
 					}
 				})
 			});

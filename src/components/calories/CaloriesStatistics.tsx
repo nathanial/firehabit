@@ -1,10 +1,12 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import styled from 'styled-components';
 import * as _ from 'lodash';
 import {db, history} from '../../util';
 import {Button} from '@blueprintjs/core';
+import DialogService from "../../services/DialogService";
+import CaloriesSettings from "./CaloriesSettings";
 import cxs from 'cxs';
+import {CaloriesState} from '../../state';
 
 const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
@@ -41,12 +43,14 @@ const settingsBtn = cxs({
 
 interface CalorieStatisticsProps {
 	date: string;
+	days: Day[];
+	caloriesState: CaloriesState;
 }
 
-@observer
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
-		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
+		const days = this.props.days;
+		const day = _.find(days, day => day.date === this.props.date);
 		let dailyTotal;
 		if(day){
 			dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
@@ -54,9 +58,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 			dailyTotal = 0;
 		}
 
-		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
+		const goal = this.props.caloriesState['calorie-settings'].caloricGoal;
 		const remaining = goal - dailyTotal;
-		const weightStasisGoal = db.calorieSettingsDB.calorieSettings.weightStasisGoal;
+		const weightStasisGoal = this.props.caloriesState['calorie-settings'].weightStasisGoal;
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
@@ -147,7 +151,18 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 		);
 	};
 
-	private gotoSettings = () => {
-		history.push('/calories/settings');
+	private gotoSettings = async () => {
+		const settings = this.props.caloriesState['calorie-settings'];
+		let {caloricGoal, weightStasisGoal} = settings;
+		function onChange(newCaloricGoal, newWeightStasisGoal) {
+			caloricGoal = newCaloricGoal;
+			weightStasisGoal = newWeightStasisGoal;
+		}
+		const result = await DialogService.showDialog("Calorie Settings", "Save", "Cancel", 
+			<CaloriesSettings caloricGoal={caloricGoal} weightStasisGoal={weightStasisGoal} onChange={onChange}/>
+		);
+		if(result){
+			settings.set({caloricGoal, weightStasisGoal});
+		}
 	}
 }

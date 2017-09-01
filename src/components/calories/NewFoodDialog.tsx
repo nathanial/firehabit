@@ -5,13 +5,14 @@ import {Dialog} from "@blueprintjs/core/dist/components/dialog/dialog";
 import {Intent} from '@blueprintjs/core';
 import styled from 'styled-components';
 import {db} from '../../util';
-
+import {generatePushID} from '../../db/util';
 const NewFoodDialogWrapper = styled.div`
 	margin-top: 20px;
 `;
 
 interface Props {
 	defaultName: string;
+	foodDefinitions: FoodDefinition[];
 }
 
 interface State {
@@ -72,7 +73,8 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 	openDialog = () => this.setState({ isOpen: true, foodName: this.props.defaultName });
 
 	onAddFood = async () => {
-		await db.foodDefinitionsDB.addFoodDefinition({
+		this.props.foodDefinitions.push({
+			id: generatePushID(),
 			name: this.foodName.value,
 			calories: this.calories.value
 		});

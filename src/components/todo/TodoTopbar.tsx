@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {Button} from '@blueprintjs/core';
-import {db} from "../../util";
 import cxs from 'cxs';
 import {state} from "../../state";
 import * as FileSaver from 'file-saver';
+import {generatePushID} from '../../db/util';
 
 const todoTopbarClass = cxs({
-	margin: '10px 30px',
+	margin: '10px 0',
 	display: 'inline-block'
 });
 
@@ -23,7 +23,12 @@ const devtoolsClass = cxs({
 	margin: '0 10px'
 });
 
-export default class TodoTopbar extends React.Component<{},{}> {
+type Props = {
+	todoColumns: TodoColumn[];
+	showDevTools: boolean;
+}
+
+export default class TodoTopbar extends React.PureComponent<Props> {
 	private fileInput: HTMLInputElement;
 
 	render(){
@@ -40,8 +45,7 @@ export default class TodoTopbar extends React.Component<{},{}> {
 	}
 
 	renderDevTools = () => {
-		const showDevTools = state.get().showDevTools;
-		if(!showDevTools){
+		if(!this.props.showDevTools){
 			return;
 		}
 		return (
@@ -77,8 +81,8 @@ export default class TodoTopbar extends React.Component<{},{}> {
 		const reader = new FileReader();
 		reader.onload = (e: any) => {
 			const contents = e.target.result;
-			const todos = JSON.parse(contents);
-			db.todoColumnsDB.reset(todos)
+			const todoData = JSON.parse(contents);
+			this.props.todoColumns.reset(todoData);
 		};
 		reader.readAsText(file);
 		console.log("File Input Changed", this.fileInput.files[0]);
@@ -90,13 +94,13 @@ export default class TodoTopbar extends React.Component<{},{}> {
 
 	private onExportTodos = () => {
 		const blob = new Blob([
-			[JSON.stringify(db.todoColumnsDB.todoColumns, undefined, 4)]
+			[JSON.stringify(this.props.todoColumns, undefined, 4)]
 		], {type: 'application/json;charset=utf-8'})
 		FileSaver.saveAs(blob, 'todos.json');
 	};
 
 	private onDeleteTodos = () => {
-		db.todoColumnsDB.reset([]);
+		this.props.todoColumns.reset([]);
 	}
 
 	private onKeyDown = (event) => {
@@ -107,6 +111,15 @@ export default class TodoTopbar extends React.Component<{},{}> {
 	};
 
 	private onAddColumn = () => {
-		db.todoColumnsDB.addTodoColumn('New Column');
+		this.props.todoColumns.push({ 
+			id: generatePushID(), 
+			name: 'New Column',
+			color: '#394B59',
+			confirmDeletion: true,
+			showClearButton: false,
+			showSettings: false,
+			todos: [],
+			editingName: false
+		});
 	};
 }

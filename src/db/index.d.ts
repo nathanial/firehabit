@@ -5,17 +5,23 @@ interface CalorieSettings {
 }
 
 interface FoodDefinition {
+	id: string;
 	name: string;
 	calories: string;
+	set?(definition: Partial<FoodDefinition>);
 }
 
 interface ConsumedFood {
 	calories: string;
+	name: string;
 }
 
 interface Day {
+	id: string;
 	date: string;
+	weight: number;
 	consumed: ConsumedFood[];
+	set?(day: Partial<Day>);
 }
 
 interface TimeSlot {
@@ -31,22 +37,26 @@ interface TimeSlot {
 interface Subtask {
 	name: string;
 	complete: boolean;
+	set?(updates: Partial<Subtask>);
 }
 
 interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
-	index: number;
+	set?(updates: Partial<Todo>);
 }
 
 interface TodoColumn {
 	id: string;
 	name: string;
 	color: string;
+	editingName: boolean;
 	confirmDeletion: boolean;
 	showClearButton: boolean;
 	todos: Todo[];
+	showSettings: boolean;
+	set?(updates: Partial<TodoColumn>);
 }
 
 interface DBSection {
@@ -57,4 +67,8 @@ interface DailyEntry {
 	id: string;
 	name: string;
 	records: {[day: string]: boolean};
+}
+
+interface Array<T> { 
+	reset(data: T[]): void;
 }
