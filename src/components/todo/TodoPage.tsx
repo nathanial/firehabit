@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {db} from '../../util';
 import styled from 'styled-components';
 import {observer} from 'mobx-react';
 import TodoColumnView from "./TodoColumnView";
@@ -29,63 +28,33 @@ const ColumnsContainer = styled.div`
     padding: 0 20px;
 `;
 
+type Props = {
+    todoColumns: TodoColumn[];
+    onTodoDropped(todo: Todo, column: TodoColumn, index: number);
+	onUpdateTodo(column: TodoColumn, todo: Todo);
+	onDeleteTodo(column: TodoColumn, todo: Todo);
+	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
+	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
+}
+
 @observer
-class ColumnsPage extends React.Component<{},{}> {
+export default class TodoPage extends React.Component<Props, {}> {
     render(){
-        const todoColumns = db.todoColumnsDB.todoColumns;
+        const {todoColumns} = this.props;
         return (
             <div className={todoPageClass}>
                 <TodoTopbar />
                 <ColumnsContainer>
                     {todoColumns.map((column) => {
                         return <TodoColumnView key={column.id} column={column} 
-                                               onUpdateColumn={this.onUpdateColumn} 
-                                               onAddTodo={this.onAddTodo} 
-                                               onDeleteTodo={this.onDeleteTodo}
-                                               onTodoDropped={this.onTodoDropped}
-                                               onUpdateTodo={this.onUpdateTodo} />
+                                               onUpdateColumn={this.props.onUpdateColumn} 
+                                               onAddTodo={this.props.onAddTodo} 
+                                               onDeleteTodo={this.props.onDeleteTodo}
+                                               onTodoDropped={this.props.onTodoDropped}
+                                               onUpdateTodo={this.props.onUpdateTodo} />
                     })}
                 </ColumnsContainer>
                 <DragAndDropLayer />
-            </div>
-        );
-    }
-
-    /**
-     * forceUpdate is a filthy hack as we move away from mobx
-     */
-    private onUpdateColumn = async (columnID: string, column: Partial<TodoColumn>) => {
-        await db.todoColumnsDB.updateTodoColumn(columnID, column);
-        this.forceUpdate();
-    }
-
-    private onAddTodo = async (column: TodoColumn, todo: Partial<Todo>) => {
-        await db.todoColumnsDB.addTodo(column, todo);
-        this.forceUpdate();
-    }
-
-    private onDeleteTodo = async (column: TodoColumn, todo: Todo) => {
-        await db.todoColumnsDB.deleteTodo(todo);
-        this.forceUpdate();
-    }
-
-    private onTodoDropped = async (todo: Todo, column: TodoColumn, index: number) => {
-        await db.todoColumnsDB.moveTodo(todo, column, {index});
-        this.forceUpdate();
-    }
-
-    private onUpdateTodo = async (column: TodoColumn, todo: Todo) => {
-        await db.todoColumnsDB.updateTodo(todo);
-        this.forceUpdate();
-    }
-}
-
-export default class TodoPage extends React.Component {
-    render(){
-        return (
-            <div>
-                <Route exact path="/" component={ColumnsPage} />
-                <Route exact path="/todo/column/:columnID/settings" component={TodoColumnSettingsPage} />
             </div>
         );
     }
