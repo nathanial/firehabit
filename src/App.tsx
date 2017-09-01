@@ -36,7 +36,8 @@ export default class App extends React.Component<Props, {}> {
                           onAddTodo={this.onAddTodo}
                           onDeleteTodo={this.onDeleteTodo}
                           onTodoDropped={this.onTodoDropped}
-                          onUpdateTodo={this.onUpdateTodo} />
+                          onUpdateTodo={this.onUpdateTodo}
+                          onDeleteColumn={this.onDeleteColumn} />
             );
         } else {
             return (
@@ -72,6 +73,11 @@ export default class App extends React.Component<Props, {}> {
 
     private onUpdateTodo = async (column: TodoColumn, todo: Todo) => {
         await db.todoColumnsDB.updateTodo(todo);
+        this.forceUpdate();
+    }
+
+    private onDeleteColumn = async (columnID: string) => {
+        await db.todoColumnsDB.deleteTodoColumn(columnID);
         this.forceUpdate();
     }
 }

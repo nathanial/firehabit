@@ -57,8 +57,8 @@ export default class TodoColumnsDB implements DBSection {
 		});
 	}
 
-	async deleteTodoColumn(column: TodoColumn){
-		await this.todoColumnsRef.child(column.id).remove();
+	async deleteTodoColumn(columnID: string){
+		await this.todoColumnsRef.child(columnID).remove();
 	}
 
 	async updateTodoColumn(id: string, values: Partial<TodoColumn>) {

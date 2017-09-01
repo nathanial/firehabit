@@ -31,7 +31,8 @@ type Props = {
 	onUpdateTodo(column: TodoColumn, todo: Todo);
 	onDeleteTodo(column: TodoColumn, todo: Todo);
 	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
-	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
+    onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
+    onDeleteColumn(columnID: string);
 }
 
 export default class TodoPage extends React.Component<Props, {}> {
@@ -47,7 +48,8 @@ export default class TodoPage extends React.Component<Props, {}> {
                                                onAddTodo={this.props.onAddTodo} 
                                                onDeleteTodo={this.props.onDeleteTodo}
                                                onTodoDropped={this.props.onTodoDropped}
-                                               onUpdateTodo={this.props.onUpdateTodo} />
+                                               onUpdateTodo={this.props.onUpdateTodo} 
+                                               onDeleteColumn={this.props.onDeleteColumn}/>
                     })}
                 </ColumnsContainer>
                 <DragAndDropLayer />

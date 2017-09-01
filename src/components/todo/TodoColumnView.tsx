@@ -122,6 +122,7 @@ interface Props {
 	onDeleteTodo(column: TodoColumn, todo: Todo);
 	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
 	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
+	onDeleteColumn(columnID: string);
 }
 
 interface State {
@@ -265,10 +266,19 @@ export default class TodoColumnView extends React.Component<Props, State> {
 					position: 'absolute',
 					left: 300, top: 0,
 					opacity: 0
-				}} column={this.props.column} goBack={() => this.hideSettings()} />
+				}} 
+				column={this.props.column} 
+				goBack={() => this.hideSettings()}
+				onDelete={this.onDeleteColumn}
+				onUpdateColumn={this.props.onUpdateColumn} />
 			);
 		}
 	};
+
+	private onDeleteColumn = (columnID: string) => {
+		this.props.onDeleteColumn(columnID);
+		this.hideSettings();
+	}
 
 	private renderTrashBtn = () => {
 		if(this.props.column.showClearButton){
