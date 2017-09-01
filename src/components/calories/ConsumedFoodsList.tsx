@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import {db} from '../../util';
 import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
@@ -49,7 +48,6 @@ interface Props {
 	day: string;
 }
 
-@observer
 export default class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){

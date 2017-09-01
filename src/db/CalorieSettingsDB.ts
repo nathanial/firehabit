@@ -2,14 +2,13 @@ import * as firebase from 'firebase';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import Query = firebase.database.Query;
-import {observable} from "mobx";
 
 export default class CalorieSettingsDB implements DBSection  {
 	calorieSettingsRef: Reference;
-	calorieSettings: CalorieSettings = observable({
+	calorieSettings: CalorieSettings = {
 		caloricGoal: 0,
 		weightStasisGoal: 0
-	});
+	};
 
 	constructor(private readonly db: Database){
 

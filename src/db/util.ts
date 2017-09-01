@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import {observable} from "mobx";
 
 function allKeysBeginWithDash(value){
 	return !_.some(_.keys(value), k => k[0] !== '-');
@@ -34,8 +33,12 @@ function pushAll(dst, src){
 
 export async function downloadCollection(dst, ref){
 	const data = await ref.once('value');
+	console.log("Dst", dst);
 	if(data.val()){
-		dst.replace(flattenKeys(data.val()));
+		dst.length = 0;
+		for(let element of flattenKeys(data.val())){
+			dst.push(element);
+		}
 	}
 }
 
@@ -57,9 +60,9 @@ export function watchCollection(dst, ref, createDefaults: () => Object){
 				const newValue = changedChild[key];
 				if(_.isArray(newValue)) {
 					if(_.isUndefined(dstItem[key])) {
-						dstItem[key] = observable([]);
+						dstItem[key] = [];
 					}
-					dstItem[key].replace(newValue);
+					dstItem[key] = newValue;
 				} else {
 					dstItem[key] = newValue;
 				}

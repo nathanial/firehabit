@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import {Button} from '@blueprintjs/core';
 import {history, db} from '../../util';
 import styled from 'styled-components';
@@ -27,7 +26,6 @@ const SettingsForm = styled.div`
 	margin-top: 20px;
 `;
 
-@observer
 export default class CaloriesSettings extends React.Component<{},{}> {
 	render(){
 		const csdb = db.calorieSettingsDB;

@@ -1,10 +1,8 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
 import {downloadCollection, watchCollection} from "./util";
-import {observable} from "mobx";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
-import * as mobx from "mobx";
 import * as uuidv4 from 'uuid/v4';
 
 type MoveTodoOptions = {
@@ -26,7 +24,7 @@ function encode(columns: TodoColumn[]) {
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
-	todoColumns: TodoColumn[] = observable([]);
+	todoColumns: TodoColumn[] = [];
 
 	constructor(private readonly db: Database) {
 
@@ -39,11 +37,11 @@ export default class TodoColumnsDB implements DBSection {
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		await downloadCollection(this.todoColumns, this.todoColumnsRef);
 		watchCollection(this.todoColumns, this.todoColumnsRef, () => {
-			return {todos: observable([])};
+			return {todos: []};
 		});
 		for(let todoColumn of this.todoColumns){
 			if(_.isUndefined(todoColumn.todos) || !todoColumn.todos.length){
-				todoColumn.todos = observable([]);
+				todoColumn.todos = [];
 			}
 			if(_.isUndefined(todoColumn.confirmDeletion)){
 				todoColumn.confirmDeletion = true;
@@ -64,7 +62,7 @@ export default class TodoColumnsDB implements DBSection {
 	}
 
 	async updateTodoColumn(id: string, values: Partial<TodoColumn>) {
-		values = _.cloneDeep(mobx.toJS(values));
+		values = _.cloneDeep(values);
 		if(values.todos){
 			const todos = values.todos;
 			const newTodos = {} as any;
@@ -95,7 +93,7 @@ export default class TodoColumnsDB implements DBSection {
 	async moveTodo(todo: Todo, column: TodoColumn, options: MoveTodoOptions){
 		await this.deleteTodo(todo);
 		await this.todoColumnsRef.child(`${column.id}/todos`).push({
-			..._.omit(mobx.toJS(todo), 'id'),
+			..._.omit(todo, 'id'),
 			index: options.index
 		});
 		await this.sortColumn(column);
@@ -123,7 +121,7 @@ export default class TodoColumnsDB implements DBSection {
 
 	async reset(columns: TodoColumn[]) {
 		await this.todoColumnsRef.remove();
-		(this.todoColumns as any).clear();
+		this.todoColumns.length = 0;
 		await this.todoColumnsRef.set(encode(columns));
 	}
 }

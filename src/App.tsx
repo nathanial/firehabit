@@ -6,7 +6,6 @@ import SiteNavbar from "./components/SiteNavbar";
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoPage from './components/todo/TodoPage';
 import {history,db} from './util';
-import {observer} from 'mobx-react';
 import {AppState} from "./state";
 
 interface Props {

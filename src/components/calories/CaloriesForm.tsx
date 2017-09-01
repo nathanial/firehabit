@@ -6,7 +6,6 @@ import * as _ from 'lodash';
 import SearchResults from './SearchResults';
 import {db} from '../../util';
 import ConsumedFoodsList from './ConsumedFoodsList';
-import {observer} from 'mobx-react';
 import DialogService from "../../services/DialogService";
 import FoodDefinitionForm from "./FoodDefinitionForm";
 import WeightForm from "./WeightForm";
@@ -40,7 +39,6 @@ interface CaloriesFormState {
 	value: string;
 }
 
-@observer
 export default class CaloriesForm extends React.Component<CaloriesFormProps, CaloriesFormState> {
 
 	state = {

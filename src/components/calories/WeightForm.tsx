@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {observer} from 'mobx-react';
 import {db} from '../../util';
 import cxs from 'cxs';
 
@@ -14,7 +13,6 @@ interface WeightFormProps {
 	date: string;
 }
 
-@observer
 export default class WeightForm extends React.Component<WeightFormProps, {}> {
 	render(){
 		const day = _.find(db.daysDB.days, day => day.date === this.props.date);

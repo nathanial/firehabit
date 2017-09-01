@@ -1,12 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import {observer} from 'mobx-react';
 import TodoColumnView from "./TodoColumnView";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import TodoTopbar from "./TodoTopbar";
 import cxs from 'cxs';
 import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
-import * as mobx from 'mobx';
 
 const todoPageClass = cxs({
     display: 'block',
@@ -36,7 +34,6 @@ type Props = {
 	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
 }
 
-@observer
 export default class TodoPage extends React.Component<Props, {}> {
     render(){
         const {todoColumns} = this.props;
