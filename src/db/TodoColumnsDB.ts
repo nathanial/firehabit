@@ -52,14 +52,14 @@ export default class TodoColumnsDB implements DBSection {
 		}
 	}
 
-	async addTodoColumn(name) {
+	async addTodoColumn(name: string) {
 		this.todoColumnsRef.push({
 			name,
 			todos: {}
 		});
 	}
 
-	async deleteTodoColumn(column){
+	async deleteTodoColumn(column: TodoColumn){
 		this.todoColumnsRef.child(column.id).remove();
 	}
 
@@ -76,11 +76,11 @@ export default class TodoColumnsDB implements DBSection {
 		this.todoColumnsRef.child(id).update(_.omit(values, ['id']));
 	}
 
-	async addTodo(column, todo) {
+	async addTodo(column: TodoColumn, todo: Partial<Todo>) {
 		this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
 	}
 
-	async updateTodo(todo){
+	async updateTodo(todo: Todo){
 		const column = _.find(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
@@ -101,7 +101,7 @@ export default class TodoColumnsDB implements DBSection {
 		await this.sortColumn(column);
 	}
 
-	async deleteTodo(todo) {
+	async deleteTodo(todo: Todo) {
 		const columns = _.filter(this.todoColumns, (column) => {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});

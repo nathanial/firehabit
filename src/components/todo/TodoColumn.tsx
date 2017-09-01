@@ -159,7 +159,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								speed={0.8}
 								horizontal={false}>
 								{todos.map((todo) => {
-									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} />;
+									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onUpdate={this.onUpdateTodo} onDelete={this.onDeleteTodo} />;
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
@@ -195,6 +195,14 @@ export default class TodoColumnView extends React.Component<Props, State> {
 			this.unregisterDropTarget = null;
 		}
 	}
+
+	private onUpdateTodo = (todo: Todo) => {
+		db.todoColumnsDB.updateTodo(todo);
+	};
+
+	private onDeleteTodo = (todo: Todo) => {
+		db.todoColumnsDB.deleteTodo(todo);
+	};
 
 	private findNeighbor(draggable: Draggable){
 		const $el = $(ReactDOM.findDOMNode(this));

@@ -3,7 +3,6 @@ import * as  _ from 'lodash';
 import * as React from 'react';
 import {EditableText, Button} from "@blueprintjs/core";
 import * as mobx from 'mobx';
-import {db} from '../../util';
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
@@ -99,6 +98,8 @@ interface Props {
 	todo: Todo;
 	confirmDeletion: boolean;
 	isDragging?: boolean;
+	onUpdate(todo: Todo);
+	onDelete(todo: Todo);
 }
 
 interface State {
@@ -216,17 +217,17 @@ class TodoView extends React.Component<Props, State> {
 	};
 
 	private onUpdatedTodo = () =>{
-		db.todoColumnsDB.updateTodo(this.state.updatedTodo);
+		this.props.onUpdate(this.state.updatedTodo);
 	};
 
 	private onDeleteTodo = async () => {
 		if(this.props.confirmDeletion) {
 			const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
 			if(result){
-				db.todoColumnsDB.deleteTodo(this.props.todo);
+				this.props.onDelete(this.props.todo);
 			}
 		} else {
-			db.todoColumnsDB.deleteTodo(this.props.todo);
+			this.props.onDelete(this.props.todo);
 		}
 	};
 
@@ -236,7 +237,7 @@ class TodoView extends React.Component<Props, State> {
 			updatedTodo.subtasks = [];
 		}
 		updatedTodo.subtasks.push({name: 'New Task'} as any);
-		db.todoColumnsDB.updateTodo(updatedTodo);
+		this.props.onUpdate(updatedTodo);
 		this.setState({updatedTodo});
 	};
 
