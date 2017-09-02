@@ -24,7 +24,7 @@ interface Props {
 	onDelete(columnID: string);
 }
 
-export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
+export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 	render(){
 		const column = this.props.column;
 		let confirmDeletion = column.confirmDeletion;

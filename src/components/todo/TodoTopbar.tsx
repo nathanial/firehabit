@@ -117,6 +117,7 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 			color: '#394B59',
 			confirmDeletion: true,
 			showClearButton: false,
+			showSettings: false,
 			todos: []
 		});
 	};

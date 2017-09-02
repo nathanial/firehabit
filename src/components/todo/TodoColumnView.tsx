@@ -121,16 +121,7 @@ interface Props {
 	onDeleteColumn(column: TodoColumn);
 }
 
-interface State {
-	columnName: string;
-	showSettings: boolean;
-}
-
-export default class TodoColumnView extends React.Component<Props, State> {
-	state = {
-		columnName: this.props.column.name,
-		showSettings: false
-	};
+export default class TodoColumnView extends React.PureComponent<Props> {
 	private animating: boolean;
 	private unregisterDropTarget: () => void;
 
@@ -138,13 +129,14 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const column = this.props.column;
 		const todos = _.sortBy(column.todos, todo => todo.index);
 		const columnColor = column.color;
+		console.log("BAM");
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
 				<div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
 					<div className={`pt-card pt-elevation-2 ${todoColumnClass}`}
 									   style={{background: columnColor}}>
 						<EditableText className={columnNameClass}
-									  value={this.state.columnName}
+									  value={this.props.column.name}
 									  onChange={this.onChangeColumnName}/>
 						<Button iconName="settings"
 								className="settings-btn pt-minimal"
@@ -258,7 +250,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	}
 
 	private renderSettings = () => {
-		if(this.state.showSettings){
+		if(this.props.column.showSettings){
 			return (
 				<TodoColumnSettingsPage style={{
 					position: 'absolute',
@@ -297,16 +289,14 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onChangeColumnName = (newName) => {
-		this.setState({
-			columnName: newName
-		});
+		this.props.column.set({name: newName});
 	};
 
 	private gotoColumnSettings = () => {
 		if(this.animating){
 			return;
 		}
-		if(!this.state.showSettings){
+		if(!this.props.column.showSettings){
 			this.showSettings();
 		} else {
 			this.hideSettings();
@@ -315,25 +305,25 @@ export default class TodoColumnView extends React.Component<Props, State> {
 
 	private showSettings() {
 		this.animating = true;
-		this.setState({
-			showSettings: true
-		}, () => {
-			const el = ReactDOM.findDOMNode(this);
-			const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
-			const settingsEl = $(el).find('.todo-column-settings-page')[0];
-			const timeline = new TimelineMax({
-				onComplete: () =>{
-					this.animating = false;
-				}
-			});
-			const columnWidth = $(el).outerWidth();
-			const width = $(window).outerWidth();
-			const centerX = width / 2 - columnWidth;
-			const actualX = $(el).offset().left;
-			timeline.to(elements, 0.5, {opacity: 0});
-			timeline.to(el, 0.5, {position: 'relative', left: centerX - actualX, 'z-index': 9});
-			timeline.to(settingsEl, 0.25, {opacity: 1});
+		this.props.column.set({showSettings: true});
+	}
+
+	private animateShowSettings(){
+		const el = ReactDOM.findDOMNode(this);
+		const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
+		const settingsEl = $(el).find('.todo-column-settings-page')[0];
+		const timeline = new TimelineMax({
+			onComplete: () =>{
+				this.animating = false;
+			}
 		});
+		const columnWidth = $(el).outerWidth();
+		const width = $(window).outerWidth();
+		const centerX = width / 2 - columnWidth;
+		const actualX = $(el).offset().left;
+		timeline.to(elements, 0.5, {opacity: 0});
+		timeline.to(el, 0.5, {position: 'relative', left: centerX - actualX, 'z-index': 9});
+		timeline.to(settingsEl, 0.25, {opacity: 1});
 	}
 
 	private hideSettings(){
@@ -348,7 +338,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const timeline = new TimelineMax({
 			onComplete: () => {
 				this.animating = false;
-				this.setState({showSettings: false});
+				this.props.column.set({showSettings: false});
 			}
 		});
 		if(el){

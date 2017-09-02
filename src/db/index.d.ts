@@ -49,6 +49,7 @@ interface TodoColumn {
 	confirmDeletion: boolean;
 	showClearButton: boolean;
 	todos: Todo[];
+	showSettings: boolean;
 	set?(updates: Partial<TodoColumn>);
 }
 

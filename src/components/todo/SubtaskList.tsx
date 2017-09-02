@@ -69,7 +69,7 @@ interface Props {
 	onDelete(index: number, subtask: Subtask);
 }
 
-export class SubtaskList extends React.Component<Props, {}> {
+export class SubtaskList extends React.PureComponent<Props> {
 	render(){
 		const subtasks = this.props.subtasks;
 		if(!_.isEmpty(subtasks)) {

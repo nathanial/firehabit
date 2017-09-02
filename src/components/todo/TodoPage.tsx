@@ -19,12 +19,12 @@ const todoPageClass = cxs({
     'white-space': 'nowrap'
 });
 
-const ColumnsContainer = styled.div`
-    width: 100%;
-    height: calc(100% - 37px);
-    overflow-x: auto;
-    padding: 0 20px;
-`;
+const columnsContainerClass = cxs({
+    width: '100%',
+    height: 'calc(100% - 37px)',
+    'overflow-x': 'auto',
+    padding: '0 20px'
+});
 
 type Props = {
     todoColumns: TodoColumn[];
@@ -33,16 +33,14 @@ type Props = {
 export default class TodoPage extends React.PureComponent<Props> {
     render(){
         const {todoColumns} = this.props;
-        console.log("Todo Columns", todoColumns);
         return (
             <div className={todoPageClass}>
                 <TodoTopbar todoColumns={todoColumns} />
-                <ColumnsContainer>
+                <div className={columnsContainerClass}>
                     {_.map(todoColumns, (column) => {
-                        console.log("Column", column);
                         return <TodoColumnView key={column.id} column={column} onDeleteColumn={this.onDeleteColumn} />
                     })}
-                </ColumnsContainer>
+                </div>
                 <DragAndDropLayer />
             </div>
         );
