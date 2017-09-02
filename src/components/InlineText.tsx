@@ -10,13 +10,37 @@ type Props = {
     onStopEditing();
 }
 
+
+
 export default class InlineText extends React.PureComponent<Props> {
     private root: HTMLElement;
+    private input: HTMLInputElement;
 
     render(){
         const className = this.getClassName();
+        const style = {} as any;
+        const inputStyle = {
+            opacity: 1,
+            height: '18px',
+            lineHeight: '18px',
+            'text-align': 'center',
+            position: 'relative'
+        } as any;
+        if(!this.props.editing){
+            style.overflow = 'hidden';
+            style['text-overflow'] = 'ellipsis';
+            inputStyle.opacity = 0;
+            inputStyle.width = 0;
+        }
         return (
-            <div ref={root => this.root = root} className={className} onClick={this.onStartEditing}>
+            <div style={style} ref={root => this.root = root} className={className} onClick={this.onStartEditing}>
+                <input style={inputStyle} 
+                       ref={input => this.input = input} 
+                       key="input" className="pt-editable-input" 
+                       type="text"
+                       value={this.props.value} 
+                       onKeyDown={this.onKeyDown}
+                       onChange={this.onChange} />
                 {this.renderText()}
             </div>
         );
@@ -30,26 +54,33 @@ export default class InlineText extends React.PureComponent<Props> {
         document.removeEventListener('mousedown', this.onMouseDown, true);
     }
 
-    private onMouseDown = (event: MouseEvent) => {
-        if(!this.props.editing){
-            return;
+    componentWillReceiveProps(nextProps: Props){
+        if(nextProps.editing){
+            this.input.focus(); 
+            this.input.setSelectionRange(0, this.props.value.length);
         }
-        const parents = this.getParents(event.target as Node);
-        const inside = _.some(parents, p => p === this.root);
-        if(!inside){
-            this.props.onStopEditing();
+    }
+
+    private onKeyDown = (event: any) => {
+        if(this.props.editing && event.keyCode === 13){
+            this.onStopEditing();
+        }
+    }
+
+    private onMouseDown = (event: MouseEvent) => {
+        if(this.props.editing){
+            const parents = this.getParents(event.target as Node);
+            const outside = !_.some(parents, p => p === this.root);
+            if(outside){
+                this.props.onStopEditing();
+            }
         }
     }
 
     private renderText() {
-        if(this.props.editing){
-            return [
-                <input key="input" className="pt-editable-input" type="text" style={{height: '18px', lineHeight: '18px', textAlign: 'center'}} value={this.props.value} onChange={this.onChange} />,
-                <span key="span" className="pt-editable-content">{this.props.value}</span>
-            ];
-        } else {
+        if(!this.props.editing){
             return (
-                <span>{this.props.value}</span>
+                <span style={{marginLeft: '2px'}} className="pt-editable-content">{this.props.value}</span>
             );
         }
     }
