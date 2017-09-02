@@ -13,6 +13,7 @@ import DialogService from "../../services/DialogService";
 import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
+import InlineText from '../InlineText';
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 
 const todoColumnClass = cxs({
@@ -36,7 +37,8 @@ const todoColumnClass = cxs({
 }) ;
 
 const columnNameClass = cxs({
-	marginTop: '-12px'
+	marginTop: '-12px',
+	width: '200px'
 });
 
 const addTodoBtnClass = cxs({
@@ -103,15 +105,17 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 		const column = this.props.column;
 		const todos = _.sortBy(column.todos, todo => todo.index);
 		const columnColor = column.color;
-		console.log("BAM");
 		return(
 			<div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
 				<div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
 					<div className={`pt-card pt-elevation-2 ${todoColumnClass}`}
 									   style={{background: columnColor}}>
-						<EditableText className={columnNameClass}
-									  value={this.props.column.name}
-									  onChange={this.onChangeColumnName}/>
+						<InlineText className={columnNameClass}
+									editing={this.props.column.editingName}
+									value={this.props.column.name}
+									onChange={this.onChangeColumnName}
+									onStartEditing={this.onStartEditing}
+									onStopEditing={this.onStopEditing}/>
 						<Button iconName="settings"
 								className="settings-btn pt-minimal"
 								onClick={this.gotoColumnSettings} />
@@ -156,6 +160,14 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 			this.unregisterDropTarget = null;
 		}
 	}
+
+	private onStartEditing = () => {
+		this.props.column.set({editingName: true});
+	};
+
+	private onStopEditing = () => {
+		this.props.column.set({editingName: false});
+	};
 
 	private moveTodo(todo: Todo, index: number){
 		console.log("Move Todo", todo, index);
