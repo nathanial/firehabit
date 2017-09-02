@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
-import {downloadCollection, watchCollection} from "./util";
+import {downloadCollection} from "./util";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import * as uuidv4 from 'uuid/v4';
+import * as Freezer from 'freezer-js';
 
 type MoveTodoOptions = {
 	index: number;
@@ -24,7 +25,7 @@ function encode(columns: TodoColumn[]) {
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
-	todoColumns: TodoColumn[] = [];
+	todoColumns: TodoColumn[] = new Freezer([])
 
 	constructor(private readonly db: Database) {
 
@@ -35,26 +36,19 @@ export default class TodoColumnsDB implements DBSection {
 		const userId = user.uid;
 
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		await downloadCollection(this.todoColumns, this.todoColumnsRef);
-		watchCollection(this.todoColumns, this.todoColumnsRef, () => {
-			return {todos: []};
-		});
-		for(let todoColumn of this.todoColumns){
-			if(_.isUndefined(todoColumn.todos) || !todoColumn.todos.length){
-				todoColumn.todos = [];
-			}
-			if(_.isUndefined(todoColumn.confirmDeletion)){
-				todoColumn.confirmDeletion = true;
-			}
-			await this.sortColumn(todoColumn);
-		}
+		this.todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
 	}
 
 	async addTodoColumn(attrs: Partial<TodoColumn>) {
-		await this.todoColumnsRef.push({
+		const newRef = <any>this.todoColumnsRef.push({});
+		const id = newRef.key;
+		const todoColumn = <TodoColumn>{
 			todos: {},
-			...attrs
-		});
+			...attrs,
+			id
+		};
+		newRef.set(todoColumn);
+		this.todoColumns.push(todoColumn);
 	}
 
 	async deleteTodoColumn(columnID: string){

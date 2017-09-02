@@ -2494,9 +2494,9 @@ forwarded@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.0.tgz#19ef9874c4ae1c297bcf078fde63a09b66a84363"
 
-freezer-js@^0.12.2:
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/freezer-js/-/freezer-js-0.12.2.tgz#34406103381acf810d22fd0b2faa3cfe31d1f56e"
+freezer-js@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/freezer-js/-/freezer-js-0.13.0.tgz#5c97d12d2ce67046f9c07038b3b1e73b26398217"
 
 fresh@0.5.0:
   version "0.5.0"

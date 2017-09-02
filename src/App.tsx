@@ -53,6 +53,11 @@ export default class App extends React.Component<Props, {}> {
         this.forceUpdate();
     };
 
+    private onResetColumns = async (data: any) => {
+        await db.todoColumnsDB.reset(data);
+        this.forceUpdate();
+    }
+
     private onUpdateColumn = async (columnID: string, column: Partial<TodoColumn>) => {
         await db.todoColumnsDB.updateTodoColumn(columnID, column);
         this.forceUpdate();

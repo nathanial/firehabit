@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {downloadCollection, watchCollection} from "./util";
+import {downloadCollection} from "./util";
 import * as firebase from "firebase/app";
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
@@ -16,10 +16,8 @@ export default class DaysDB implements DBSection {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
-		await downloadCollection(this.days, this.daysRef);
-		watchCollection(this.days, this.daysRef, () => ({}));
+		this.days = await downloadCollection<Day>(this.daysRef);
 	}
-
 
 	async addConsumedFood(date, food) {
 		food = _.omit(food, ['id']);
@@ -36,8 +34,6 @@ export default class DaysDB implements DBSection {
 			this.daysRef.child(childRef.key + '/consumed').push(food);
 		}
 	}
-
-
 
 	async updateDay(date, values) {
 		let day;

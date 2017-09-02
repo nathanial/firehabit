@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
 import Reference = firebase.database.Reference;
-import {downloadCollection, watchCollection} from "./util";
+import {downloadCollection} from "./util";
 import Database = firebase.database.Database;
 
 export default class FoodDefinitionsDB implements DBSection {
@@ -16,8 +16,7 @@ export default class FoodDefinitionsDB implements DBSection {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
-		await downloadCollection(this.foodDefinitions, this.foodDefinitionsRef);
-		watchCollection(this.foodDefinitions, this.foodDefinitionsRef, () => ({}));
+		this.foodDefinitions = await downloadCollection<FoodDefinition>(this.foodDefinitionsRef);
 	}
 
 	async addFoodDefinition(definition){

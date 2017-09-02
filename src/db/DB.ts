@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import CalorieSettingsDB from './CalorieSettingsDB';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
-import {downloadCollection, watchCollection} from "./util";
+import {downloadCollection} from "./util";
 import TodoColumnsDB from "./TodoColumnsDB";
 import DaysDB from "./DaysDB";
 import FoodDefinitionsDB from "./FoodDefinitionsDB";
