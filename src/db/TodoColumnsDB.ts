@@ -37,13 +37,19 @@ export default class TodoColumnsDB implements DBSection {
 
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		this.todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
+		for(let todoColumn of this.todoColumns){
+			console.log("Todo Column", todoColumn);
+			if(_.isEmpty(todoColumn.todos)){
+				todoColumn.todos = [];
+			}
+		}
 	}
 
-	async addTodoColumn(attrs: Partial<TodoColumn>) {
+	addTodoColumn(attrs: Partial<TodoColumn>) {
 		const newRef = <any>this.todoColumnsRef.push({});
 		const id = newRef.key;
 		const todoColumn = <TodoColumn>{
-			todos: {},
+			todos: [],
 			...attrs,
 			id
 		};
@@ -51,8 +57,9 @@ export default class TodoColumnsDB implements DBSection {
 		this.todoColumns.push(todoColumn);
 	}
 
-	async deleteTodoColumn(columnID: string){
-		await this.todoColumnsRef.child(columnID).remove();
+	deleteTodoColumn(columnID: string){
+		this.todoColumnsRef.child(columnID).remove();
+		this.todoColumns.splice(_.findIndex(this.todoColumns, col => col.id === columnID), 1);
 	}
 
 	async updateTodoColumn(id: string, values: Partial<TodoColumn>) {
@@ -69,7 +76,14 @@ export default class TodoColumnsDB implements DBSection {
 	}
 
 	async addTodo(column: TodoColumn, todo: Partial<Todo>) {
-		await this.todoColumnsRef.child(`${column.id}/todos`).push(todo);
+		const newRef = this.todoColumnsRef.child(`${column.id}/todos`).push({});
+		const id = newRef.key;
+		const newTodo = <Todo>{
+			...todo,
+			id
+		};
+		newRef.set(newTodo);
+		column.todos.push(newTodo);
 	}
 
 	async updateTodo(todo: Todo){
@@ -98,7 +112,9 @@ export default class TodoColumnsDB implements DBSection {
 			return !_.isUndefined(_.find(column.todos, (t: any) => t.id === todo.id));
 		});
 		for(let column of columns){
-			await this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
+			this.todoColumnsRef.child(`${column.id}/todos/${todo.id}`).remove();
+			const index = _.findIndex(column.todos, t => t.id === todo.id);
+			column.todos.splice(index, 1);
 		}
 	}
 
