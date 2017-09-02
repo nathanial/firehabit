@@ -199,7 +199,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		console.log("Move Todo", todo, index);
 	}
 
-	private onDeleteTodo(todo: Todo) {
+	private onDeleteTodo = (todo: Todo) => {
 		const index = _.findIndex(this.props.column.todos, t => t.id === todo.id);
 		if(index >= 0){
 			this.props.column.todos.splice(index, 1);
