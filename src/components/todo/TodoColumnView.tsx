@@ -15,32 +15,6 @@ import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 
-/**
- * Animation Plan
- *
- * 	Step 1. don't display none other columns
- * 	Step 2. use relative positioning to move column to the right spot
- * 	Step 3. let is snap back into place by setting left: 0
- *
-**/
-
-declare class ScrollArea extends React.Component<any, {}>{
-	handleKeyDown(e);
-}
-
-class CustomScrollArea extends ScrollArea {
-	render(){
-		return super.render();
-	}
-	handleKeyDown(e){
-		if (e.target.tagName.toLowerCase() === 'textarea') {
-			return;
-		} else {
-			return super.handleKeyDown(e);
-		}
-	}
-}
-
 const todoColumnClass = cxs({
 	display: 'inline-block',
 	margin: '10px',
@@ -146,13 +120,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 								onClick={this.onAddTodo} />
 						{this.renderTrashBtn()}
 						<TodoListWrapper>
-							<CustomScrollArea
-								speed={0.8}
-								horizontal={false}>
-								{todos.map((todo) => {
-									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
-								})}
-							</CustomScrollArea>
+							{todos.map((todo) => {
+								return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
+							})}
 						</TodoListWrapper>
 					</div>
 				</div>
