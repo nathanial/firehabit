@@ -30,7 +30,7 @@ type Props = {
     todoColumns: TodoColumn[];
 }
 
-export default class TodoPage extends React.Component<Props, {}> {
+export default class TodoPage extends React.PureComponent<Props> {
     render(){
         const {todoColumns} = this.props;
         console.log("Todo Columns", todoColumns);

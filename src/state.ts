@@ -12,12 +12,14 @@ export interface CaloriesState {
 export interface AppState {
 	showDevTools: boolean;
 	calories: CaloriesState;
+	todoColumns: TodoColumn[];
 	set?(name: string, value: any);
 	set?(newState: Partial<AppState>);
 }
 
 interface FreezerData<T> {
 	get(): T;
+	set(changes: Partial<T>);
 	on(eventName: string, callback: () => void);
 }
 
@@ -25,8 +27,9 @@ const initialAppState: AppState = {
 	showDevTools: false,
 	calories: {
 		selectedDate: moment().format('MM/DD/YY')
-	}
+	},
+	todoColumns: []
 };
 
-export const state = new Freezer(initialAppState);
+export const state = new Freezer(initialAppState) as FreezerData<AppState>;
 

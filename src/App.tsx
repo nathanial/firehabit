@@ -14,7 +14,7 @@ interface Props {
 
 
 
-export default class App extends React.Component<Props, {}> {
+export default class App extends React.PureComponent<Props> {
 
     render() {
         return (
@@ -29,7 +29,7 @@ export default class App extends React.Component<Props, {}> {
 
     private renderPage(){
         if(history.location.pathname === '/') {
-            const todoColumns = db.todoColumnsDB.todoColumns.get();
+            const todoColumns = this.props.appState.todoColumns;
             return 	(
                 <TodoPage todoColumns={todoColumns} />
             );

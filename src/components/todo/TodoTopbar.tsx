@@ -27,7 +27,7 @@ type Props = {
 	todoColumns: TodoColumn[];
 }
 
-export default class TodoTopbar extends React.Component<Props,{}> {
+export default class TodoTopbar extends React.PureComponent<Props> {
 	private fileInput: HTMLInputElement;
 
 	render(){

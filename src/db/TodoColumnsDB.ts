@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as firebase from "firebase/app";
 import {downloadCollection} from "./util";
+import {state} from '../state';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import * as uuidv4 from 'uuid/v4';
@@ -25,7 +26,6 @@ function encode(columns: TodoColumn[]) {
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
-	todoColumns: FreezerState<TodoColumn[]> = new Freezer([])
 
 	constructor(private readonly db: Database) {
 
@@ -36,11 +36,12 @@ export default class TodoColumnsDB implements DBSection {
 		const userId = user.uid;
 
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		this.todoColumns = new Freezer<TodoColumn[]>(await downloadCollection<TodoColumn>(this.todoColumnsRef));
-		for(let todoColumn of this.todoColumns.get()){
+		const todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
+		for(let todoColumn of todoColumns){
 			if(_.isEmpty(todoColumn.todos)){
-				todoColumn.set({todos: []});
+				todoColumn.todos = [];
 			}
 		}
+		state.set({todoColumns: todoColumns});
 	}
 }

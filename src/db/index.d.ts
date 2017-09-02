@@ -65,7 +65,3 @@ interface DailyEntry {
 interface Array<T> { 
 	reset(data: T[]): void;
 }
-
-interface FreezerState<T> {
-	get(): T;
-}
