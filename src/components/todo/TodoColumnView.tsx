@@ -288,6 +288,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onAddTodo = async () => {
+		console.log("HERE WE ARE", this.props.column.todos);
 		this.props.column.todos.push({
 			id: generatePushID(), 
 			name: 'NEW TODO', 

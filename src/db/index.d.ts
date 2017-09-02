@@ -62,6 +62,10 @@ interface DailyEntry {
 	records: {[day: string]: boolean};
 }
 
-interface FreezerArray<T> extends Array<T> {
+interface Array<T> { 
 	reset(data: T[]): void;
+}
+
+interface FreezerState<T> {
+	get(): T;
 }

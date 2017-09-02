@@ -24,7 +24,7 @@ const devtoolsClass = cxs({
 });
 
 type Props = {
-	todoColumns: FreezerArray<TodoColumn>;
+	todoColumns: TodoColumn[];
 }
 
 export default class TodoTopbar extends React.Component<Props,{}> {

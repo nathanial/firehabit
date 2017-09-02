@@ -29,7 +29,7 @@ export default class App extends React.Component<Props, {}> {
 
     private renderPage(){
         if(history.location.pathname === '/') {
-            const todoColumns = db.todoColumnsDB.todoColumns;
+            const todoColumns = db.todoColumnsDB.todoColumns.get();
             return 	(
                 <TodoPage todoColumns={todoColumns} />
             );

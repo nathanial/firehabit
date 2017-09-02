@@ -25,7 +25,7 @@ function encode(columns: TodoColumn[]) {
 
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
-	todoColumns: FreezerArray<TodoColumn> = new Freezer([])
+	todoColumns: FreezerState<TodoColumn[]> = new Freezer([])
 
 	constructor(private readonly db: Database) {
 
@@ -36,10 +36,10 @@ export default class TodoColumnsDB implements DBSection {
 		const userId = user.uid;
 
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		this.todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
-		for(let todoColumn of this.todoColumns){
+		this.todoColumns = new Freezer<TodoColumn[]>(await downloadCollection<TodoColumn>(this.todoColumnsRef));
+		for(let todoColumn of this.todoColumns.get()){
 			if(_.isEmpty(todoColumn.todos)){
-				todoColumn.todos = [];
+				todoColumn.set({todos: []});
 			}
 		}
 	}

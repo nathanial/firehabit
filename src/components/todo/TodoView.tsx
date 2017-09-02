@@ -165,7 +165,7 @@ class TodoView extends React.Component<Props, State> {
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
                         </div>
                     </TodoWrapper>
-                    <SubtaskList subtasks={this.state.updatedTodo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
+                    <SubtaskList subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
                 </div>
             </div>
         );
@@ -176,11 +176,7 @@ class TodoView extends React.Component<Props, State> {
     }
 
     private onDeleteSubtask(index: number) {
-        const updatedTodo = _.cloneDeep(this.state.updatedTodo);
-        updatedTodo.subtasks.splice(index, 1);
-        this.setState({updatedTodo}, () => {
-            this.onUpdatedTodo();
-        });
+        this.props.todo.subtasks.splice(index, 1);
     }
 
     private onDragStart = async (event) => {
@@ -202,7 +198,7 @@ class TodoView extends React.Component<Props, State> {
     };
 
     private onNameChanged = (newName) => {
-        this.props.todo.set('name', newName);
+        this.props.todo.set({name: newName});
     };
 
     private onDeleteTodo = async () => {

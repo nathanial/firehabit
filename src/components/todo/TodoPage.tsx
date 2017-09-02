@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import styled from 'styled-components';
 import TodoColumnView from "./TodoColumnView";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
@@ -26,23 +27,29 @@ const ColumnsContainer = styled.div`
 `;
 
 type Props = {
-    todoColumns: FreezerArray<TodoColumn>;
+    todoColumns: TodoColumn[];
 }
 
 export default class TodoPage extends React.Component<Props, {}> {
     render(){
         const {todoColumns} = this.props;
+        console.log("Todo Columns", todoColumns);
         return (
             <div className={todoPageClass}>
                 <TodoTopbar todoColumns={todoColumns} />
                 <ColumnsContainer>
-                    {todoColumns.map((column) => {
-                        return <TodoColumnView key={column.id} column={column} />
+                    {_.map(todoColumns, (column) => {
+                        console.log("Column", column);
+                        return <TodoColumnView key={column.id} column={column} onDeleteColumn={this.onDeleteColumn} />
                     })}
                 </ColumnsContainer>
                 <DragAndDropLayer />
             </div>
         );
+    }
+
+    onDeleteColumn = (column) => {
+        this.props.todoColumns.splice(_.findIndex(this.props.todoColumns, c => c.id === column.id), 1);
     }
 
 
