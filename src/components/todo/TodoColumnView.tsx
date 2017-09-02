@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as $ from 'jquery';
 import {Button, EditableText} from "@blueprintjs/core";
 import {history} from '../../util';
+import {generatePushID} from '../../db/util';
 import styled from 'styled-components';
 import TodoView from "./TodoView";
 import ScrollArea from 'react-scrollbar';
@@ -117,12 +118,7 @@ const TodoListWrapper = styled.ul`
 
 interface Props {
 	column: TodoColumn;
-	onTodoDropped(todo: Todo, column: TodoColumn, index: number);
-	onUpdateTodo(column: TodoColumn, todo: Todo);
-	onDeleteTodo(column: TodoColumn, todo: Todo);
-	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
-	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
-	onDeleteColumn(columnID: string);
+	onDeleteColumn(column: TodoColumn);
 }
 
 interface State {
@@ -149,8 +145,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 									   style={{background: columnColor}}>
 						<EditableText className={columnNameClass}
 									  value={this.state.columnName}
-									  onChange={this.onChangeColumnName}
-									  onConfirm={this.onFinishEditingColumnName} />
+									  onChange={this.onChangeColumnName}/>
 						<Button iconName="settings"
 								className="settings-btn pt-minimal"
 								onClick={this.gotoColumnSettings} />
@@ -163,7 +158,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 								speed={0.8}
 								horizontal={false}>
 								{todos.map((todo) => {
-									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onUpdate={this.onUpdateTodo} onDelete={this.onDeleteTodo} />;
+									return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
 								})}
 							</CustomScrollArea>
 						</TodoListWrapper>
@@ -188,7 +183,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 						index -= 1;
 					}
 				}
-				this.props.onTodoDropped(draggable.data, this.props.column,index);
+				this.moveTodo(draggable.data,index);
 			}
 		});
 	}
@@ -200,13 +195,16 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		}
 	}
 
-	private onUpdateTodo = (todo: Todo) => {
-		this.props.onUpdateTodo(this.props.column, todo);
-	};
+	private moveTodo(todo: Todo, index: number){
+		console.log("Move Todo", todo, index);
+	}
 
-	private onDeleteTodo = (todo: Todo) => {
-		this.props.onDeleteTodo(this.props.column, todo);
-	};
+	private onDeleteTodo(todo: Todo) {
+		const index = _.findIndex(this.props.column.todos, t => t.id === todo.id);
+		if(index >= 0){
+			this.props.column.todos.splice(index, 1);
+		}
+	}
 
 	private findNeighbor(draggable: Draggable){
 		const $el = $(ReactDOM.findDOMNode(this));
@@ -269,14 +267,13 @@ export default class TodoColumnView extends React.Component<Props, State> {
 				}} 
 				column={this.props.column} 
 				goBack={() => this.hideSettings()}
-				onDelete={this.onDeleteColumn}
-				onUpdateColumn={this.props.onUpdateColumn} />
+				onDelete={this.onDeleteColumn} />
 			);
 		}
 	};
 
 	private onDeleteColumn = (columnID: string) => {
-		this.props.onDeleteColumn(columnID);
+		this.props.onDeleteColumn(this.props.column);
 		this.hideSettings();
 	}
 
@@ -291,17 +288,18 @@ export default class TodoColumnView extends React.Component<Props, State> {
 	};
 
 	private onAddTodo = async () => {
-		this.props.onAddTodo(this.props.column, {name: 'NEW TODO'});
+		this.props.column.todos.push({
+			id: generatePushID(), 
+			name: 'NEW TODO', 
+			subtasks: [],
+			index: 0
+		});
 	};
 
 	private onChangeColumnName = (newName) => {
 		this.setState({
 			columnName: newName
 		});
-	};
-
-	private onFinishEditingColumnName = () => {
-		this.props.onUpdateColumn(this.props.column.id, {name: this.state.columnName});
 	};
 
 	private gotoColumnSettings = () => {
@@ -366,7 +364,7 @@ export default class TodoColumnView extends React.Component<Props, State> {
 		const column = this.props.column;
 		const result = await DialogService.showDangerDialog(`Clear Column "${column.name}"?`, 'Clear', 'Cancel');
 		if(result){
-			this.props.onUpdateColumn(column.id, {todos: []});
+			this.props.column.set({todos: []});
 		}
 	};
 

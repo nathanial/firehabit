@@ -26,15 +26,7 @@ const ColumnsContainer = styled.div`
 `;
 
 type Props = {
-    todoColumns: TodoColumn[];
-    onTodoDropped(todo: Todo, column: TodoColumn, index: number);
-	onUpdateTodo(column: TodoColumn, todo: Todo);
-	onDeleteTodo(column: TodoColumn, todo: Todo);
-	onAddTodo(column: TodoColumn, todo: Partial<Todo>);
-    onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
-    onDeleteColumn(columnID: string);
-    onAddColumn(column: Partial<TodoColumn>);
-    onResetColumns(todoData: any);
+    todoColumns: FreezerArray<TodoColumn>;
 }
 
 export default class TodoPage extends React.Component<Props, {}> {
@@ -42,18 +34,10 @@ export default class TodoPage extends React.Component<Props, {}> {
         const {todoColumns} = this.props;
         return (
             <div className={todoPageClass}>
-                <TodoTopbar todoColumns={todoColumns}
-                            onAddColumn={this.props.onAddColumn} 
-                            onResetColumns={this.props.onResetColumns} />
+                <TodoTopbar todoColumns={todoColumns} />
                 <ColumnsContainer>
                     {todoColumns.map((column) => {
-                        return <TodoColumnView key={column.id} column={column} 
-                                               onUpdateColumn={this.props.onUpdateColumn} 
-                                               onAddTodo={this.props.onAddTodo} 
-                                               onDeleteTodo={this.props.onDeleteTodo}
-                                               onTodoDropped={this.props.onTodoDropped}
-                                               onUpdateTodo={this.props.onUpdateTodo} 
-                                               onDeleteColumn={this.props.onDeleteColumn}/>
+                        return <TodoColumnView key={column.id} column={column} />
                     })}
                 </ColumnsContainer>
                 <DragAndDropLayer />

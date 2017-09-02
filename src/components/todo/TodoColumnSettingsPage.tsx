@@ -21,7 +21,6 @@ interface Props {
 	style?: Object;
 	column: TodoColumn;
 	goBack();
-	onUpdateColumn(columnID: string, changes: Partial<TodoColumn>);
 	onDelete(columnID: string);
 }
 
@@ -52,21 +51,19 @@ export default class TodoColumnSettingsPage extends React.Component<Props,{}> {
 	}
 
 	private onResetColor = () => {
-		this.props.onUpdateColumn(this.columnID, {color: null});
+		this.props.column.set({color: null});
 	};
 
 	private onChange = (event) => {
-		this.props.onUpdateColumn(this.columnID, {color: event.hex});
+		this.props.column.set({color: event.hex});
 	};
 
 	private onChangeConfirmDeletion = (event) => {
-		this.props.onUpdateColumn(this.columnID, {confirmDeletion: event.target.checked});
-		this.forceUpdate();
+		this.props.column.set({confirmDeletion: event.target.checked});
 	};
 
 	private onChangeShowClearButton = (event) => {
-		this.props.onUpdateColumn(this.columnID, {showClearButton: event.target.checked});
-		this.forceUpdate();
+		this.props.column.set({showClearButton: event.target.checked});
 	};
 
 	private onDeleteColumn = async () => {

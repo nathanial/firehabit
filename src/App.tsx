@@ -31,15 +31,7 @@ export default class App extends React.Component<Props, {}> {
         if(history.location.pathname === '/') {
             const todoColumns = db.todoColumnsDB.todoColumns;
             return 	(
-                <TodoPage todoColumns={todoColumns}
-                          onUpdateColumn={this.onUpdateColumn}
-                          onAddTodo={this.onAddTodo}
-                          onDeleteTodo={this.onDeleteTodo}
-                          onTodoDropped={this.onTodoDropped}
-                          onUpdateTodo={this.onUpdateTodo}
-                          onDeleteColumn={this.onDeleteColumn} 
-                          onAddColumn={this.onAddColumn}
-                          onResetColumns={this.onResetColumns}/>
+                <TodoPage todoColumns={todoColumns} />
             );
         } else {
             return (
@@ -53,44 +45,5 @@ export default class App extends React.Component<Props, {}> {
         this.forceUpdate();
     };
 
-    private onResetColumns = async (data: any) => {
-        await db.todoColumnsDB.reset(data);
-        this.forceUpdate();
-    }
-
-    private onUpdateColumn = async (columnID: string, column: Partial<TodoColumn>) => {
-        await db.todoColumnsDB.updateTodoColumn(columnID, column);
-        this.forceUpdate();
-    }
-
-    private onAddTodo = async (column: TodoColumn, todo: Partial<Todo>) => {
-        await db.todoColumnsDB.addTodo(column, todo);
-        this.forceUpdate();
-    }
-
-    private onDeleteTodo = async (column: TodoColumn, todo: Todo) => {
-        await db.todoColumnsDB.deleteTodo(todo);
-        this.forceUpdate();
-    }
-
-    private onTodoDropped = async (todo: Todo, column: TodoColumn, index: number) => {
-        await db.todoColumnsDB.moveTodo(todo, column, {index});
-        this.forceUpdate();
-    }
-
-    private onUpdateTodo = async (column: TodoColumn, todo: Todo) => {
-        await db.todoColumnsDB.updateTodo(todo);
-        this.forceUpdate();
-    }
-
-    private onDeleteColumn = async (columnID: string) => {
-        await db.todoColumnsDB.deleteTodoColumn(columnID);
-        this.forceUpdate();
-    }
-
-    private onAddColumn = async (attrs: Partial<TodoColumn>) => {
-        await db.todoColumnsDB.addTodoColumn(attrs);
-        this.forceUpdate();
-    }
 }
 

@@ -3,6 +3,7 @@ import {Button} from '@blueprintjs/core';
 import cxs from 'cxs';
 import {state} from "../../state";
 import * as FileSaver from 'file-saver';
+import {generatePushID} from '../../db/util';
 
 const todoTopbarClass = cxs({
 	margin: '10px 30px',
@@ -23,9 +24,7 @@ const devtoolsClass = cxs({
 });
 
 type Props = {
-	todoColumns: TodoColumn[];
-	onResetColumns(todoData: any);
-	onAddColumn(attrs: Partial<TodoColumn>);
+	todoColumns: FreezerArray<TodoColumn>;
 }
 
 export default class TodoTopbar extends React.Component<Props,{}> {
@@ -83,7 +82,7 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 		reader.onload = (e: any) => {
 			const contents = e.target.result;
 			const todoData = JSON.parse(contents);
-			this.props.onResetColumns(todoData);
+			this.props.todoColumns.reset(todoData);
 		};
 		reader.readAsText(file);
 		console.log("File Input Changed", this.fileInput.files[0]);
@@ -101,7 +100,7 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 	};
 
 	private onDeleteTodos = () => {
-		this.props.onResetColumns([]);
+		this.props.todoColumns.reset([]);
 	}
 
 	private onKeyDown = (event) => {
@@ -112,6 +111,13 @@ export default class TodoTopbar extends React.Component<Props,{}> {
 	};
 
 	private onAddColumn = () => {
-		this.props.onAddColumn({name: 'New Column'});
+		this.props.todoColumns.push({ 
+			id: generatePushID(), 
+			name: 'New Column',
+			color: '#394B59',
+			confirmDeletion: true,
+			showClearButton: false,
+			todos: []
+		});
 	};
 }

@@ -31,6 +31,7 @@ interface TimeSlot {
 interface Subtask {
 	name: string;
 	complete: boolean;
+	set?(updates: Partial<Subtask>);
 }
 
 interface Todo {
@@ -38,6 +39,7 @@ interface Todo {
 	name: string;
 	subtasks: Subtask[];
 	index: number;
+	set?(updates: Partial<Todo>);
 }
 
 interface TodoColumn {
@@ -47,6 +49,7 @@ interface TodoColumn {
 	confirmDeletion: boolean;
 	showClearButton: boolean;
 	todos: Todo[];
+	set?(updates: Partial<TodoColumn>);
 }
 
 interface DBSection {
@@ -57,4 +60,8 @@ interface DailyEntry {
 	id: string;
 	name: string;
 	records: {[day: string]: boolean};
+}
+
+interface FreezerArray<T> extends Array<T> {
+	reset(data: T[]): void;
 }
