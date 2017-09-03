@@ -147,7 +147,7 @@ class TodoView extends React.Component<Props, State> {
                  style={{
                     padding:0,
                     background: '#eee',
-                    opacity: this.state.dragging ? 0 : 1 }
+                    opacity: this.state.dragging ? 0 : undefined}
                  }
                  onDragStart={this.onDragStart}>
                 <div>

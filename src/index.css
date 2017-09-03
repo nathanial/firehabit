@@ -19,3 +19,22 @@
 .custom-scrollbar:hover .custom-scrollbar-handle, .custom-scrollbar:active .custom-scrollbar-handle {
   background-color: rgba(255,255,255,0.7);
 }
+
+
+.todo-view-enter {
+  opacity: 0.01;
+}
+
+.todo-view-enter.todo-view-enter-active {
+  opacity: 1;
+  transition: opacity 150ms ease-in;
+}
+
+.todo-view-leave {
+  opacity: 1;
+}
+
+.todo-view-leave.todo-view-leave-active {
+  opacity: 0.01;
+  transition: opacity 100ms ease-in;
+}

@@ -15,6 +15,8 @@ import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import InlineText from '../InlineText';
 import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
+import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 
 const todoColumnClass = cxs({
     display: 'inline-block',
@@ -111,9 +113,11 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         {this.renderTrashBtn()}
                         <div className={toolbarBorderClass}></div>
                         <ScrollArea className={todoListClass}>
-                            {todos.map((todo) => {
-                                return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
-                            })}
+                            <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+                                {todos.map((todo) => {
+                                    return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
+                                })}
+                            </ReactCSSTransitionGroup>
                         </ScrollArea>
                     </div>
                 </div>
