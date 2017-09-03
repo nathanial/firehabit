@@ -83,10 +83,11 @@ export default class ScrollArea extends React.Component<Props,State> {
             height: `${this.state.handleHeight}px`
         };
         return (
-            <div className={scrollBarClass} onMouseDown={this.onScrollbarMouseDown}>
+            <div className={scrollBarClass} onMouseDown={this.onScrollbarMouseDown} onTouchStart={this.onScrollbarTouchDown}>
                 <div className={scrollHandleClass} 
                     style={handleStyle} 
                     onMouseDown={this.onHandleMouseDown}
+                    onTouchStart={this.onHandleTouchDown}
                     ref={handle => this.handle = handle}>
                 </div>
             </div>
@@ -115,7 +116,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     }
 
     private onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-        const range = (this.state.contentHeight - this.state.handleHeight);
+        const range = this.getRange();
         if(event.deltaY > 0){
             this.onScroll((this.state.scrollY || 0) + 25 / range);
         } else {
@@ -130,8 +131,18 @@ export default class ScrollArea extends React.Component<Props,State> {
         this.startY = event.pageY;
         let scrollbarOffset = event.pageY - this.state.rootTop;
         scrollbarOffset -= this.state.handleHeight / 2;
-        const percentage = scrollbarOffset / this.state.contentHeight;
-        console.log("Percentage", percentage);
+        const percentage = scrollbarOffset / this.getRange();
+        this.onScroll(percentage);
+    }
+
+    private onScrollbarTouchDown = (event: React.TouchEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        this.startY = event.touches[0].pageY;
+        let scrollbarOffset = event.touches[0].pageY - this.state.rootTop;
+        scrollbarOffset -= this.state.handleHeight / 2;
+        const percentage = scrollbarOffset / this.getRange();
         this.onScroll(percentage);
     }
 
@@ -145,8 +156,18 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.addEventListener('mouseup', this.onMouseUp, true);
     }
 
+    private onHandleTouchDown = (event: React.TouchEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.startY = event.touches[0].pageY;
+        this.originalY = this.state.scrollY;
+        document.addEventListener('touchmove', this.onTouchMove, true);
+        document.addEventListener('touchend', this.onTouchEnd, true);
+    }
+
     private onMouseMove = (event: MouseEvent) => {
-        this.onScroll(this.getPercentage(event));
+        this.onScroll(this.getPercentage(event.pageY));
     };
 
     private onMouseUp = () => {
@@ -154,12 +175,22 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.removeEventListener('mouseup', this.onMouseUp, true);
     };
 
+    private onTouchMove = (event: TouchEvent) => {
+        this.onScroll(this.getPercentage(event.touches[0].pageY));
+    }
+
+    private onTouchEnd = () => {
+        document.removeEventListener('touchmove', this.onTouchMove, true);
+        document.removeEventListener('touchend', this.onTouchEnd, true);
+    }
+
     private resizeHandle = () => {
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
         const offsetHeight = rect.height;
-        if(scrollHeight <= offsetHeight){
+        console.log("Scroll Height / Offset Height", scrollHeight, offsetHeight);
+        if((scrollHeight - bottomMargin) <= offsetHeight){
             this.setState({
                 hidden: true,
                 handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
@@ -190,10 +221,13 @@ export default class ScrollArea extends React.Component<Props,State> {
         });
     } 
 
-    private getPercentage = (event: MouseEvent) => {
-        let scrollPosition = (event.pageY - this.startY)  ;
-        const range = (this.state.contentHeight - this.state.handleHeight);
-        let percentage = scrollPosition / range;
+    private getPercentage = (pageY: number) => {
+        let scrollPosition = (pageY - this.startY)  ;
+        let percentage = scrollPosition / this.getRange();
         return percentage + this.originalY;
+    }
+
+    private getRange() {
+        return (this.state.contentHeight - this.state.handleHeight);
     }
 }
