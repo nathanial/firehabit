@@ -56,15 +56,26 @@ const trashBtnClass = cxs({
 const todoListClass = cxs({
     'list-style-type': 'none',
     margin: 0,
-    padding: 0,
+    paddingTop: 0,
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    top: '40px',
+    top: '35px',
     '.todo-view': {
         marginLeft: '20px'
     }
+});
+
+const toolbarBorderClass = cxs({
+    borderBottom: '1px solid rgba(0,0,0,0.15)',
+    boxShadow: "1px 4px 7px 0px rgba(0,0,0,0.03)",
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '25px',
+    height: '10px',
+    zIndex: 9999
 });
 
 interface Props {
@@ -98,6 +109,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                                 className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
                                 onClick={this.onAddTodo} />
                         {this.renderTrashBtn()}
+                        <div className={toolbarBorderClass}></div>
                         <ScrollArea className={todoListClass} 
                                     scrollY={this.props.column.scrollY}
                                     onScroll={this.onScroll}>

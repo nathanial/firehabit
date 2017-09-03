@@ -20,7 +20,6 @@ const scrollBarClass = cxs({
     top: 0,
     bottom: 0,
     background: 'rgba(255,255,255,0.2)',
-    borderRadius: '2px'
 });
 
 const scrollHandleClass = cxs({
@@ -29,7 +28,6 @@ const scrollHandleClass = cxs({
     top: 0,
     right: 0,
     background: 'rgba(255,255,255,0.4)',
-    borderRadius: '2px'
 });
 
 type Props = {
@@ -143,8 +141,9 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     private onMouseMove = (event: MouseEvent) => {
         const rect = this.root.getBoundingClientRect();
-        let newValue = event.pageY - this.startY + this.originalY;
-        this.onScroll(newValue);
+        let offsetY = event.pageY - this.startY + this.originalY;
+        console.log("New Value", offsetY, this.state.contentHeight, (offsetY) / this.state.contentHeight)
+        this.onScroll(offsetY);
     };
 
     private onMouseUp = () => {
@@ -153,20 +152,21 @@ export default class ScrollArea extends React.Component<Props,State> {
     };
 
     private resizeHandle = () => {
+        const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight;
-        const offsetHeight = this.content.offsetHeight;
+        const offsetHeight = rect.height - this.props.scrollY;
         if(scrollHeight <= offsetHeight){
             this.setState({
                 hidden: true,
                 handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
-                contentHeight: this.content.offsetHeight,
+                contentHeight: offsetHeight,
                 scrollHeight: this.content.scrollHeight
             });
         } else {
             this.setState({
                 hidden: false,
                 handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
-                contentHeight: this.content.offsetHeight,
+                contentHeight: offsetHeight,
                 scrollHeight: this.content.scrollHeight
             });
         }
@@ -176,8 +176,9 @@ export default class ScrollArea extends React.Component<Props,State> {
         if(newValue < 0){
             newValue = 0;
         }
-        if(newValue > this.content.offsetHeight - this.state.handleHeight) {
-            newValue = this.content.offsetHeight - this.state.handleHeight;
+        const max = this.state.contentHeight - this.state.handleHeight;
+        if(newValue > max) {
+            newValue = max;
         }
         this.props.onScroll(newValue);
     } 
