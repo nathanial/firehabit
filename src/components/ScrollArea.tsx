@@ -15,8 +15,8 @@ const scrollAreaContent = cxs({
 
 const scrollBarClass = cxs({
     position: 'absolute',
-    right: 0,
-    width: '10px',
+    right: '1px',
+    width: '5px',
     top: 0,
     bottom: 0,
     background: 'rgba(255,255,255,0.2)',
@@ -28,7 +28,7 @@ const scrollHandleClass = cxs({
     left: 0,
     top: 0,
     right: 0,
-    background: 'rgba(255,255,255,0.6)',
+    background: 'rgba(255,255,255,0.4)',
     borderRadius: '2px'
 });
 
@@ -62,10 +62,14 @@ export default class ScrollArea extends React.Component<Props,State> {
     render(){
         let className = this.props.className || '';
         className += ' ' + scrollAreaClass;
+
+        const contentStyle = {
+            scrollTop: this.props.scrollY
+        };
   
         return (
-            <div ref={root => this.root = root} className={className}>
-                <div ref={content => this.content = content} className={scrollAreaContent}>
+            <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
+                <div ref={content => this.content = content} className={scrollAreaContent} style={{top: -this.props.scrollY}}>
                     {this.props.children}
                 </div>
                 {this.renderScrollbar()}
@@ -94,12 +98,17 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     componentDidMount(){
         this.resizeHandle();
+        this.content.scrollTop = this.props.scrollY;
     }
 
     componentDidUpdate(prevProps, prevState){
         if(prevProps.children !== this.props.children){
             this.resizeHandle();
         }
+    }
+
+    private onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+        this.onScroll((this.props.scrollY || 0) + event.deltaY);
     }
 
     private onScrollbarMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -109,13 +118,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         const rect = this.root.getBoundingClientRect();
         let newValue = event.pageY - rect.top;
         newValue -= this.state.handleHeight / 2;
-        if(newValue < 0){
-            newValue = 0;
-        }
-        if(newValue > this.content.offsetHeight - this.state.handleHeight) {
-            newValue = this.content.offsetHeight - this.state.handleHeight;
-        }
-        this.props.onScroll(newValue);
+        this.onScroll(newValue);
     }
 
     private onHandleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -130,6 +133,8 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     private onMouseDown = (event) => {
         event.preventDefault();
+        this.startY = event.pageY;
+        this.originalY = this.props.scrollY;
         this.onMouseMove(event);
         document.addEventListener('mousemove', this.onMouseMove, true);
         document.addEventListener('mouseup', this.onMouseUp, true);
@@ -139,13 +144,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private onMouseMove = (event: MouseEvent) => {
         const rect = this.root.getBoundingClientRect();
         let newValue = event.pageY - this.startY + this.originalY;
-        if(newValue < 0){
-            newValue = 0;
-        }
-        if(newValue > this.content.offsetHeight - this.state.handleHeight) {
-            newValue = this.content.offsetHeight - this.state.handleHeight;
-        }
-        this.props.onScroll(newValue);
+        this.onScroll(newValue);
     };
 
     private onMouseUp = () => {
@@ -172,4 +171,14 @@ export default class ScrollArea extends React.Component<Props,State> {
             });
         }
     };
+
+    private onScroll = (newValue: number) => {
+        if(newValue < 0){
+            newValue = 0;
+        }
+        if(newValue > this.content.offsetHeight - this.state.handleHeight) {
+            newValue = this.content.offsetHeight - this.state.handleHeight;
+        }
+        this.props.onScroll(newValue);
+    } 
 }
