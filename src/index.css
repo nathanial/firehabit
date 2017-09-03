@@ -5,3 +5,8 @@
   right: 0;
   bottom: 0;
   top: 0; }
+
+
+  .todo-view:first-child {
+    margin-top: 0 !important;
+  }

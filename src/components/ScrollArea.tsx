@@ -19,7 +19,7 @@ const scrollBarClass = cxs({
     width: '10px',
     top: 0,
     bottom: 0,
-    background: 'red'
+    background: 'rgba(255,255,255,0.2)'
 });
 
 const scrollHandleClass = cxs({
@@ -27,7 +27,7 @@ const scrollHandleClass = cxs({
     left: 0,
     top: 0,
     right: 0,
-    background: 'yellow'
+    background: 'rgba(255,255,255,0.6)'
 });
 
 type Props = {
@@ -39,6 +39,8 @@ type Props = {
 type State = {
     hidden: boolean;
     handleHeight: number;
+    contentHeight: number;
+    scrollHeight: number;
 }
 
 export default class ScrollArea extends React.Component<Props,State> {
@@ -48,7 +50,9 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     state = {
         hidden: true,
-        handleHeight: 20
+        handleHeight: 20,
+        scrollHeight: 0,
+        contentHeight: 0
     }
 
     render(){
@@ -74,11 +78,10 @@ export default class ScrollArea extends React.Component<Props,State> {
             height: `${this.state.handleHeight}px`
         };
         return (
-            <div className={scrollBarClass}>
+            <div className={scrollBarClass} onMouseDown={this.onMouseDown}>
                 <div className={scrollHandleClass} 
                     style={handleStyle} 
-                    ref={handle => this.handle = handle}
-                    onMouseDown={this.onMouseDown}>
+                    ref={handle => this.handle = handle}>
                 </div>
             </div>
         );
@@ -96,6 +99,7 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     private onMouseDown = (event) => {
         event.preventDefault();
+        this.onMouseMove(event);
         document.addEventListener('mousemove', this.onMouseMove, true);
         document.addEventListener('mouseup', this.onMouseUp, true);
         return false;
@@ -124,12 +128,16 @@ export default class ScrollArea extends React.Component<Props,State> {
         if(scrollHeight <= offsetHeight){
             this.setState({
                 hidden: true,
-                handleHeight: (offsetHeight / scrollHeight) * offsetHeight
+                handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
+                contentHeight: this.content.offsetHeight,
+                scrollHeight: this.content.scrollHeight
             });
         } else {
             this.setState({
                 hidden: false,
-                handleHeight: (offsetHeight / scrollHeight) * offsetHeight
+                handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
+                contentHeight: this.content.offsetHeight,
+                scrollHeight: this.content.scrollHeight
             });
         }
     };
