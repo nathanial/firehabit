@@ -27,7 +27,6 @@ const scrollHandleClass = cxs({
     left: 0,
     top: 0,
     right: 0,
-    height: '20px',
     background: 'yellow'
 });
 
@@ -37,40 +36,79 @@ type Props = {
     onScroll(value: number);
 }
 
-export default class ScrollArea extends React.PureComponent<Props,{}> {
+type State = {
+    hidden: boolean;
+    handleHeight: number;
+}
+
+export default class ScrollArea extends React.Component<Props,State> {
     private root: HTMLElement;
+    private content: HTMLElement;
+    private handle: HTMLElement;
+
+    state = {
+        hidden: true,
+        handleHeight: 20
+    }
 
     render(){
         let className = this.props.className || '';
         className += ' ' + scrollAreaClass;
-        const handleStyle = {
-            top: this.props.scrollY
-        };
+  
         return (
             <div ref={root => this.root = root} className={className}>
-                <div className={scrollAreaContent}>
+                <div ref={content => this.content = content} className={scrollAreaContent}>
                     {this.props.children}
                 </div>
-                <div className={scrollBarClass}>
-                    <div className={scrollHandleClass} 
-                         style={handleStyle} 
-                         onMouseDown={this.onMouseDown}>
-                    </div>
+                {this.renderScrollbar()}
+            </div>
+        );
+    }
+    
+    renderScrollbar(){
+        if(this.state.hidden){
+            return;
+        }
+        const handleStyle = {
+            top: this.props.scrollY,
+            height: `${this.state.handleHeight}px`
+        };
+        return (
+            <div className={scrollBarClass}>
+                <div className={scrollHandleClass} 
+                    style={handleStyle} 
+                    ref={handle => this.handle = handle}
+                    onMouseDown={this.onMouseDown}>
                 </div>
             </div>
         );
     }
 
-    private onMouseDown = () => {
+    componentDidMount(){
+        this.resizeHandle();
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(prevProps.children !== this.props.children){
+            this.resizeHandle();
+        }
+    }
+
+    private onMouseDown = (event) => {
+        event.preventDefault();
         document.addEventListener('mousemove', this.onMouseMove, true);
         document.addEventListener('mouseup', this.onMouseUp, true);
+        return false;
     };
 
     private onMouseMove = (event: MouseEvent) => {
         const rect = this.root.getBoundingClientRect();
-        let newValue = event.pageY - rect.top - 10;
+        let newValue = event.pageY - rect.top;
         if(newValue < 0){
             newValue = 0;
+        }
+        if(newValue > this.content.offsetHeight - this.state.handleHeight) {
+            newValue = this.content.offsetHeight - this.state.handleHeight;
         }
         this.props.onScroll(newValue);
     };
@@ -78,5 +116,21 @@ export default class ScrollArea extends React.PureComponent<Props,{}> {
     private onMouseUp = () => {
         document.removeEventListener('mousemove', this.onMouseMove, true);
         document.removeEventListener('mouseup', this.onMouseUp, true);
+    };
+
+    private resizeHandle = () => {
+        const scrollHeight = this.content.scrollHeight;
+        const offsetHeight = this.content.offsetHeight;
+        if(scrollHeight <= offsetHeight){
+            this.setState({
+                hidden: true,
+                handleHeight: (offsetHeight / scrollHeight) * offsetHeight
+            });
+        } else {
+            this.setState({
+                hidden: false,
+                handleHeight: (offsetHeight / scrollHeight) * offsetHeight
+            });
+        }
     };
 }
