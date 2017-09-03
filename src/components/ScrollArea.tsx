@@ -28,6 +28,8 @@ const scrollHandleClass = cxs({
     background: 'rgba(255,255,255,0.4)',
 });
 
+const bottomMargin = 20;
+
 type Props = {
     className?: string;
 }
@@ -38,6 +40,7 @@ type State = {
     handleHeight: number;
     contentHeight: number;
     scrollHeight: number;
+    rootTop: number;
 }
 
 export default class ScrollArea extends React.Component<Props,State> {
@@ -52,7 +55,8 @@ export default class ScrollArea extends React.Component<Props,State> {
         hidden: true,
         handleHeight: 20,
         scrollHeight: 0,
-        contentHeight: 0
+        contentHeight: 0,
+        rootTop: 0
     }
 
     render(){
@@ -60,10 +64,9 @@ export default class ScrollArea extends React.Component<Props,State> {
         className += ' ' + scrollAreaClass;
 
         let scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
-        console.log("SCROLL Y", this.state.scrollY, scrollY, this.state.scrollHeight, this.state.contentHeight);
         return (
             <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
-                <div ref={content => this.content = content} className={scrollAreaContent} style={{transform: `translateY(${-scrollY}px)`, transformOrigin: 'top right'}}>
+                <div ref={content => this.content = content} className={scrollAreaContent} style={{transform: `translateY(${-scrollY}px)`}}>
                     {this.props.children}
                 </div>
                 {this.renderScrollbar()}
@@ -91,8 +94,9 @@ export default class ScrollArea extends React.Component<Props,State> {
     }
 
     componentDidMount(){
-        this.resizeHandle();
-        this.content.scrollTop = this.state.scrollY;
+        setTimeout(() => {
+            this.resizeHandle();
+        }, 100);
         window.addEventListener('resize', this.onResize, true);
     }
 
@@ -107,15 +111,15 @@ export default class ScrollArea extends React.Component<Props,State> {
     }
 
     private onResize = () => {
-        console.log("GOTCHA");
         this.resizeHandle();
     }
 
     private onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+        const range = (this.state.contentHeight - this.state.handleHeight);
         if(event.deltaY > 0){
-            this.onScroll((this.state.scrollY || 0) + 0.03);
+            this.onScroll((this.state.scrollY || 0) + 25 / range);
         } else {
-            this.onScroll((this.state.scrollY || 0) - 0.03);
+            this.onScroll((this.state.scrollY || 0) - 25 / range);
         }
     }
 
@@ -123,9 +127,8 @@ export default class ScrollArea extends React.Component<Props,State> {
         event.preventDefault();
         event.stopPropagation();
         
-        const rect = this.root.getBoundingClientRect();
         this.startY = event.pageY;
-        let scrollbarOffset = event.pageY - rect.top;
+        let scrollbarOffset = event.pageY - this.state.rootTop;
         scrollbarOffset -= this.state.handleHeight / 2;
         const percentage = scrollbarOffset / this.state.contentHeight;
         console.log("Percentage", percentage);
@@ -152,28 +155,30 @@ export default class ScrollArea extends React.Component<Props,State> {
     };
 
     private resizeHandle = () => {
+        const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
-        const scrollHeight = this.content.scrollHeight;
+        const scrollHeight = this.content.scrollHeight + bottomMargin;
         const offsetHeight = rect.height;
         if(scrollHeight <= offsetHeight){
             this.setState({
                 hidden: true,
                 handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
                 contentHeight: offsetHeight,
-                scrollHeight: scrollHeight
+                scrollHeight: scrollHeight,
+                rootTop: root.top
             });
         } else {
             this.setState({
                 hidden: false,
                 handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
                 contentHeight: offsetHeight,
-                scrollHeight: scrollHeight
+                scrollHeight: scrollHeight,
+                rootTop: root.top
             });
         }
     };
 
     private onScroll = (newValue: number) => {
-        console.log("On Scroll", newValue);
         if(newValue < 0){
             newValue = 0;
         }
@@ -186,10 +191,9 @@ export default class ScrollArea extends React.Component<Props,State> {
     } 
 
     private getPercentage = (event: MouseEvent) => {
-        const rect = this.root.getBoundingClientRect();
-        let scrollPosition = event.pageY - rect.top;
+        let scrollPosition = (event.pageY - this.startY)  ;
         const range = (this.state.contentHeight - this.state.handleHeight);
         let percentage = scrollPosition / range;
-        return percentage;
+        return percentage + this.originalY;
     }
 }
