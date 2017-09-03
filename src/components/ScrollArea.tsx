@@ -121,7 +121,9 @@ export default class ScrollArea extends React.Component<Props,State> {
         const rect = this.root.getBoundingClientRect();
         let newValue = event.pageY - rect.top;
         newValue -= this.state.handleHeight / 2;
-        this.onScroll(newValue);
+        const percentage = newValue / (this.state.contentHeight - this.state.handleHeight);
+        console.log("Percentage", percentage);
+        this.onScroll(percentage);
     }
 
     private onHandleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -134,18 +136,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.addEventListener('mouseup', this.onMouseUp, true);
     }
 
-    private onMouseDown = (event) => {
-        event.preventDefault();
-        this.startY = event.pageY;
-        this.originalY = this.state.scrollY;
-        this.onMouseMove(event);
-        document.addEventListener('mousemove', this.onMouseMove, true);
-        document.addEventListener('mouseup', this.onMouseUp, true);
-        return false;
-    };
-
     private onMouseMove = (event: MouseEvent) => {
-        console.log("BAM");
         this.onScroll(this.getPercentage(event));
     };
 
@@ -191,6 +182,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private getPercentage = (event: MouseEvent) => {
         let scrollPosition = event.pageY - this.startY;
         let percentage = scrollPosition / (this.state.contentHeight - this.state.handleHeight);
+        console.log("Percentage", percentage, scrollPosition);
         return percentage;
     }
 }
