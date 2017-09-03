@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {history} from '../util';
 import {Button, Menu, MenuDivider, MenuItem, Popover, Position} from '@blueprintjs/core';
 import * as firebase from 'firebase';
+import TodoTopbar from './todo/TodoTopbar';
 
 type Props = {
 	path: string;
@@ -40,6 +41,10 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 					<span className="pt-navbar-divider" />
 					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
 					<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+				</div>
+				<div className="pt-navbar-group pt-align-left">
+					<span className="pt-navbar-divider" />
+					{this.props.children}
 				</div>
 				<div className="pt-navbar-group pt-align-right">
 					{this.renderUserDropdown()}

@@ -7,6 +7,7 @@ import CaloriesPage from './components/calories/CaloriesPage';
 import TodoPage from './components/todo/TodoPage';
 import {history,db} from './util';
 import {AppState} from "./state";
+import TodoTopbar from './components/todo/TodoTopbar';
 
 interface Props {
     appState: AppState
@@ -19,7 +20,9 @@ export default class App extends React.PureComponent<Props> {
     render() {
         return (
             <div className="App pt-dark">
-                <SiteNavbar user={db.user} path={history.location.pathname} onNavigate={this.onNavigate} />
+                <SiteNavbar user={db.user} path={history.location.pathname} onNavigate={this.onNavigate}>
+                    {this.renderCustomTopbar()}
+                </SiteNavbar>
                 <div className="app-content">
                     {this.renderPage()}
                 </div>
@@ -39,6 +42,15 @@ export default class App extends React.PureComponent<Props> {
             );
         }
     }
+
+    private renderCustomTopbar() {
+		if(history.location.pathname === '/') {
+            const {todoColumns, showDevTools} = this.props.appState;
+			return <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
+		} else {
+			return <div />
+		}
+	}
 
     private onNavigate = (page) => {
         history.push('/' + page);

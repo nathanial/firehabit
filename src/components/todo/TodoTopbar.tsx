@@ -6,7 +6,7 @@ import * as FileSaver from 'file-saver';
 import {generatePushID} from '../../db/util';
 
 const todoTopbarClass = cxs({
-	margin: '10px 30px',
+	margin: '10px 0',
 	display: 'inline-block'
 });
 
