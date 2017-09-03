@@ -4,9 +4,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  top: 0; }
+  top: 0; 
+}
 
 
-  .todo-view:first-child {
-    margin-top: 15px !important;
-  }
+.todo-view:first-child {
+  margin-top: 15px !important;
+}
+
+.custom-scrollbar .custom-scrollbar-handle {
+  transition: background-color 0.15s ease-in;
+}
+
+.custom-scrollbar:hover .custom-scrollbar-handle, .custom-scrollbar:active .custom-scrollbar-handle {
+  background-color: rgba(255,255,255,0.7);
+}

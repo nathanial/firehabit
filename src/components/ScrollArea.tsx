@@ -17,7 +17,7 @@ const scrollBarClass = cxs({
     width: '5px',
     top: 0,
     bottom: 0,
-    background: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
 });
 
 const scrollHandleClass = cxs({
@@ -25,7 +25,7 @@ const scrollHandleClass = cxs({
     left: 0,
     top: 0,
     right: 0,
-    background: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'rgba(255,255,255,0.4)',
 });
 
 const bottomMargin = 20;
@@ -83,8 +83,8 @@ export default class ScrollArea extends React.Component<Props,State> {
             height: `${this.state.handleHeight}px`
         };
         return (
-            <div className={scrollBarClass} onMouseDown={this.onScrollbarMouseDown} onTouchStart={this.onScrollbarTouchDown}>
-                <div className={scrollHandleClass} 
+            <div className={scrollBarClass + ' custom-scrollbar'} onMouseDown={this.onScrollbarMouseDown} onTouchStart={this.onScrollbarTouchDown}>
+                <div className={scrollHandleClass + ' custom-scrollbar-handle'} 
                     style={handleStyle} 
                     onMouseDown={this.onHandleMouseDown}
                     onTouchStart={this.onHandleTouchDown}
@@ -189,7 +189,6 @@ export default class ScrollArea extends React.Component<Props,State> {
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
         const offsetHeight = rect.height;
-        console.log("Scroll Height / Offset Height", scrollHeight, offsetHeight);
         if((scrollHeight - bottomMargin) <= offsetHeight){
             this.setState({
                 hidden: true,
