@@ -84,7 +84,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             <div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
                 <div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
                     <div className={`pt-card pt-elevation-2 ${todoColumnClass}`}
-                                       style={{background: columnColor}}>
+                         style={{background: columnColor}}>
                         <InlineText className={columnNameClass}
                                     editing={this.props.column.editingName}
                                     value={this.props.column.name}
@@ -98,7 +98,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                                 className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
                                 onClick={this.onAddTodo} />
                         {this.renderTrashBtn()}
-                        <ScrollArea className={todoListClass}>
+                        <ScrollArea className={todoListClass} 
+                                    scrollY={this.props.column.scrollY}
+                                    onScroll={this.onScroll}>
                             {todos.map((todo) => {
                                 return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
                             })}
@@ -134,6 +136,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             this.unregisterDropTarget();
             this.unregisterDropTarget = null;
         }
+    }
+
+    private onScroll = (newValue: number) => {
+        this.props.column.set({scrollY: newValue});
     }
 
     private onStartEditing = () => {

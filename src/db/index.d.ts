@@ -51,6 +51,7 @@ interface TodoColumn {
 	showClearButton: boolean;
 	todos: Todo[];
 	showSettings: boolean;
+	scrollY: number;
 	set?(updates: Partial<TodoColumn>);
 }
 
