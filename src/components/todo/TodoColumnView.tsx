@@ -110,9 +110,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                                 onClick={this.onAddTodo} />
                         {this.renderTrashBtn()}
                         <div className={toolbarBorderClass}></div>
-                        <ScrollArea className={todoListClass} 
-                                    scrollY={this.props.column.scrollY}
-                                    onScroll={this.onScroll}>
+                        <ScrollArea className={todoListClass}>
                             {todos.map((todo) => {
                                 return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
                             })}
@@ -148,10 +146,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             this.unregisterDropTarget();
             this.unregisterDropTarget = null;
         }
-    }
-
-    private onScroll = (newValue: number) => {
-        this.props.column.set({scrollY: newValue});
     }
 
     private onStartEditing = () => {
