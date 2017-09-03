@@ -25,6 +25,7 @@ const devtoolsClass = cxs({
 
 type Props = {
 	todoColumns: TodoColumn[];
+	showDevTools: boolean;
 }
 
 export default class TodoTopbar extends React.PureComponent<Props> {
@@ -44,8 +45,7 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 	}
 
 	renderDevTools = () => {
-		const showDevTools = state.get().showDevTools;
-		if(!showDevTools){
+		if(!this.props.showDevTools){
 			return;
 		}
 		return (

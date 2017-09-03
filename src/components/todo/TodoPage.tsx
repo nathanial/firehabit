@@ -28,14 +28,15 @@ const columnsContainerClass = cxs({
 
 type Props = {
     todoColumns: TodoColumn[];
+    showDevTools: boolean;
 }
 
 export default class TodoPage extends React.PureComponent<Props> {
     render(){
-        const {todoColumns} = this.props;
+        const {todoColumns, showDevTools} = this.props;
         return (
             <div className={todoPageClass}>
-                <TodoTopbar todoColumns={todoColumns} />
+                <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
                 <div className={columnsContainerClass}>
                     {_.map(todoColumns, (column) => {
                         return <TodoColumnView key={column.id} column={column} onDeleteColumn={this.onDeleteColumn} />

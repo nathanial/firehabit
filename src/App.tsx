@@ -29,9 +29,9 @@ export default class App extends React.PureComponent<Props> {
 
     private renderPage(){
         if(history.location.pathname === '/') {
-            const todoColumns = this.props.appState.todoColumns;
+            const {todoColumns, showDevTools} = this.props.appState;
             return 	(
-                <TodoPage todoColumns={todoColumns} />
+                <TodoPage todoColumns={todoColumns} showDevTools={showDevTools} />
             );
         } else {
             return (
