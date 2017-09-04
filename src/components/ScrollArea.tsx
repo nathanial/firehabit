@@ -49,6 +49,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private handle: HTMLElement;
     private originalY: number;
     private startY: number;
+    private interval: number;
 
     state = {
         scrollY: 0,
@@ -99,6 +100,7 @@ export default class ScrollArea extends React.Component<Props,State> {
             this.resizeHandle();
         }, 100);
         window.addEventListener('resize', this.onResize, true);
+        this.startWatchingScrollHeight();
     }
 
     componentDidUpdate(prevProps, prevState){
@@ -109,6 +111,11 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     componentWillUnmount(){
         window.removeEventListener('resize', this.onResize, true);
+        this.stopWatchingScrollHeight();
+    }
+
+    componentDidEnter(){
+        console.log("Component Did Enter");
     }
 
     private onResize = () => {
@@ -228,5 +235,18 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     private getRange() {
         return (this.state.contentHeight - this.state.handleHeight);
+    }
+
+    private startWatchingScrollHeight(){
+        this.interval = setInterval(() => {
+            const currentScrollHeight = this.content.scrollHeight + bottomMargin;
+            if(currentScrollHeight !== this.state.scrollHeight){
+                this.resizeHandle();
+            }
+        }, 16);
+    }
+
+    private stopWatchingScrollHeight(){
+        clearInterval(this.interval);
     }
 }

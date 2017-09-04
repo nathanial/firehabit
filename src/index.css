@@ -47,11 +47,15 @@
 }
 
 .todo-view-enter + .todo-view {
-  position: relative;
   margin-top: 15px !important;
 }
 
 .todo-view-enter ~ .todo-view {
   transition: transform 300ms ease-out !important;
   transform: translateY(67px);
+}
+
+.todo-view-leave ~ .todo-view {
+  transition: transform 300ms ease-out !important;
+  transform: translateY(-67px);
 }
