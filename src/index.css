@@ -33,7 +33,7 @@
 
 .todo-view-leave.todo-view-leave-active {
   transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transform 300ms ease-out 400ms !important;
-  max-height: 62px !important;
+  max-height: 57px !important;
   opacity: 0.01; }
 
 .todo-view-enter + .todo-view {
@@ -45,4 +45,4 @@
 
 .todo-view-leave ~ .todo-view {
   transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transform 300ms ease-out 400ms !important;
-  transform: translateY(-72px); }
+  transform: translateY(-67px); }

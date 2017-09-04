@@ -53,7 +53,7 @@ $out-transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transf
 
 .todo-view-leave.todo-view-leave-active {
   transition: $out-transition !important;
-  max-height: 62px !important;
+  max-height: 57px !important;
   opacity: 0.01;
 }
 
@@ -68,5 +68,5 @@ $out-transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transf
 
 .todo-view-leave ~ .todo-view {
   transition: $out-transition !important;
-  transform: translateY(-72px);
+  transform: translateY(-67px);
 }

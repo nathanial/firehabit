@@ -50,7 +50,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private originalY: number;
     private startY: number;
     private interval: number;
-    private stayInPlace = false;
+    private stayInPlace = true;
 
     private previousScrollY = 0;
 
@@ -196,12 +196,11 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.removeEventListener('touchend', this.onTouchEnd, true);
     }
 
-    private resizeHandle = (stayInPlace = false) => {
+    private resizeHandle = () => {
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
         const offsetHeight = rect.height;
-        this.stayInPlace = stayInPlace;
         if((scrollHeight - bottomMargin) <= offsetHeight){
             this.setState({
                 hidden: true,
@@ -209,8 +208,6 @@ export default class ScrollArea extends React.Component<Props,State> {
                 contentHeight: offsetHeight,
                 scrollHeight: scrollHeight,
                 rootTop: root.top
-            }, () => {
-                this.stayInPlace = false;
             });
         } else {
             this.setState({
@@ -219,8 +216,6 @@ export default class ScrollArea extends React.Component<Props,State> {
                 contentHeight: offsetHeight,
                 scrollHeight: scrollHeight,
                 rootTop: root.top
-            }, () => {
-                this.stayInPlace = false;
             });
         }
     };
@@ -232,8 +227,11 @@ export default class ScrollArea extends React.Component<Props,State> {
         if(newValue > 1) {
             newValue = 1;
         }
+        this.stayInPlace = false;
         this.setState({
             scrollY: newValue
+        }, () => {
+            this.stayInPlace = true;
         });
     } 
 
@@ -251,7 +249,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         this.interval = setInterval(() => {
             const currentScrollHeight = this.content.scrollHeight + bottomMargin;
             if(currentScrollHeight !== this.state.scrollHeight){
-                this.resizeHandle(true);
+                this.resizeHandle();
             }
         }, 16);
     }
