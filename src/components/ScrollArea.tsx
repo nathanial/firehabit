@@ -63,7 +63,6 @@ export default class ScrollArea extends React.Component<Props,State> {
     render(){
         let className = this.props.className || '';
         className += ' ' + scrollAreaClass;
-
         let scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
         return (
             <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
@@ -105,6 +104,7 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     componentDidUpdate(prevProps, prevState){
         if(prevProps.children !== this.props.children){
+            console.log("Children Triggered Resize");
             this.resizeHandle();
         }
     }
@@ -241,6 +241,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         this.interval = setInterval(() => {
             const currentScrollHeight = this.content.scrollHeight + bottomMargin;
             if(currentScrollHeight !== this.state.scrollHeight){
+                console.log("BAM");
                 this.resizeHandle();
             }
         }, 16);

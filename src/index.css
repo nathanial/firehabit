@@ -4,58 +4,45 @@
   left: 0;
   right: 0;
   bottom: 0;
-  top: 0; 
-}
-
+  top: 0; }
 
 .todo-view:first-child {
-  margin-top: 15px !important;
-}
+  margin-top: 15px !important; }
 
 .custom-scrollbar .custom-scrollbar-handle {
-  transition: background-color 0.15s ease-in;
-}
+  transition: background-color 0.15s ease-in; }
 
 .custom-scrollbar:hover .custom-scrollbar-handle, .custom-scrollbar:active .custom-scrollbar-handle {
-  background-color: rgba(255,255,255,0.7);
-}
-
-.todo-view {
-  transform: translateZ(00000.1px);
-}
+  background-color: rgba(255, 255, 255, 0.7); }
 
 .todo-view-enter {
   position: absolute;
   max-height: 0 !important;
-  opacity: 0.01;
-}
+  opacity: 0.01; }
 
 .todo-view-enter.todo-view-enter-active {
   opacity: 1;
   top: -15px;
   max-height: 500px !important;
-  transition: opacity 300ms 300ms ease-out !important;
-}
+  transition: opacity 300ms 300ms ease-out !important; }
 
 .todo-view-leave {
   opacity: 1;
-}
+  max-height: 500px !important;
+  overflow: hidden; }
 
 .todo-view-leave.todo-view-leave-active {
-  opacity: 0.01;
-  transition: opacity 100ms ease-in !important;
-}
+  transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transform 300ms ease-out 400ms !important;
+  max-height: 62px !important;
+  opacity: 0.01; }
 
 .todo-view-enter + .todo-view {
-  margin-top: 15px !important;
-}
+  margin-top: 15px !important; }
 
 .todo-view-enter ~ .todo-view {
   transition: transform 300ms ease-out !important;
-  transform: translateY(67px);
-}
+  transform: translateY(67px); }
 
 .todo-view-leave ~ .todo-view {
-  transition: transform 300ms ease-out !important;
-  transform: translateY(-67px);
-}
+  transition: opacity 100ms ease-out, max-height 300ms ease-out 100ms, transform 300ms ease-out 400ms !important;
+  transform: translateY(-72px); }
