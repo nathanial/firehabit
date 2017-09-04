@@ -68,7 +68,6 @@ export default class ScrollArea extends React.Component<Props,State> {
         className += ' ' + scrollAreaClass;
         let scrollY;
         if(this.stayInPlace){
-            console.log("STAY IN PLACE");
             scrollY = this.previousScrollY
         }  else {
             scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
@@ -115,7 +114,6 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     componentDidUpdate(prevProps, prevState){
         if(prevProps.children !== this.props.children){
-            console.log("Children Triggered Resize");
             this.resizeHandle();
         }
     }
@@ -123,10 +121,6 @@ export default class ScrollArea extends React.Component<Props,State> {
     componentWillUnmount(){
         window.removeEventListener('resize', this.onResize, true);
         this.stopWatchingScrollHeight();
-    }
-
-    componentDidEnter(){
-        console.log("Component Did Enter");
     }
 
     private onResize = () => {
