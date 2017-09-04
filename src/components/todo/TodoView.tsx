@@ -55,7 +55,7 @@ const TodoWrapper = styled.div`
             opacity: 1;
         }
     }
-    
+
     .todo-controls {
         height: 37px;
         position: relative;
@@ -147,8 +147,9 @@ class TodoView extends React.Component<Props, State> {
                  style={{
                     padding:0,
                     background: '#eee',
-                    opacity: this.state.dragging ? 0 : undefined}
-                 }
+                    opacity: this.state.dragging ? 0 : undefined,
+                    transition: 'none'
+                }}
                  onDragStart={this.onDragStart}>
                 <div>
                     <TodoWrapper className={todoWrapperClass} >
