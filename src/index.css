@@ -23,11 +23,13 @@
 
 .todo-view-enter {
   opacity: 0.01;
+  max-height: 0 !important;
 }
 
 .todo-view-enter.todo-view-enter-active {
   opacity: 1;
-  transition: opacity 150ms ease-in;
+  max-height: 500px !important;
+  transition: max-height 2000ms 0s linear, opacity 150ms 300ms ease-out;
 }
 
 .todo-view-leave {

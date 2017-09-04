@@ -113,7 +113,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         {this.renderTrashBtn()}
                         <div className={toolbarBorderClass}></div>
                         <ScrollArea className={todoListClass}>
-                            <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+                            <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={1000} transitionLeaveTimeout={300}>
                                 {todos.map((todo) => {
                                     return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
                                 })}
@@ -253,7 +253,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     };
 
     private onAddTodo = async () => {
-        this.props.column.todos.push({
+        this.props.column.todos.unshift({
             id: generatePushID(), 
             name: 'NEW TODO', 
             subtasks: [],

@@ -10,8 +10,6 @@ type Props = {
     onStopEditing();
 }
 
-
-
 export default class InlineText extends React.PureComponent<Props> {
     private root: HTMLElement;
     private input: HTMLInputElement;
