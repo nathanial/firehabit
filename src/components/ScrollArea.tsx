@@ -50,6 +50,9 @@ export default class ScrollArea extends React.Component<Props,State> {
     private originalY: number;
     private startY: number;
     private interval: number;
+    private stayInPlace = false;
+
+    private previousScrollY = 0;
 
     state = {
         scrollY: 0,
@@ -63,7 +66,15 @@ export default class ScrollArea extends React.Component<Props,State> {
     render(){
         let className = this.props.className || '';
         className += ' ' + scrollAreaClass;
-        let scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
+        let scrollY;
+        if(this.stayInPlace){
+            console.log("STAY IN PLACE");
+            scrollY = this.previousScrollY
+        }  else {
+            scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
+        }
+        this.previousScrollY = scrollY;
+        
         return (
             <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
                 <div ref={content => this.content = content} className={scrollAreaContent} style={{transform: `translateY(${-scrollY}px)`}}>
@@ -191,11 +202,12 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.removeEventListener('touchend', this.onTouchEnd, true);
     }
 
-    private resizeHandle = () => {
+    private resizeHandle = (stayInPlace = false) => {
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
         const offsetHeight = rect.height;
+        this.stayInPlace = stayInPlace;
         if((scrollHeight - bottomMargin) <= offsetHeight){
             this.setState({
                 hidden: true,
@@ -203,6 +215,8 @@ export default class ScrollArea extends React.Component<Props,State> {
                 contentHeight: offsetHeight,
                 scrollHeight: scrollHeight,
                 rootTop: root.top
+            }, () => {
+                this.stayInPlace = false;
             });
         } else {
             this.setState({
@@ -211,6 +225,8 @@ export default class ScrollArea extends React.Component<Props,State> {
                 contentHeight: offsetHeight,
                 scrollHeight: scrollHeight,
                 rootTop: root.top
+            }, () => {
+                this.stayInPlace = false;
             });
         }
     };
@@ -241,8 +257,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         this.interval = setInterval(() => {
             const currentScrollHeight = this.content.scrollHeight + bottomMargin;
             if(currentScrollHeight !== this.state.scrollHeight){
-                console.log("BAM");
-                this.resizeHandle();
+                this.resizeHandle(true);
             }
         }, 16);
     }
