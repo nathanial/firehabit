@@ -10,7 +10,6 @@ import ScrollArea from '../ScrollArea';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
 import DialogService from "../../services/DialogService";
-import {TimelineMax} from 'gsap';
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import InlineText from '../InlineText';
@@ -90,38 +89,25 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private unregisterDropTarget: () => void;
 
     render(){
+        const columnColor = this.props.column.color;
         const column = this.props.column;
-        const todos = _.sortBy(column.todos, todo => todo.index);
-        const columnColor = column.color;
         return(
-            <div className="todo-column-and-settings" style={{display:'inline-block', position: 'relative', height: '100%'}}>
-                <div className="todo-column" style={{display:'inline-block', height: 'calc(100% - 30px)'}}>
-                    <div className={`pt-card pt-elevation-2 ${todoColumnClass}`}
-                         style={{background: columnColor}}>
-                        <InlineText className={columnNameClass}
-                                    editing={this.props.column.editingName}
-                                    value={this.props.column.name}
-                                    onChange={this.onChangeColumnName}
-                                    onStartEditing={this.onStartEditing}
-                                    onStopEditing={this.onStopEditing}/>
-                        <Button iconName="settings"
-                                className="settings-btn pt-minimal"
-                                onClick={this.gotoColumnSettings} />
-                        <Button iconName="plus"
-                                className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                                onClick={this.onAddTodo} />
-                        {this.renderTrashBtn()}
-                        <div className={toolbarBorderClass}></div>
-                        <ScrollArea className={todoListClass}>
-                            <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={600} transitionLeaveTimeout={1000}>
-                                {todos.map((todo) => {
-                                    return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
-                                })}
-                            </ReactCSSTransitionGroup>
-                        </ScrollArea>
-                    </div>
-                </div>
-                {this.renderSettings()}
+            <div className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                <InlineText className={columnNameClass}
+                            editing={this.props.column.editingName}
+                            value={this.props.column.name}
+                            onChange={this.onChangeColumnName}
+                            onStartEditing={this.onStartEditing}
+                            onStopEditing={this.onStopEditing}/>
+                <Button iconName="settings"
+                        className="settings-btn pt-minimal"
+                        onClick={this.gotoColumnSettings} />
+                <Button iconName="plus"
+                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                        onClick={this.onAddTodo} />
+                {this.renderTrashBtn()}
+                <div className={toolbarBorderClass}></div>
+                {this.renderContent()}
             </div>
         );
     }
@@ -150,6 +136,24 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             this.unregisterDropTarget();
             this.unregisterDropTarget = null;
         }
+    }
+
+    private renderContent(){
+        const columnColor = this.props.column.color;
+        const column = this.props.column;
+        const todos = _.sortBy(column.todos, todo => todo.index);
+        if(this.props.column.showSettings){
+            return this.renderSettings();
+        }
+        return (
+            <ScrollArea className={todoListClass}>
+                <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+                    {todos.map((todo) => {
+                        return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
+                    })}
+                </ReactCSSTransitionGroup>
+            </ScrollArea>
+        );
     }
 
     private onStartEditing = () => {
@@ -225,21 +229,15 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private renderSettings = () => {
         if(this.props.column.showSettings){
             return (
-                <TodoColumnSettingsPage style={{
-                    position: 'absolute',
-                    left: 300, top: 0,
-                    opacity: 0
-                }} 
-                column={this.props.column} 
-                goBack={() => this.hideSettings()}
-                onDelete={this.onDeleteColumn} />
+                <TodoColumnSettingsPage 
+                    column={this.props.column} 
+                    onDelete={this.onDeleteColumn} />
             );
         }
     };
 
     private onDeleteColumn = (columnID: string) => {
         this.props.onDeleteColumn(this.props.column);
-        this.hideSettings();
     }
 
     private renderTrashBtn = () => {
@@ -253,22 +251,12 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     };
 
     private onAddTodo = async () => {
-        if(this.animating){
-            return;
-        }
-        this.animating = true;
         this.props.column.todos.unshift({
             id: generatePushID(), 
             name: 'NEW TODO', 
             subtasks: [],
             index: 0
         });
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 600);
-        });
-        this.animating = false;
     };
 
     private onChangeColumnName = (newName) => {
@@ -276,62 +264,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     };
 
     private gotoColumnSettings = () => {
-        if(this.animating){
-            return;
-        }
-        if(!this.props.column.showSettings){
-            this.showSettings();
-        } else {
-            this.hideSettings();
-        }
+        this.props.column.set({showSettings: !this.props.column.showSettings});
     };
-
-    private showSettings() {
-        this.animating = true;
-        this.props.column.set({showSettings: true});
-    }
-
-    private animateShowSettings(){
-        const el = ReactDOM.findDOMNode(this);
-        const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
-        const settingsEl = $(el).find('.todo-column-settings-page')[0];
-        const timeline = new TimelineMax({
-            onComplete: () =>{
-                this.animating = false;
-            }
-        });
-        const columnWidth = $(el).outerWidth();
-        const width = $(window).outerWidth();
-        const centerX = width / 2 - columnWidth;
-        const actualX = $(el).offset().left;
-        timeline.to(elements, 0.5, {opacity: 0});
-        timeline.to(el, 0.5, {position: 'relative', left: centerX - actualX, 'z-index': 9});
-        timeline.to(settingsEl, 0.25, {opacity: 1});
-    }
-
-    private hideSettings(){
-        this.animating = true;
-        let el = null;
-        try {
-            el = ReactDOM.findDOMNode(this);
-        } catch(err){
-
-        }
-        const elements = _.filter($('.todo-column-and-settings').toArray(), e => e !== el);
-        const timeline = new TimelineMax({
-            onComplete: () => {
-                this.animating = false;
-                this.props.column.set({showSettings: false});
-            }
-        });
-        if(el){
-            const settingsEl = $(el).find('.todo-column-settings-page')[0];
-            timeline.to(settingsEl, 0.25, {opacity: 0});
-            timeline.to(el, 0.5, {position: 'relative', left: 0, 'z-index': 0});
-        }
-
-        timeline.to(elements, 0.5, {opacity: 1});
-    }
 
     private onClearColumn = async () => {
         const column = this.props.column;
