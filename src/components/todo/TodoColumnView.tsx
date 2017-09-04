@@ -253,12 +253,22 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     };
 
     private onAddTodo = async () => {
+        if(this.animating){
+            return;
+        }
+        this.animating = true;
         this.props.column.todos.unshift({
             id: generatePushID(), 
             name: 'NEW TODO', 
             subtasks: [],
             index: 0
         });
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 600);
+        });
+        this.animating = false;
     };
 
     private onChangeColumnName = (newName) => {
