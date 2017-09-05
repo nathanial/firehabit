@@ -27,6 +27,9 @@ function encode(columns: TodoColumn[]) {
 export default class TodoColumnsDB implements DBSection {
 	todoColumnsRef: Reference;
 
+	private dirtyColumns: string[] = [];
+	private deletedColumns: string[] = [];
+
 	constructor(private readonly db: Database) {
 
 	}
@@ -43,5 +46,33 @@ export default class TodoColumnsDB implements DBSection {
 			}
 		}
 		state.set({todoColumns: todoColumns});
+
+		setTimeout(() => {
+			state.on('update', (currentState, prevState) => {
+				for(let prevColumn of prevState.todoColumns){
+					if(!_.some(currentState.todoColumns, c => c.id === prevColumn.id)){
+						this.deletedColumns.push(prevColumn.id);
+					}
+				}
+				for(let currentColumn of currentState.todoColumns){
+					if(!_.some(prevState.todoColumns, prevColumn => prevColumn === currentColumn)){
+						this.dirtyColumns.push(currentColumn.id);						
+					}
+				}
+			})
+		}, 500);
+
+		setInterval(() => {
+			const todoColumns = state.get().todoColumns;
+			for(let columnID of _.uniq(this.dirtyColumns)){
+				const column = _.find(todoColumns, c => c.id === columnID);
+				this.todoColumnsRef.child(columnID).set(_.omit(column, 'id'));
+			}
+			for(let columnID of _.uniq(this.deletedColumns)){
+				this.todoColumnsRef.child(columnID).remove();
+			}
+			this.dirtyColumns = [];
+			this.deletedColumns = [];
+		}, 1000);
 	}
 }

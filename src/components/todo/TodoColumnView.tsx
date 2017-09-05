@@ -126,7 +126,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         index -= 1;
                     }
                 }
-                this.moveTodo(draggable.data,index);
+                this.dropTodo(draggable.data,index);
             }
         });
     }
@@ -164,8 +164,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         this.props.column.set({editingName: false});
     };
 
-    private moveTodo(todo: Todo, index: number){
-        console.log("Move Todo", todo, index);
+    private dropTodo(todo: Todo, index: number){
+        this.props.column.todos.splice(index, 0, todo);
     }
 
     private onDeleteTodo = (todo: Todo) => {

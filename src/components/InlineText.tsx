@@ -21,12 +21,12 @@ export default class InlineText extends React.PureComponent<Props> {
             opacity: 1,
             height: '18px',
             lineHeight: '18px',
-            'text-align': 'center',
+            textAlign: 'center',
             position: 'relative'
         } as any;
         if(!this.props.editing){
             style.overflow = 'hidden';
-            style['text-overflow'] = 'ellipsis';
+            style.textOverflow = 'ellipsis';
             inputStyle.opacity = 0;
             inputStyle.width = 0;
         }

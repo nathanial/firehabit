@@ -20,7 +20,7 @@ export interface AppState {
 interface FreezerData<T> {
 	get(): T;
 	set(changes: Partial<T>);
-	on(eventName: string, callback: () => void);
+	on(eventName: string, callback: (currentState: T, prevState: T) => void);
 }
 
 const initialAppState: AppState = {

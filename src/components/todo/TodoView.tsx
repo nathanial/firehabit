@@ -190,12 +190,16 @@ class TodoView extends React.Component<Props, State> {
         this.setState({
             dragging: true
         });
-        await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
+        const dropped = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
             <TodoDragPreview todo={this.props.todo} />
         );
-        this.setState({
-            dragging: false
-        });
+        if(dropped){
+            this.props.onDelete(this.props.todo);
+        } else {
+            this.setState({
+                dragging: false
+            });
+        }
     };
 
     private onNameChanged = (newName) => {
