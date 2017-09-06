@@ -130,7 +130,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         index += 1;
                     }
                 }
-                console.log("DROP TODO", index);
                 this.dropTodo(draggable.data,index);
             },
             onHover: (draggable: Draggable) => {
@@ -143,7 +142,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         index += 1;
                     }
                 }
-                console.log("On Hover", index, draggable);
             }
         });
     }
