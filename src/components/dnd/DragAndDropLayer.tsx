@@ -31,6 +31,7 @@ type State = {
 
 type DropTarget = {
 	element: HTMLElement;
+	canDrop(draggable: Draggable): boolean;
 	onDrop(draggable: Draggable);
 };
 
@@ -96,7 +97,7 @@ export class DragAndDropLayer extends React.Component<{},State>{
 			for(let draggable of this.state.draggables){
 				let dropped = false;
 				for(let dropTarget of this.state.dropTargets){
-					if(intersects(draggable, dropTarget.element.getBoundingClientRect())){
+					if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
 						dropTarget.onDrop(draggable);
 						draggable.onDrop(dropTarget);
 						dropped = true;

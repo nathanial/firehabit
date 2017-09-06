@@ -116,6 +116,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const element = ReactDOM.findDOMNode(this);
         this.unregisterDropTarget = dndService.addDropTarget({
             element,
+            canDrop: (draggable: Draggable,) => {
+                const todo = draggable.data as Todo;
+                return !_.some(this.props.column.todos, t => t.id === todo.id)
+            },
             onDrop: (draggable: Draggable) => {
                 const {todoID, direction} = this.findNeighbor(draggable);
                 let index = this.props.column.todos.length;
