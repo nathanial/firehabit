@@ -38,7 +38,6 @@ interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
-	index: number;
 	set?(updates: Partial<Todo>);
 }
 

@@ -33,6 +33,7 @@ type DropTarget = {
 	element: HTMLElement;
 	canDrop(draggable: Draggable): boolean;
 	onDrop(draggable: Draggable);
+	onHover(draggable: Draggable);
 };
 
 type Dimensions = {
@@ -89,6 +90,14 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					draggable.x = event.pageX - 10;
 					draggable.y = event.pageY - 30;
 					this.forceUpdate();
+
+					for(let dropTarget of this.state.dropTargets){
+						if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
+							dropTarget.onHover(draggable);
+							// draggable.onHover(dropTarget);
+							break;
+						}
+					}
 				}
 			}
 		});

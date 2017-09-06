@@ -125,12 +125,25 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                 let index = this.props.column.todos.length;
                 if(todoID){
                     const todo = _.find(this.props.column.todos, (todo: Todo) => todo.id === todoID);
-                    index = _.find(this.props.column.todos, (todo: Todo) => todo.id === todoID).index;
-                    if(direction === 'above'){
-                        index -= 1;
+                    index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
+                    if(direction !== 'above'){
+                        index += 1;
                     }
                 }
+                console.log("DROP TODO", index);
                 this.dropTodo(draggable.data,index);
+            },
+            onHover: (draggable: Draggable) => {
+                const {todoID, direction} = this.findNeighbor(draggable);
+                let index = this.props.column.todos.length;
+                if(todoID){
+                    const todo = _.find(this.props.column.todos, (todo: Todo) => todo.id === todoID);
+                    index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
+                    if(direction !== 'above'){
+                        index += 1;
+                    }
+                }
+                console.log("On Hover", index, draggable);
             }
         });
     }
@@ -145,14 +158,13 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private renderContent(){
         const columnColor = this.props.column.color;
         const column = this.props.column;
-        const todos = _.sortBy(column.todos, todo => todo.index);
         if(this.props.column.showSettings){
             return this.renderSettings();
         }
         return (
             <ScrollArea className={todoListClass}>
                 <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                    {todos.map((todo) => {
+                    {column.todos.map((todo) => {
                         return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
                     })}
                 </ReactCSSTransitionGroup>
@@ -258,8 +270,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         this.props.column.todos.unshift({
             id: generatePushID(), 
             name: 'NEW TODO', 
-            subtasks: [],
-            index: 0
+            subtasks: []
         });
     };
 
