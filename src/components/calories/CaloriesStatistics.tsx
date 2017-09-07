@@ -152,10 +152,17 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 	};
 
 	private gotoSettings = async () => {
+		const settings = this.props.caloriesState['calorie-settings'];
+		let {caloricGoal, weightStasisGoal} = settings;
+		function onChange(newCaloricGoal, newWeightStasisGoal) {
+			caloricGoal = newCaloricGoal;
+			weightStasisGoal = newWeightStasisGoal;
+		}
 		const result = await DialogService.showDialog("Calorie Settings", "Save", "Cancel", 
-			<CaloriesSettings caloriesState={this.props.caloriesState} />
+			<CaloriesSettings caloricGoal={caloricGoal} weightStasisGoal={weightStasisGoal} onChange={onChange}/>
 		);
 		if(result){
+			settings.set({caloricGoal, weightStasisGoal});
 		}
 	}
 }

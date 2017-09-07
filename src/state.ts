@@ -6,6 +6,7 @@ import moment = require("moment");
 export interface CalorieSettings {
 	caloricGoal: number,
 	weightStasisGoal: number
+	set?(updates: Partial<CalorieSettings>);
 }
 
 export interface CaloriesState {

@@ -94,7 +94,13 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps,{}> 
 
 	onAddFood = (food: FoodDefinition) => {
 		console.log("ADD fOOD", food);
-		this.props.consumedFoods.push({ name: food.name, calories: food.calories});
+		const newFoodEntry = { name: food.name, calories: food.calories};
+		if(_.isEmpty(this.props.consumedFoods)){
+			const day = _.find(this.props.days, d => d.date === this.props.date);
+			day.set({consumed: [newFoodEntry]})
+		} else {
+			this.props.consumedFoods.push(newFoodEntry);
+		}
 		this.setState({value: ''});
 	};
 

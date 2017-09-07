@@ -38,6 +38,7 @@ export class DB {
 
 	private daysRef: Reference;
 	private dirtyDays: string[] = [];
+	private dirtyCalorieSettings = false;
 
 	async load(){
 
@@ -65,7 +66,7 @@ export class DB {
 		});
 
 		this.addListeners();
-		this.startSync();
+		this.startSync(userId);
 	}
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
@@ -120,25 +121,26 @@ export class DB {
 					if(prevState.calories.days !== currentState.calories.days){
 						for(let day of currentState.calories.days){
 							if(!_.some(prevState.calories.days, d => d === day)){
-								console.log("DIRTY DAY", day);
 								this.dirtyDays.push(day.id);
 							}
 						}
 					}
-
+				}
+				if(prevState.calories['calorie-settings'] !== currentState.calories['calorie-settings']){
+					this.dirtyCalorieSettings = true;
 				}
 			})
 		}, 500);
 	}
 
-	async startSync(){
-		setInterval(() => this.sync(), 1000);
+	async startSync(userId){
+		setInterval(() => this.sync(userId), 1000);
 	}
 
-	async sync(){
+	async sync(userId){
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
-		this.syncDays();
+		this.syncDays(userId);
 	}
 
 	async syncTodoColumns(){
@@ -167,14 +169,20 @@ export class DB {
 		this.deletedFoodDefinitions = [];
 	}
 
-	async syncDays(){
-		const days = state.get().calories.days;
+	async syncDays(userId){
+		const appState = state.get();
+		const days = appState.calories.days;
 		for(let dayID of _.uniq(this.dirtyDays)){
 			const day = _.find(days, d => d.id === dayID);
-			console.log("SET DAY", day);
 			this.daysRef.child(dayID).set(_.omit(day, 'id'));
 		}
 		this.dirtyDays = [];
+
+		if(this.dirtyCalorieSettings){
+			this.db.ref(`/users/${userId}/calorie-settings`).set({...appState.calories['calorie-settings']});
+		}
+
+		this.dirtyCalorieSettings = false;
 	}
 
 }

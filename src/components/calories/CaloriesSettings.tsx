@@ -12,13 +12,25 @@ const SettingsForm = styled.div`
 `;
 
 type Props = {
-    caloriesState: CaloriesState;
+    caloricGoal: number;
+    weightStasisGoal: number;
+    onChange(caloricGoal: number, wieghtStasisGoal: number);
 };
 
-export default class CaloriesSettings extends React.Component<Props,{}> {
+type State = {
+    caloricGoal: number;
+    weightStasisGoal: number;
+}
+
+export default class CaloriesSettings extends React.Component<Props,State> {
+
+    state = {
+        caloricGoal: this.props.caloricGoal,
+        weightStasisGoal: this.props.weightStasisGoal
+    }
+
     render(){
-        const {caloriesState} = this.props;
-        const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings'];
+        const {caloricGoal, weightStasisGoal} = this.state;
         return (
             <div>
                 <SettingsForm>
@@ -43,12 +55,18 @@ export default class CaloriesSettings extends React.Component<Props,{}> {
         );
     }
 
-    onCaloricGoalChanged = () => {
-        console.log("Caloric Goal Changed");
+    onCaloricGoalChanged = (event) => {
+        this.setState({
+            caloricGoal: event.target.value
+        });
+        this.props.onChange(event.target.value, this.state.weightStasisGoal);
     }
 
-    onWeightStasisGoalChanged = () => {
-        console.log("Weight Stasis Goal Changed");
+    onWeightStasisGoalChanged = (event) => {
+        this.setState({
+            weightStasisGoal: event.target.value
+        });
+        this.props.onChange(this.state.caloricGoal, event.target.value);
     }
 }
 
