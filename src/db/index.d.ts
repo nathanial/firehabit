@@ -17,6 +17,7 @@ interface ConsumedFood {
 }
 
 interface Day {
+	id: string;
 	date: string;
 	weight: number;
 	consumed: ConsumedFood[];

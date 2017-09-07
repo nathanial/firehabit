@@ -104,17 +104,26 @@ export class DB {
 					}
 				}
 				if(prevState.calories !== currentState.calories){
-					for(let prevFoodDefinition of prevState.calories.foodDefinitions){
-						if(!_.some(currentState.calories.foodDefinitions, fd => fd.id === prevFoodDefinition.id)){
-							this.deletedFoodDefinitions.push(prevFoodDefinition.id);
+					if(prevState.calories.foodDefinitions !== currentState.calories.foodDefinitions){
+						for(let prevFoodDefinition of prevState.calories.foodDefinitions){
+							if(!_.some(currentState.calories.foodDefinitions, fd => fd.id === prevFoodDefinition.id)){
+								this.deletedFoodDefinitions.push(prevFoodDefinition.id);
+							}
+						}
+						for(let currentFoodDefinition of currentState.calories.foodDefinitions){
+							if(!_.some(prevState.calories.foodDefinitions, fd => fd === currentFoodDefinition)){
+								this.dirtyFoodDefinitions.push(currentFoodDefinition.id);
+							}
 						}
 					}
-					for(let currentFoodDefinition of currentState.calories.foodDefinitions){
-						if(!_.some(prevState.calories.foodDefinitions, fd => fd === currentFoodDefinition)){
-							console.log("Gotcha", currentFoodDefinition);
-							this.dirtyFoodDefinitions.push(currentFoodDefinition.id);
+					if(prevState.calories.days !== currentState.calories.days){
+						for(let day of prevState.calories.days){
+							if(!_.some(currentState.calories.days, d => d === day)){
+								this.dirtyDays.push(day.id);
+							}
 						}
 					}
+
 				}
 			})
 		}, 500);
@@ -127,6 +136,7 @@ export class DB {
 	async sync(){
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
+		this.syncDays();
 	}
 
 	async syncTodoColumns(){
@@ -153,6 +163,15 @@ export class DB {
 		}
 		this.dirtyFoodDefinitions = [];
 		this.deletedFoodDefinitions = [];
+	}
+
+	async syncDays(){
+		const days = state.get().calories.days;
+		for(let dayID of _.uniq(this.dirtyDays)){
+			const day = _.find(days, d => d.id === dayID);
+			this.daysRef.child(dayID).set(_.omit(day, 'id'));
+		}
+		this.dirtyDays = [];
 	}
 
 }
