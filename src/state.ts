@@ -3,8 +3,16 @@ import * as _ from 'lodash';
 import * as uuidv4 from 'uuid/v4';
 import moment = require("moment");
 
+export interface CalorieSettings {
+	caloricGoal: number,
+	weightStasisGoal: number
+}
+
 export interface CaloriesState {
 	selectedDate: string;
+	'calorie-settings': CalorieSettings;
+	foodDefinitions: FoodDefinition[];
+	days: Day[];
 	set?(name: string, value: any);
 	set?(newState: Partial<CaloriesState>);
 }
@@ -26,7 +34,13 @@ interface FreezerData<T> {
 const initialAppState: AppState = {
 	showDevTools: false,
 	calories: {
-		selectedDate: moment().format('MM/DD/YY')
+		selectedDate: moment().format('MM/DD/YY'),
+		foodDefinitions: [],
+		days: [],
+		'calorie-settings': {
+			caloricGoal: 0,
+			weightStasisGoal: 0
+		}
 	},
 	todoColumns: []
 };

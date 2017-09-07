@@ -40,11 +40,14 @@ const settingsBtn = cxs({
 
 interface CalorieStatisticsProps {
 	date: string;
+	days: Day[];
+	calorieSettings: CalorieSettings;
 }
 
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
 	render() {
-		const day = _.find(db.daysDB.days, day => day.date === this.props.date);
+		const days = this.props.days;
+		const day = _.find(days, day => day.date === this.props.date);
 		let dailyTotal;
 		if(day){
 			dailyTotal = _.sum(_.map(day.consumed, f => parseInt(f.calories, 10)));
@@ -52,9 +55,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 			dailyTotal = 0;
 		}
 
-		const goal = db.calorieSettingsDB.calorieSettings.caloricGoal;
+		const goal = this.props.calorieSettings.caloricGoal;
 		const remaining = goal - dailyTotal;
-		const weightStasisGoal = db.calorieSettingsDB.calorieSettings.weightStasisGoal;
+		const weightStasisGoal = this.props.calorieSettings.weightStasisGoal;
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (

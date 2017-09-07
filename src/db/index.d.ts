@@ -7,15 +7,19 @@ interface CalorieSettings {
 interface FoodDefinition {
 	name: string;
 	calories: string;
+	set?(definition: Partial<FoodDefinition>);
 }
 
 interface ConsumedFood {
 	calories: string;
+	name: string;
 }
 
 interface Day {
 	date: string;
+	weight: number;
 	consumed: ConsumedFood[];
+	set?(day: Partial<Day>);
 }
 
 interface TimeSlot {

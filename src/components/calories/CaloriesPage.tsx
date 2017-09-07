@@ -4,6 +4,7 @@ import CalorieStatistics from "./CaloriesStatistics";
 import CaloriesSettings from "./CaloriesSettings";
 import {CaloriesState} from "../../state";
 import {history} from '../../util';
+import * as _ from 'lodash';
 
 type CaloriesDataPageProps = {
     caloriesState: CaloriesState;
@@ -11,11 +12,17 @@ type CaloriesDataPageProps = {
 
 class CaloriesDataPage extends React.PureComponent<CaloriesDataPageProps, {}> {
     render(){
-        const {selectedDate} = this.props.caloriesState;
+        const {selectedDate, foodDefinitions, days} = this.props.caloriesState;
+        const selectedDay = _.find(days, d => d.date === selectedDate);
+        const consumedFoods = _.get(selectedDay, 'consumed', []);
         return (
             <div style={{marginLeft: 20}}>
-                <CalorieStatistics date={selectedDate} />
-                <CaloriesForm date={selectedDate} onChangeDate={this.onChangeDate} />
+                <CalorieStatistics date={selectedDate} days={days} calorieSettings={this.props.caloriesState['calorie-settings']} />
+                <CaloriesForm date={selectedDate} 
+                              days={days}
+                              onChangeDate={this.onChangeDate} 
+                              foodDefinitions={foodDefinitions} 
+                              consumedFoods={consumedFoods} />
             </div>
         );
     }
@@ -41,7 +48,7 @@ export default class CaloriesPage extends React.Component<CaloriesPageProps,{}> 
     private renderPage(){
         const caloriesState = this.props.caloriesState;
         if(history.location.pathname === '/calories/settings') {
-            return <CaloriesSettings />
+            return <CaloriesSettings caloriesState={caloriesState}  />
         } else {
             return <CaloriesDataPage caloriesState={caloriesState} />;
         }

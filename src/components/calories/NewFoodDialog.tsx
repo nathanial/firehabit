@@ -12,6 +12,7 @@ const NewFoodDialogWrapper = styled.div`
 
 interface Props {
 	defaultName: string;
+	foodDefinitions: FoodDefinition[];
 }
 
 interface State {
@@ -72,7 +73,7 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 	openDialog = () => this.setState({ isOpen: true, foodName: this.props.defaultName });
 
 	onAddFood = async () => {
-		await db.foodDefinitionsDB.addFoodDefinition({
+		this.props.foodDefinitions.push({
 			name: this.foodName.value,
 			calories: this.calories.value
 		});

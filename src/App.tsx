@@ -37,6 +37,7 @@ export default class App extends React.PureComponent<Props> {
                 <TodoPage todoColumns={todoColumns} showDevTools={showDevTools} />
             );
         } else {
+            console.log("App State", this.props.appState);
             return (
                 <CaloriesPage caloriesState={this.props.appState.calories} />
             );

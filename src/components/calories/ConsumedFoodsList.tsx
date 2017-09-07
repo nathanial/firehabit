@@ -45,13 +45,13 @@ const CaloriesListWrapper = styled.ul`
 `;
 
 interface Props {
-	day: string;
+	day: Day;
 }
 
 export default class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){
-		const day = _.find(db.daysDB.days, day => day.date === this.props.day);
+		const day = this.props.day;
 		let groups = [];
 		if(day){
 			groups = this.getEntryGroups(day);
@@ -90,12 +90,12 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 		});
 	};
 
-	onRepeatFood = (day, entry) => {
-		db.daysDB.addConsumedFood(day, entry);
+	onRepeatFood = (day: Day, entry) => {
+		day.consumed.push({calories: entry.calories, name: entry.name});
 	};
 
-	onRemoveFood = (day, entry) => {
-		db.daysDB.removeConsumedFood(day, entry);
+	onRemoveFood = (day: Day, entry) => {
+		day.consumed.splice(_.findIndex(day.consumed, f => f.name === entry.name), 1);
 	};
 
 }

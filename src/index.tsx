@@ -75,7 +75,6 @@ async function init(){
 init();
 
 state.on('update', () => {
-	console.log("UPDATE", state.get());
 	ReactDOM.render(<App appState={state.get()} />, document.getElementById('root'));
 });
 

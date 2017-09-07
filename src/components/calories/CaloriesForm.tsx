@@ -32,14 +32,14 @@ const caloriesFormOuterWrapperClass = cxs({
 
 interface CaloriesFormProps {
 	date: string;
+	days: Day[];
+	foodDefinitions: FoodDefinition[];
+	consumedFoods: ConsumedFood[];
 	onChangeDate(newDate: string);
 }
 
-interface CaloriesFormState {
-	value: string;
-}
 
-export default class CaloriesForm extends React.Component<CaloriesFormProps, CaloriesFormState> {
+export default class CaloriesForm extends React.PureComponent<CaloriesFormProps,{}> {
 
 	state = {
 		value: ''
@@ -50,7 +50,7 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 	render() {
 		return (
 			<div className={caloriesFormOuterWrapperClass}>
-				<WeightForm date={this.props.date} />
+				<WeightForm date={this.props.date} days={this.props.days} />
 				<div className={`pt-card pt-elevation-2 ${caloriesFormWrapperClass}`}>
 					<h2>Calories</h2>
 					<DayPicker date={this.props.date}
@@ -78,40 +78,39 @@ export default class CaloriesForm extends React.Component<CaloriesFormProps, Cal
 			return (
 				<div>
 					<SearchResults search={this.state.value}
-								   foodDefinitions={db.foodDefinitionsDB.foodDefinitions}
+								   foodDefinitions={this.props.foodDefinitions}
 								   onAddFood={this.onAddFood}
 								   onRemoveFoodDefinition={this.onRemoveFoodDefinition}
 								   onEditFoodDefinition={this.onEditFoodDefinition}/>
-					<NewFoodDialog defaultName={this.state.value} />
+					<NewFoodDialog defaultName={this.state.value} foodDefinitions={this.props.foodDefinitions} />
 				</div>
 			);
 		}
+		const day = _.find(this.props.days, (d) => d.date === this.props.date);
 		return (
-			<ConsumedFoodsList day={this.props.date} />
+			<ConsumedFoodsList day={day} />
 		);
 	};
 
-	onAddFood = async (food) => {
-		await db.daysDB.addConsumedFood(this.props.date, food);
-		this.setState({
-			value: ''
-		});
+	onAddFood = async (food: FoodDefinition) => {
+		this.props.consumedFoods.push({name: food.name, calories: food.calories});
 	};
 
-	onRemoveFoodDefinition = async (food) => {
-		await db.foodDefinitionsDB.removeFoodDefinition(food);
+	onRemoveFoodDefinition = async (food: FoodDefinition) => {
+		const {foodDefinitions} = this.props;
+		foodDefinitions.splice(_.findIndex(foodDefinitions, f => f.name === food.name), 1);
 	};
 
-	onEditFoodDefinition = async (food) => {
-		let updatedFoodDefinition;
-		function onChange(newValue){
+	onEditFoodDefinition = async (food: FoodDefinition) => {
+		let updatedFoodDefinition: FoodDefinition;
+		function onChange(newValue: FoodDefinition){
 			updatedFoodDefinition = newValue;
 		}
 		const result = await DialogService.showDialog("Food Definition", "Ok", "Cancel", (
 			<FoodDefinitionForm foodDefinition={food} onChange={onChange} />
 		));
 		if(result && updatedFoodDefinition){
-			await db.foodDefinitionsDB.updateFoodDefinition(_.extend({}, food,  updatedFoodDefinition));
+			food.set(updatedFoodDefinition);
 		}
 	};
 
