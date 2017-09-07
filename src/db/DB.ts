@@ -29,11 +29,15 @@ export class DB {
 	private db: Database;
 
 	private todoColumnsRef: Reference;
-	private foodDefinitionsRef: Reference;
-	private daysRef: Reference;
-
 	private dirtyColumns: string[] = [];
 	private deletedColumns: string[] = [];
+
+	private foodDefinitionsRef: Reference;
+	private dirtyFoodDefinitions: string[] = [];
+	private deletedFoodDefinitions: string[] = [];
+
+	private daysRef: Reference;
+	private dirtyDays: string[] = [];
 
 	async load(){
 
@@ -99,6 +103,19 @@ export class DB {
 						this.dirtyColumns.push(currentColumn.id);						
 					}
 				}
+				if(prevState.calories !== currentState.calories){
+					for(let prevFoodDefinition of prevState.calories.foodDefinitions){
+						if(!_.some(currentState.calories.foodDefinitions, fd => fd.id === prevFoodDefinition.id)){
+							this.deletedFoodDefinitions.push(prevFoodDefinition.id);
+						}
+					}
+					for(let currentFoodDefinition of currentState.calories.foodDefinitions){
+						if(!_.some(prevState.calories.foodDefinitions, fd => fd === currentFoodDefinition)){
+							console.log("Gotcha", currentFoodDefinition);
+							this.dirtyFoodDefinitions.push(currentFoodDefinition.id);
+						}
+					}
+				}
 			})
 		}, 500);
 	}
@@ -108,6 +125,11 @@ export class DB {
 	}
 
 	async sync(){
+		this.syncTodoColumns();
+		this.syncFoodDefinitions();
+	}
+
+	async syncTodoColumns(){
 		const todoColumns = state.get().todoColumns;
 		for(let columnID of _.uniq(this.dirtyColumns)){
 			const column = _.find(todoColumns, c => c.id === columnID);
@@ -119,4 +141,18 @@ export class DB {
 		this.dirtyColumns = [];
 		this.deletedColumns = [];
 	}
+
+	async syncFoodDefinitions(){
+		const foodDefinitions = state.get().calories.foodDefinitions;
+		for(let foodDefinitionID of _.uniq(this.dirtyFoodDefinitions)){
+			const foodDefinition = _.find(foodDefinitions, f => f.id === foodDefinitionID);
+			this.foodDefinitionsRef.child(foodDefinitionID).set(_.omit(foodDefinition, 'id'));
+		}
+		for(let foodDefinitionID of _.uniq(this.deletedFoodDefinitions)){
+			this.foodDefinitionsRef.child(foodDefinitionID).remove();
+		}
+		this.dirtyFoodDefinitions = [];
+		this.deletedFoodDefinitions = [];
+	}
+
 }

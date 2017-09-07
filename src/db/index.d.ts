@@ -5,6 +5,7 @@ interface CalorieSettings {
 }
 
 interface FoodDefinition {
+	id: string;
 	name: string;
 	calories: string;
 	set?(definition: Partial<FoodDefinition>);

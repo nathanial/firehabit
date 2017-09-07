@@ -5,7 +5,7 @@ import {Dialog} from "@blueprintjs/core/dist/components/dialog/dialog";
 import {Intent} from '@blueprintjs/core';
 import styled from 'styled-components';
 import {db} from '../../util';
-
+import {generatePushID} from '../../db/util';
 const NewFoodDialogWrapper = styled.div`
 	margin-top: 20px;
 `;
@@ -74,6 +74,7 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 
 	onAddFood = async () => {
 		this.props.foodDefinitions.push({
+			id: generatePushID(),
 			name: this.foodName.value,
 			calories: this.calories.value
 		});
