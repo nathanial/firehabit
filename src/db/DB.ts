@@ -50,6 +50,7 @@ export class DB {
 		const foodDefinitions = await this.loadFoodDefinitions(userId);
 		const days = await this.loadDays(userId);
 		const selectedDate = moment().format('MM/DD/YY');
+		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
 		state.set({
 			todoColumns, 
 			calories: {
@@ -57,8 +58,8 @@ export class DB {
 				foodDefinitions,
 				days,
 				'calorie-settings': {
-					caloricGoal: 0,
-					weightStasisGoal: 0
+					caloricGoal: _.get(calorieSettings, 'caloricGoal', 0),
+					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
 				}
 			}
 		});
@@ -67,7 +68,7 @@ export class DB {
 		this.startSync();
 	}
 
-	async loadTodoColumns(userId: string){
+	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		const todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
 		for(let todoColumn of todoColumns){
@@ -78,13 +79,13 @@ export class DB {
 		return todoColumns;
 	}
 
-	async loadFoodDefinitions(userId: string) {
+	async loadFoodDefinitions(userId: string): Promise<FoodDefinition[]> {
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
 		const foodDefinitions = await downloadCollection<FoodDefinition>(this.foodDefinitionsRef);
 		return foodDefinitions;
 	}
 
-	async loadDays(userId: string){
+	async loadDays(userId: string): Promise<Day[]> {
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
 		const days = await downloadCollection<Day>(this.daysRef);
 		return days;
@@ -117,8 +118,9 @@ export class DB {
 						}
 					}
 					if(prevState.calories.days !== currentState.calories.days){
-						for(let day of prevState.calories.days){
-							if(!_.some(currentState.calories.days, d => d === day)){
+						for(let day of currentState.calories.days){
+							if(!_.some(prevState.calories.days, d => d === day)){
+								console.log("DIRTY DAY", day);
 								this.dirtyDays.push(day.id);
 							}
 						}
@@ -169,6 +171,7 @@ export class DB {
 		const days = state.get().calories.days;
 		for(let dayID of _.uniq(this.dirtyDays)){
 			const day = _.find(days, d => d.id === dayID);
+			console.log("SET DAY", day);
 			this.daysRef.child(dayID).set(_.omit(day, 'id'));
 		}
 		this.dirtyDays = [];

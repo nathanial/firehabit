@@ -5,22 +5,6 @@ import styled from 'styled-components';
 import {CaloriesState} from '../../state';
 
 const CaloriesSettingsWrapper = styled.div`
-    position: absolute;
-    width: 500px;
-    left: 50%;
-    margin-left: -250px;
-    margin-top: 30px;
-    & > h1 {
-        margin-bottom: 30px;
-    }
-    
-    .settings-container {
-        position: relative;
-        text-align: left;
-    }
-    
-    .back-btn {
-    }
 `;
 
 const SettingsForm = styled.div`
@@ -36,35 +20,27 @@ export default class CaloriesSettings extends React.Component<Props,{}> {
         const {caloriesState} = this.props;
         const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings'];
         return (
-            <CaloriesSettingsWrapper>
-                <h1>Calories Settings</h1>
-                <div className="pt-card pt-elevation-1 settings-container">
-                    <Button onClick={this.onGoBack} className="back-btn">Back</Button>
-                    <SettingsForm>
-                        <label className="pt-label">
-                            Caloric Goal
-                            <input className="pt-input"
-                                   type="number"
-                                   ref="caloricGoal"
-                                   value={caloricGoal}
-                                   onChange={this.onCaloricGoalChanged} />
-                        </label>
-                        <label className="pt-label">
-                            Weight Stasis Goal
-                            <input className="pt-input"
-                                     type="number"
-                                     ref="weightStasisGoal"
-                                     value={weightStasisGoal}
-                                     onChange={this.onWeightStasisGoalChanged}/>
-                        </label>
-                    </SettingsForm>
-                </div>
-            </CaloriesSettingsWrapper>
+            <div>
+                <SettingsForm>
+                    <label className="pt-label">
+                        Caloric Goal
+                        <input className="pt-input"
+                                type="number"
+                                ref="caloricGoal"
+                                value={caloricGoal}
+                                onChange={this.onCaloricGoalChanged} />
+                    </label>
+                    <label className="pt-label">
+                        Weight Stasis Goal
+                        <input className="pt-input"
+                                    type="number"
+                                    ref="weightStasisGoal"
+                                    value={weightStasisGoal}
+                                    onChange={this.onWeightStasisGoalChanged}/>
+                    </label>
+                </SettingsForm>
+            </div>
         );
-    }
-
-    onGoBack = () => {
-        history.push('/calories');
     }
 
     onCaloricGoalChanged = () => {

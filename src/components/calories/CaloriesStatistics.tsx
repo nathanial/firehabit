@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import * as _ from 'lodash';
 import {db, history} from '../../util';
 import {Button} from '@blueprintjs/core';
+import DialogService from "../../services/DialogService";
+import CaloriesSettings from "./CaloriesSettings";
 import cxs from 'cxs';
+import {CaloriesState} from '../../state';
 
 const CalorieStatisticsWrapper = styled.div`
 	display: inline-block;
@@ -41,7 +44,7 @@ const settingsBtn = cxs({
 interface CalorieStatisticsProps {
 	date: string;
 	days: Day[];
-	calorieSettings: CalorieSettings;
+	caloriesState: CaloriesState;
 }
 
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
@@ -55,9 +58,9 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 			dailyTotal = 0;
 		}
 
-		const goal = this.props.calorieSettings.caloricGoal;
+		const goal = this.props.caloriesState['calorie-settings'].caloricGoal;
 		const remaining = goal - dailyTotal;
-		const weightStasisGoal = this.props.calorieSettings.weightStasisGoal;
+		const weightStasisGoal = this.props.caloriesState['calorie-settings'].weightStasisGoal;
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
@@ -148,7 +151,11 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 		);
 	};
 
-	private gotoSettings = () => {
-		history.push('/calories/settings');
+	private gotoSettings = async () => {
+		const result = await DialogService.showDialog("Calorie Settings", "Save", "Cancel", 
+			<CaloriesSettings caloriesState={this.props.caloriesState} />
+		);
+		if(result){
+		}
 	}
 }

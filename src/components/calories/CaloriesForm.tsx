@@ -39,7 +39,7 @@ interface CaloriesFormProps {
 }
 
 
-export default class CaloriesForm extends React.PureComponent<CaloriesFormProps,{}> {
+export default class CaloriesForm extends React.Component<CaloriesFormProps,{}> {
 
 	state = {
 		value: ''
@@ -92,11 +92,13 @@ export default class CaloriesForm extends React.PureComponent<CaloriesFormProps,
 		);
 	};
 
-	onAddFood = async (food: FoodDefinition) => {
-		this.props.consumedFoods.push({name: food.name, calories: food.calories});
+	onAddFood = (food: FoodDefinition) => {
+		console.log("ADD fOOD", food);
+		this.props.consumedFoods.push({ name: food.name, calories: food.calories});
+		this.setState({value: ''});
 	};
 
-	onRemoveFoodDefinition = async (food: FoodDefinition) => {
+	onRemoveFoodDefinition = (food: FoodDefinition) => {
 		const {foodDefinitions} = this.props;
 		foodDefinitions.splice(_.findIndex(foodDefinitions, f => f.name === food.name), 1);
 	};
