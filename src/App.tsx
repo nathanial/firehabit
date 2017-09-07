@@ -31,14 +31,15 @@ export default class App extends React.PureComponent<Props> {
     }
 
     private renderPage(){
+        const appState = this.props.appState;
         if(history.location.pathname === '/') {
-            const {todoColumns, showDevTools} = this.props.appState;
+            const {todoColumns, showDevTools} = appState;
             return 	(
                 <TodoPage todoColumns={todoColumns} showDevTools={showDevTools} />
             );
         } else {
             return (
-                <CaloriesPage caloriesState={this.props.appState.calories} />
+                <CaloriesPage caloriesState={appState.calories} />
             );
         }
     }

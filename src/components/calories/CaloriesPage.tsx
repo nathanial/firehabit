@@ -14,6 +14,9 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         const caloriesState = this.props.caloriesState;
         const {selectedDate, foodDefinitions, days} = this.props.caloriesState;
         const selectedDay = _.find(days, d => d.date === selectedDate);
+        if(!selectedDay){
+            return <div />;
+        }
         const consumedFoods = selectedDay.consumed;
         return (
             <div style={{width: 800, minWidth: 800, maxWidth: 800, marginLeft: '-400px', left: '50%', position:'relative'}}>
