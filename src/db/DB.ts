@@ -4,6 +4,7 @@ import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import {downloadCollection} from "./util";
 import {state} from '../state';
+import * as moment from 'moment';
 
 function encode(columns: TodoColumn[]) {
 	const copy = _.cloneDeep(columns);
@@ -28,6 +29,8 @@ export class DB {
 	private db: Database;
 
 	private todoColumnsRef: Reference;
+	private foodDefinitionsRef: Reference;
+	private daysRef: Reference;
 
 	private dirtyColumns: string[] = [];
 	private deletedColumns: string[] = [];
@@ -40,7 +43,21 @@ export class DB {
 		const userId = user.uid;
 
 		const todoColumns = await this.loadTodoColumns(userId);
-		state.set({todoColumns});
+		const foodDefinitions = await this.loadFoodDefinitions(userId);
+		const days = await this.loadDays(userId);
+		const selectedDate = moment().format('MM/DD/YY');
+		state.set({
+			todoColumns, 
+			calories: {
+				selectedDate,
+				foodDefinitions,
+				days,
+				'calorie-settings': {
+					caloricGoal: 0,
+					weightStasisGoal: 0
+				}
+			}
+		});
 
 		this.addListeners();
 		this.startSync();
@@ -55,6 +72,18 @@ export class DB {
 			}
 		}
 		return todoColumns;
+	}
+
+	async loadFoodDefinitions(userId: string) {
+		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
+		const foodDefinitions = await downloadCollection<FoodDefinition>(this.foodDefinitionsRef);
+		return foodDefinitions;
+	}
+
+	async loadDays(userId: string){
+		this.daysRef = this.db.ref(`/users/${userId}/days`);
+		const days = await downloadCollection<Day>(this.daysRef);
+		return days;
 	}
 
 	addListeners(){
