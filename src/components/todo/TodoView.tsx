@@ -218,7 +218,13 @@ class TodoView extends React.Component<Props, State> {
     };
 
     private onAddSubtask = async () => {
-        this.props.todo.subtasks.push({name: 'New Task'} as any);
+        if(!this.props.todo.subtasks){
+            this.props.todo.set({
+                subtasks: [{name: 'New Task'} as any]
+            });
+        } else {
+            this.props.todo.subtasks.push({name: 'New Task'} as any);
+        }
     };
 
 }
