@@ -268,7 +268,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         this.props.column.todos.unshift({
             id: generatePushID(), 
             name: 'NEW TODO', 
-            subtasks: []
+            subtasks: [],
+            attachments: []
         });
     };
 

@@ -31,7 +31,7 @@
 
 .todo-view:first-child:not(:last-child).todo-view-enter ~ .todo-view {
   transition: transform 150ms ease-out !important;
-  transform: translateY(67px); }
+  transform: translateY(48px); }
 
 .todo-view-leave {
   opacity: 1;
@@ -45,7 +45,7 @@
 
 .todo-view-leave ~ .todo-view {
   transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transform 150ms ease-out 150ms !important;
-  transform: translateY(-67px); }
+  transform: translateY(-48px); }
 
 .sketch-picker {
   margin-left: 20px;

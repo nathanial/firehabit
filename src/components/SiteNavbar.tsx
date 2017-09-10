@@ -61,7 +61,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 
 		const compassMenu = (
 			<Menu>
-				<MenuItem iconName="logout" text="Logout" onClick={logout} />
+				<MenuItem iconName="log-out" text="Logout" onClick={logout} />
 			</Menu>
 		);
 		return (

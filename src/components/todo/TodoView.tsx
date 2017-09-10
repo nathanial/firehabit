@@ -1,13 +1,21 @@
 import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
-import {EditableText, Button} from "@blueprintjs/core";
+import {Spinner, EditableText, Button} from "@blueprintjs/core";
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
+import {AttachmentList} from './AttachmentList';
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
+import * as cloudinary from 'cloudinary-core';
+
+const cloudName = 'dsv1fug8x';
+const unsignedUploadPreset = 'fnddxf5w';
+const cl = new cloudinary.Cloudinary({cloud_name: cloudName, secure: true});
+
+
 
 const todoContentWrapperClass = cxs({
     position: 'relative',
@@ -21,6 +29,7 @@ const todoContentWrapperClass = cxs({
 });
 
 const todoItemClass = cxs({
+    position: 'relative',
     padding: '10px',
     margin: '10px',
     color: 'black',
@@ -37,6 +46,7 @@ const todoWrapperClass = cxs({
 });
 
 const TodoWrapper = styled.div`
+    position: relative;
     .drag-handle {
         bottom: 0;
         width: 30px;
@@ -56,11 +66,18 @@ const TodoWrapper = styled.div`
         }
     }
 
+    input[type="file"] {
+        display: none;
+    }
+
     .todo-controls {
-        height: 37px;
         position: relative;
         display: flex;
-        flex-direction: column;
+        height: 20px;
+        flex-direction: row;
+        position: absolute;
+        right: 0;
+        top: 0;
         background: white;
         border-left: 1px solid #ccc;
         border-top: 1px solid #ccc;
@@ -69,20 +86,22 @@ const TodoWrapper = styled.div`
         border-bottom-left-radius: 3px;
         opacity: 0;
         .delete-btn {
+            height: 18px;
             min-width: 18px;
             min-height: 18px;
             line-height: 18px;
             transition: opacity 0.2s ease-out;
             &:before {
-                font-size: 12px;
+                font-size: 11px;
                 vertical-align: middle;
             }
         }
         
         transition: opacity 0.2s ease-in-out;
         
-        .add-subtask-btn {
+        .add-subtask-btn, .file-upload-btn {
             min-width: 18px;
+            height: 18px;
             min-height: 18px;
             line-height: 10px;
             &:before {
@@ -93,6 +112,23 @@ const TodoWrapper = styled.div`
     }
 `;
 
+const spinnerContainerClass = cxs({
+    background: 'rgba(0,0,0,0.6)',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0
+});
+
+const spinnerClass = cxs({
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    marginTop: '-26px',
+    marginLeft: '-28px'
+});
+
 interface Props {
     todo: Todo;
     confirmDeletion: boolean;
@@ -102,6 +138,8 @@ interface Props {
 
 interface State {
     dragging: boolean;
+    progress: number;
+    uploading: boolean;
 }
 
 type PreviewProps = {
@@ -125,6 +163,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
+                            <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" />
                         </div>
                     </TodoWrapper>
                     <SubtaskList subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  />
@@ -137,8 +176,12 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
 class TodoView extends React.Component<Props, State> {
 
     state = {
-        dragging: false
+        dragging: false,
+        progress: 0,
+        uploading: false
     };
+
+    private fileInput: HTMLInputElement;
 
     render(){
         return (
@@ -164,10 +207,29 @@ class TodoView extends React.Component<Props, State> {
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
+                            <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" onClick={this.onAddAttachment} />
                         </div>
+                        <input type="file" 
+                               ref={fileInput => this.fileInput = fileInput } 
+                               onChange={this.onFileChanged} />
                     </TodoWrapper>
                     <SubtaskList subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
+                    <AttachmentList attachments={this.props.todo.attachments} 
+                                    onOpenAttachment={(attachment) => this.onOpenAttachment(attachment)} 
+                                    onDelete={(i, attachment) => this.onDeleteAttachment(i, attachment)} />
                 </div>
+                {this.renderSpinner()}
+            </div>
+        );
+    }
+
+    private renderSpinner = () => {
+        if(!this.state.uploading){
+            return;
+        }
+        return (
+            <div className={spinnerContainerClass}>
+                <Spinner className={spinnerClass} />
             </div>
         );
     }
@@ -217,7 +279,7 @@ class TodoView extends React.Component<Props, State> {
         }
     };
 
-    private onAddSubtask = async () => {
+    private onAddSubtask = () => {
         if(!this.props.todo.subtasks){
             this.props.todo.set({
                 subtasks: [{name: 'New Task'} as any]
@@ -226,6 +288,72 @@ class TodoView extends React.Component<Props, State> {
             this.props.todo.subtasks.push({name: 'New Task'} as any);
         }
     };
+
+    private onFileChanged = async (event: any) => {
+        const file = event.target.files[0];
+        const attachment = await this.uploadFile(file);
+        if(!this.props.todo.attachments){
+            this.props.todo.set({
+                attachments: [attachment]
+            });
+        } else {
+            this.props.todo.attachments.push(attachment);
+        }   
+    }
+
+    private onAddAttachment = () => {
+        $(this.fileInput).trigger('click');
+     
+    }
+
+    private onOpenAttachment(attachment: Attachment){
+        window.open(attachment.url);
+    }
+
+    private onDeleteAttachment = async (index: number, attachment: Attachment) => {
+        this.props.todo.attachments.splice(index, 1);
+    }
+
+    // *********** Upload file to Cloudinary ******************** //
+    uploadFile = async (file: File): Promise<Attachment> => {
+        return new Promise<Attachment>((resolve) => {
+            var url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+            var xhr = new XMLHttpRequest();
+            var fd = new FormData();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        
+            // Update progress (can be used to show progress indicator)
+            xhr.upload.addEventListener("progress", (e) => {
+                var progress = Math.round((e.loaded * 100.0) / e.total);
+                this.setState({
+                    uploading: true,
+                    progress: progress
+                });
+                // console.log(`fileuploadprogress data.loaded: ${e.loaded}, data.total: ${e.total}`);
+            });
+        
+            xhr.onreadystatechange = (e) => {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // File uploaded successfully
+                    var response = JSON.parse(xhr.responseText);
+                    // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
+                    const attachment = _.cloneDeep(response);
+                    attachment.name = response.original_filename;
+                    console.log("Attachment", attachment);
+                    this.setState({
+                        uploading: false
+                    });
+                    resolve(attachment);
+                }
+            };
+        
+            fd.append('upload_preset', unsignedUploadPreset);
+            fd.append('tags', 'browser_upload'); // Optional - add tag for image admin in Cloudinary
+            fd.append('file', file);
+            xhr.send(fd);
+        });
+    }
 
 }
 

@@ -40,10 +40,28 @@ interface Subtask {
 	set?(updates: Partial<Subtask>);
 }
 
+interface Attachment {
+	name: string;
+	bytes: number;
+	created_at: string;
+	etag: string;
+	original_filename: string;
+	public_id: string;
+	resource_type: string;
+	secure_url: string;
+	signature: string;
+	tags: string[];
+	url: string;
+	version: number;
+	set?(updates: Partial<Attachment>);
+
+}
+
 interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
+	attachments: Attachment[];
 	set?(updates: Partial<Todo>);
 }
 

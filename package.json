@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@blueprintjs/core": "^1.16.0",
+    "@blueprintjs/core": "^1.27.0",
     "@types/jquery": "^3.2.4",
+    "blueimp-file-upload": "^9.19.1",
+    "cloudinary-core": "^2.3.0",
+    "cloudinary-jquery-file-upload": "^2.3.0",
     "color": "^1.0.3",
     "cxs": "^3.0.4",
     "draft-js": "^0.10.1",

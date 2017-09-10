@@ -5,6 +5,8 @@ $fh-color-3: #475969;
 $fh-color-4: #1D3040;
 $fh-color-5: #102232;
 
+$downward-translate-y: 48px;
+
 body {
 }
 
@@ -51,7 +53,7 @@ body {
   
   &.todo-view-enter ~ .todo-view {
     transition: transform 150ms ease-out !important;
-    transform: translateY(67px);
+    transform: translateY($downward-translate-y);
   }
 }
 
@@ -73,7 +75,7 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
 
 .todo-view-leave ~ .todo-view {
   transition: $out-transition !important;
-  transform: translateY(-67px);
+  transform: translateY(-$downward-translate-y);
 }
 
 .sketch-picker {
