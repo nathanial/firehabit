@@ -12,7 +12,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "sourceMap": true,
     "jsx": "react",
-    "baseUrl": "./public_html",
+    "baseUrl": "./src",
     "typeRoots": [
       "./node_modules/@types"
     ]
