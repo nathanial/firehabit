@@ -85,7 +85,10 @@
     "webpack": "1.14.0",
     "webpack-dev-server": "1.16.2",
     "webpack-manifest-plugin": "1.1.0",
-    "whatwg-fetch": "2.0.2"
+    "whatwg-fetch": "2.0.2",
+    "@storybook/react": "^3.2.8",
+    "@storybook/addon-actions": "^3.2.6",
+    "@storybook/addon-links": "^3.2.6"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/ --include-path=./node_modules/",
@@ -94,7 +97,9 @@
     "build-js": "node scripts/build.js",
     "start": "npm-run-all -p build-css watch-sass start-js",
     "build": "npm-run-all build-css build-js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "jest": {
     "collectCoverageFrom": [
