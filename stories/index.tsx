@@ -8,19 +8,12 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 import TodoView from '../src/components/todo/TodoView';
+import * as Freezer from 'freezer-js';
 
 import { Button, Welcome } from '@storybook/react/demo';
 
-storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
-
-storiesOf('Button', module)
-  .add('with text', () => <Button onClick={action('clicked')}>Hello Button</Button>)
-  .add('with some emoji', () => <Button onClick={action('clicked')}>😀 😎 👍 💯</Button>);
-
-
 storiesOf('TodoView', module)
 .add('default', () => {
-  const todo = {
-  } as any;
+  const todo = new Freezer({}).get();
   return <TodoView todo={todo} confirmDeletion={false} onDelete={_.noop} />
 });
