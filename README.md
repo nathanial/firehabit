@@ -12,6 +12,6 @@ yarn install
 
 ## Running 
 ```
-cd personal-life-manager
+cd firehabit
 yarn start
 ```
