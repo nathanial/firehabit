@@ -2,7 +2,7 @@
 <h1 align="center">
   <br>
   <a href="https://firehabit.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/nathanial/firehabit/master/public/icons/FireHabitLogo.png" alt="Fire Habit" width="200"></a>
+    <img src="https://raw.githubusercontent.com/nathanial/firehabit/master/public/icons/FireHabitLogo.png" alt="Fire Habit" width="200" style="margin-left:40px"></a>
     <br>
     Fire Habit
     <br>
