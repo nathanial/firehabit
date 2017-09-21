@@ -57,6 +57,43 @@ body {
   }
 }
 
+.todo-column-header {
+  z-index: 19;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 33px;
+
+  .pt-editable-text {
+    position: relative;
+    top: 20px;
+  }
+}
+
+.todo-column-settings {
+}
+
+.settings-enter{
+  transform: translateY(-600px);
+}
+
+.settings-enter.settings-enter-active {  
+  transform: translateY(0);
+  transition: transform 300ms ease-out !important;
+}
+
+.settings-leave {
+  transition: transform 300ms ease-out !important;
+  transform: translateY(-600px);
+}
+
+.settings-leave.settings-leave-active {
+}
+
+// .settings-enter.settings-enter-active {
+// }
 
 .todo-view-leave {
   opacity: 1;
@@ -81,4 +118,7 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
 .sketch-picker {
   margin-left: 20px;
   margin-top: 20px;
+}
+
+.pt-overlay-backdrop {
 }

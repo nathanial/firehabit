@@ -33,6 +33,29 @@
   transition: transform 150ms ease-out !important;
   transform: translateY(48px); }
 
+.todo-column-header {
+  z-index: 19;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 33px; }
+  .todo-column-header .pt-editable-text {
+    position: relative;
+    top: 20px; }
+
+.settings-enter {
+  transform: translateY(-600px); }
+
+.settings-enter.settings-enter-active {
+  transform: translateY(0);
+  transition: transform 300ms ease-out !important; }
+
+.settings-leave {
+  transition: transform 300ms ease-out !important;
+  transform: translateY(-600px); }
+
 .todo-view-leave {
   opacity: 1;
   max-height: 500px !important;

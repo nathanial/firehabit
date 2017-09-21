@@ -5,9 +5,20 @@ import {history} from '../../util';
 import { SketchPicker } from 'react-color';
 import DialogService from "../../services/DialogService";
 import cxs from 'cxs';
+import * as Color from 'color';
 
 const deleteColumnBtnClass = cxs({
 	marginTop: '10px'
+});
+
+const todoColumnSettingsPageClass = cxs({
+	position: 'absolute',
+	zIndex: 9,
+	left: 0,
+	top: 35,
+	right: 0,
+	paddingBottom: 10,
+	paddingLeft: 15
 });
 
 interface Props {
@@ -22,8 +33,14 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 		let confirmDeletion = column.confirmDeletion;
 		let showClearBtn = column.showClearButton;
 		const color = column.color || '#30404d';
+		const borderColor = Color(color).darken(0.2);
+		const style = _.extend({}, {
+			background: color,
+			borderBottom: `1px solid ${borderColor}`,
+			boxShadow: `1px 4px 7px 0px ${borderColor}`,
+		}, this.props.style);
 		return (
-			<div className="todo-column-settings-page" style={this.props.style}>
+			<div className={"todo-column-settings " + todoColumnSettingsPageClass} style={style}>
 				<div style={{position: 'relative'}}>
 					<SketchPicker color={color} className="sketch-picker" onChange={this.onChange}/>
 					<Button style={{marginTop: 10, marginBottom: 20}} onClick={this.onResetColor}>Reset Color</Button>

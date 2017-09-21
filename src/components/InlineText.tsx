@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 type Props = {
     className?: string;
     value: string;
+    style?: Object;
     editing: boolean;
     onChange(newValue: string);
     onStartEditing();
@@ -30,6 +31,7 @@ export default class InlineText extends React.PureComponent<Props> {
             inputStyle.opacity = 0;
             inputStyle.width = 0;
         }
+        _.extend(style, this.props.style || {});
         return (
             <div style={style} ref={root => this.root = root} className={className} onClick={this.onStartEditing}>
                 <input style={inputStyle} 

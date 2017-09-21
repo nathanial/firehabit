@@ -76,7 +76,7 @@ const toolbarBorderClass = cxs({
     right: 0,
     top: '25px',
     height: '10px',
-    zIndex: 9999
+    zIndex: 99
 });
 
 interface Props {
@@ -93,20 +93,23 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const column = this.props.column;
         return(
             <div className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
-                <InlineText className={columnNameClass}
-                            editing={this.props.column.editingName}
-                            value={this.props.column.name}
-                            onChange={this.onChangeColumnName}
-                            onStartEditing={this.onStartEditing}
-                            onStopEditing={this.onStopEditing}/>
-                <Button iconName="settings"
-                        className="settings-btn pt-minimal"
-                        onClick={this.gotoColumnSettings} />
-                <Button iconName="plus"
-                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                        onClick={this.onAddTodo} />
-                {this.renderTrashBtn()}
-                <div className={toolbarBorderClass}></div>
+                <div className="todo-column-header" style={{background: columnColor}}>
+                    <InlineText className={columnNameClass}
+                                style={{color: 'white'}}
+                                editing={this.props.column.editingName}
+                                value={this.props.column.name}
+                                onChange={this.onChangeColumnName}
+                                onStartEditing={this.onStartEditing}
+                                onStopEditing={this.onStopEditing}/>
+                    <Button iconName="settings"
+                            className="settings-btn pt-minimal"
+                            onClick={this.gotoColumnSettings} />
+                    <Button iconName="plus"
+                            className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                            onClick={this.onAddTodo} />
+                    {this.renderTrashBtn()}
+                    <div className={toolbarBorderClass}></div>
+                </div>
                 {this.renderContent()}
             </div>
         );
@@ -155,18 +158,18 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private renderContent(){
         const columnColor = this.props.column.color;
         const column = this.props.column;
-        if(this.props.column.showSettings){
-            return this.renderSettings();
-        }
         return (
-            <ScrollArea className={todoListClass}>
-                <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                    {column.todos.map((todo) => {
-                        return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
-                    })}
-                </ReactCSSTransitionGroup>
-            </ScrollArea>
-        );
+            <div>
+                {this.renderSettings()}
+                <ScrollArea className={todoListClass}>
+                    <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+                        {column.todos.map((todo) => {
+                            return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
+                        })}
+                    </ReactCSSTransitionGroup>
+                </ScrollArea>
+            </div>
+        )
     }
 
     private onStartEditing = () => {
@@ -243,13 +246,14 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     }
 
     private renderSettings = () => {
-        if(this.props.column.showSettings){
-            return (
-                <TodoColumnSettingsPage 
-                    column={this.props.column} 
-                    onDelete={this.onDeleteColumn} />
-            );
-        }
+        return (
+            <ReactCSSTransitionGroup transitionName="settings" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+                {this.props.column.showSettings && 
+                    <TodoColumnSettingsPage column={this.props.column} 
+                                            onDelete={this.onDeleteColumn} />
+                }
+            </ReactCSSTransitionGroup>
+        );
     };
 
     private onDeleteColumn = (columnID: string) => {
