@@ -93,6 +93,7 @@ const TodoWrapper = styled.div`
             transition: opacity 0.2s ease-out;
             &:before {
                 font-size: 11px;
+                line-height: 14px;
                 vertical-align: middle;
             }
         }
@@ -184,8 +185,12 @@ class TodoView extends React.Component<Props, State> {
     private fileInput: HTMLInputElement;
 
     render(){
+        let extraClasses = '';
+        if(this.props.todo.dragged){
+            extraClasses += ' dragged';
+        }
         return (
-            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
+            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses}`}
                  data-todo-id={this.props.todo.id}
                  style={{
                     padding:0,
@@ -252,10 +257,11 @@ class TodoView extends React.Component<Props, State> {
         this.setState({
             dragging: true
         });
-        const dropped = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
+        const acceptDrop = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
             <TodoDragPreview todo={this.props.todo} />
         );
-        if(dropped){
+        if(acceptDrop){
+            acceptDrop()
             this.props.onDelete(this.props.todo);
         } else {
             this.setState({

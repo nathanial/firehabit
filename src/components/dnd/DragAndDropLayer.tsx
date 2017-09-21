@@ -8,7 +8,8 @@ const dndClass = cxs({
 	top: 0,
 	right: 0,
 	bottom: 0,
-	'pointer-events': 'none'
+	'pointer-events': 'none',
+	zIndex: 9999
 });
 
 export type Draggable = {
@@ -107,7 +108,6 @@ export class DragAndDropLayer extends React.Component<{},State>{
 				let dropped = false;
 				for(let dropTarget of this.state.dropTargets){
 					if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
-						dropTarget.onDrop(draggable);
 						draggable.onDrop(dropTarget);
 						dropped = true;
 						break;
@@ -126,25 +126,28 @@ export class DragAndDropLayer extends React.Component<{},State>{
 		dndService.layer = null;
 	}
 
-	async startDrag(pageX: number, pageY: number, width: number, height: number, data:any, element: React.ReactElement<any>){
-		return new Promise((resolve) => {
+	async startDrag(pageX: number, pageY: number, width: number, height: number, data:any, element: React.ReactElement<any>): Promise<() => void>{
+		return new Promise<() => void>((resolve) => {
+			const draggable = {
+				x: pageX,
+				y: pageY,
+				startX: pageX,
+				startY: pageY,
+				width,
+				height,
+				element,
+				data,
+				onDrop: (dropTarget: DropTarget) => {
+					resolve(() => {
+						dropTarget.onDrop(draggable);
+					});
+				},
+				onCancel: () => {
+					resolve(undefined);
+				}
+			};
 			this.setState({
-				draggables: this.state.draggables.concat({
-					x: pageX,
-					y: pageY,
-					startX: pageX,
-					startY: pageY,
-					width,
-					height,
-					element,
-					data,
-					onDrop: (dropTarget: DropTarget) => {
-						resolve(dropTarget);
-					},
-					onCancel: () => {
-						resolve(false);
-					}
-				})
+				draggables: this.state.draggables.concat(draggable)
 			});
 		});
 	}
@@ -183,7 +186,7 @@ class DragAndDropService {
 		this.dropTargetBuffer = [];
 	}
 
-	async startDrag(position: DndPosition, data:any, element: React.ReactElement<any>){
+	async startDrag(position: DndPosition, data:any, element: React.ReactElement<any>): Promise<() => void>{
 		return await this.layer.startDrag(position.x, position.y, position.width, position.height, data, element);
 	}
 

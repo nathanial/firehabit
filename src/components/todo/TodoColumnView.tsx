@@ -180,6 +180,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private dropTodo(todo: Todo, index: number){
         const newTodo = _.cloneDeep(todo);
         newTodo.id = generatePushID();
+        newTodo.dragged = true;
         this.props.column.todos.splice(index, 0, newTodo);
     }
 
