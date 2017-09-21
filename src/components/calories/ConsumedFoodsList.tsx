@@ -6,11 +6,7 @@ import * as _ from 'lodash';
 
 const CaloriesListWrapper = styled.ul`
 	border: 1px solid #000;
-	width: 600px;
-	max-width: 600px;
-	min-width: 600px;
 	min-height: 100px;
-	max-height: 500px;
 	overflow-y: scroll;
 	list-style-type: none;
 	text-align: left;

@@ -4,10 +4,19 @@ import CalorieStatistics from "./CaloriesStatistics";
 import {CaloriesState} from "../../state";
 import {history} from '../../util';
 import * as _ from 'lodash';
+import cxs from 'cxs';
 
 type Props = {
     caloriesState: CaloriesState;
 }
+
+const caloriesPageClass = cxs({
+    display: 'flex',
+    width: 900,
+    margin: '0 auto',
+    flexDirection: 'row'
+});
+
 
 export default class CaloriesPage extends React.Component<Props,{}> {
     render() {
@@ -18,16 +27,21 @@ export default class CaloriesPage extends React.Component<Props,{}> {
             return <div />;
         }
         const consumedFoods = selectedDay.consumed;
+
+        const statisticsStyle = {
+            left :0,
+            top: 0,
+            flex: '0'
+        };
+
         return (
-            <div style={{width: 800, minWidth: 800, maxWidth: 800, marginLeft: '-400px', left: '50%', position:'relative'}}>
-                <div style={{marginLeft: 20}}>
-                    <CalorieStatistics date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
-                    <CaloriesForm date={selectedDate} 
-                                days={days}
-                                onChangeDate={this.onChangeDate} 
-                                foodDefinitions={foodDefinitions} 
-                                consumedFoods={consumedFoods} />
-                </div>
+            <div className={caloriesPageClass}>
+                <CalorieStatistics style={statisticsStyle} date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
+                <CaloriesForm date={selectedDate} 
+                            days={days}
+                            onChangeDate={this.onChangeDate} 
+                            foodDefinitions={foodDefinitions} 
+                            consumedFoods={consumedFoods} />
             </div>
         );
     }

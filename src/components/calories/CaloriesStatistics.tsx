@@ -8,43 +8,31 @@ import CaloriesSettings from "./CaloriesSettings";
 import cxs from 'cxs';
 import {CaloriesState} from '../../state';
 
-const CalorieStatisticsWrapper = styled.div`
-	display: inline-block;
-	position: relative;
-	text-align: left;
-	width: 700px;
-	max-width: 700px;
-	min-width: 700px;
-	vertical-align: top;
-	margin-top: 20px;
-	padding-left: 40px;
-
-	& .pt-running-text {
-		display: inline-block;
-		margin: 10px;
-		text-align: left;
-		& > .total-calories-label {
-			margin-right: 10px;
-		}
-	}
-	
-	.smiley {
-		position: absolute;
-		left: -100px;
-		top:80px;
-	}
-`;
+const calorieStatisticsClass = cxs({
+	position: 'relative',
+	padding: '50px',
+	textAlign: 'center',
+	margin: '20px',
+	width: 250,
+	minWidth: 250,
+	alignSelf: 'flex-start'
+});
 
 const settingsBtn = cxs({
 	position: 'absolute',
-	right: '0px',
+	right: '7px',
 	top: '7px'
 });
+
+const smileyClass = cxs({
+	textAlign: 'center'
+})
 
 interface CalorieStatisticsProps {
 	date: string;
 	days: Day[];
 	caloriesState: CaloriesState;
+	style?: Object;
 }
 
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
@@ -64,21 +52,17 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
-			<CalorieStatisticsWrapper>
+			<div style={this.props.style || {}} className={`pt-card pt-elevation-2 ${calorieStatisticsClass}` }>
 				{this.renderSmileyFace(poundsLost)}
-				<div>
-					{this.renderDailyTotal(dailyTotal)}
-					<span>|</span>
-					{this.renderGoal(goal)}
-					<span>|</span>
-					{this.renderRemaining(remaining)}
-					<span>|</span>
-					{this.renderPoundsLost(poundsLost)}
-				</div>
+				<div style={{marginTop:30}} />
+				{this.renderDailyTotal(dailyTotal)}
+				{this.renderGoal(goal)}
+				{this.renderRemaining(remaining)}
+				{this.renderPoundsLost(poundsLost)}
 				<Button className={`pt-minimal ${settingsBtn}`}
 						iconName="settings"
 						onClick={this.gotoSettings} />
-			</CalorieStatisticsWrapper>
+			</div>
 		);
 	}
 
@@ -103,15 +87,15 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 	private renderSmileyFace = (poundsLost: number) => {
 		if(poundsLost > (2 / 7)) {
 			return (
-				<img className="smiley" src="icons/happy.png" width="128" />
+				<img className={smileyClass} src="icons/happy.png" width="128" />
 			);
 		} else if(poundsLost > 0) {
 			return (
-				<img className="smiley" src="icons/dread.png" width="128"  />
+				<img className={smileyClass} src="icons/dread.png" width="128"  />
 			);
 		} else {
 			return (
-				<img className="smiley" src="icons/crying.png" width="128"/>
+				<img className={smileyClass} src="icons/crying.png" width="128"/>
 			);
 		}
 	};
@@ -145,7 +129,7 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 		}
 		return (
 			<p className="pt-running-text" style={style}>
-				<span className="goal-label">Pounds Lost Today: </span>
+				<span className="goal-label">Pounds Lost: </span>
 				<span>{poundsLost}</span>
 			</p>
 		);
