@@ -46,5 +46,5 @@ const initialAppState: AppState = {
 	todoColumns: []
 };
 
-export const state = new Freezer(initialAppState) as FreezerData<AppState>;
+export const state = new Freezer(initialAppState, {live: true}) as FreezerData<AppState>;
 

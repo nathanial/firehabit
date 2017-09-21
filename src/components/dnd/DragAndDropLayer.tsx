@@ -138,8 +138,8 @@ export class DragAndDropLayer extends React.Component<{},State>{
 					height,
 					element,
 					data,
-					onDrop: () => {
-						resolve(true);
+					onDrop: (dropTarget: DropTarget) => {
+						resolve(dropTarget);
 					},
 					onCancel: () => {
 						resolve(false);

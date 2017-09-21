@@ -117,8 +117,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         this.unregisterDropTarget = dndService.addDropTarget({
             element,
             canDrop: (draggable: Draggable,) => {
-                const todo = draggable.data as Todo;
-                return !_.some(this.props.column.todos, t => t.id === todo.id)
+                return true;
             },
             onDrop: (draggable: Draggable) => {
                 const {todoID, direction} = this.findNeighbor(draggable);
@@ -179,7 +178,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     };
 
     private dropTodo(todo: Todo, index: number){
-        this.props.column.todos.splice(index, 0, todo);
+        const newTodo = _.cloneDeep(todo);
+        newTodo.id = generatePushID();
+        this.props.column.todos.splice(index, 0, newTodo);
     }
 
     private onDeleteTodo = (todo: Todo) => {
