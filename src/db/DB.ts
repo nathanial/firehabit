@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as $ from 'jquery';
 import * as firebase from 'firebase';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
@@ -76,8 +77,10 @@ export class DB {
 	
 
 	async reload(){
+		$('body').css({'pointer-events': 'none'});
 		clearInterval(this.syncInterval);
 		await this.load();
+		$('body').css({'pointer-events': 'auto'});
 	}
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{

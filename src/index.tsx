@@ -82,9 +82,6 @@ async function init(){
 	window.addEventListener('focus', () => {
 		db.reload();
 	});
-	window.addEventListener('blur', () => {
-		console.log("Window Blur");
-	})
 }
 
 init();
