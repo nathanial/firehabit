@@ -63,6 +63,7 @@ interface Todo {
 	subtasks: Subtask[];
 	attachments: Attachment[];
 	dragged?: boolean;
+	editing?: boolean;
 	set?(updates: Partial<Todo>);
 }
 

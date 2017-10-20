@@ -273,9 +273,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private onAddTodo = async () => {
         this.props.column.todos.unshift({
             id: generatePushID(), 
-            name: 'NEW TODO', 
+            name: '',
             subtasks: [],
-            attachments: []
+            attachments: [],
+            editing: true
         });
     };
 

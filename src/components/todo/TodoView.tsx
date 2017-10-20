@@ -207,7 +207,12 @@ class TodoView extends React.Component<Props, State> {
                         <div className={todoContentWrapperClass}>
                             <EditableText value={this.props.todo.name}
                                           multiline={true}
-                                          onChange={this.onNameChanged} />
+                                          placeholder="New Todo"
+                                          isEditing={this.props.todo.editing || false}
+                                          onChange={this.onNameChanged}
+                                          onEdit={this.onStartEditing}
+                                          onConfirm={this.onStopEditing}
+                                          onCancel={this.onStopEditing} />
                         </div>
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
@@ -226,6 +231,14 @@ class TodoView extends React.Component<Props, State> {
                 {this.renderSpinner()}
             </div>
         );
+    }
+
+    private onStartEditing = () => {
+        this.props.todo.set({editing: true});
+    }
+
+    private onStopEditing = () => {
+        this.props.todo.set({editing: false});
     }
 
     private renderSpinner = () => {
