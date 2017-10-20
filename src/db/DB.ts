@@ -39,6 +39,8 @@ export class DB {
 	private daysRef: Reference;
 	private dirtyDays: string[] = [];
 	private dirtyCalorieSettings = false;
+	private syncInterval: number;
+	private loaded: boolean = false;
 
 	async load(){
 
@@ -65,8 +67,17 @@ export class DB {
 			}
 		});
 
-		this.addListeners();
+		if(!this.loaded){
+			this.loaded = true;
+			this.addListeners();
+		}
 		this.startSync(userId);
+	}
+	
+
+	async reload(){
+		clearInterval(this.syncInterval);
+		await this.load();
 	}
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
@@ -134,7 +145,7 @@ export class DB {
 	}
 
 	async startSync(userId){
-		setInterval(() => this.sync(userId), 1000);
+		this.syncInterval = setInterval(() => this.sync(userId), 1000);
 	}
 
 	async sync(userId){

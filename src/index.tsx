@@ -78,6 +78,13 @@ async function init(){
 		<App appState={appState} />,
 		document.getElementById('root')
 	);
+
+	window.addEventListener('focus', () => {
+		db.reload();
+	});
+	window.addEventListener('blur', () => {
+		console.log("Window Blur");
+	})
 }
 
 init();
