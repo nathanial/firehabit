@@ -5,6 +5,7 @@ import {CaloriesState} from "../../state";
 import {history} from '../../util';
 import * as _ from 'lodash';
 import cxs from 'cxs';
+import {generatePushID} from '../../db/util';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -24,6 +25,7 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         const {selectedDate, foodDefinitions, days} = this.props.caloriesState;
         const selectedDay = _.find(days, d => d.date === selectedDate);
         if(!selectedDay){
+            this.props.caloriesState.days.push({id: generatePushID(), date: selectedDate, consumed: [], weight: 0});
             return <div />;
         }
         const consumedFoods = selectedDay.consumed;
