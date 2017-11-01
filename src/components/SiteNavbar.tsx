@@ -37,6 +37,14 @@ const emailClass = cxs({
 	top: '-5px'
 });
 
+const siteNavbarClass = cxs({
+	background: '#273142',
+	display: 'block',
+	width: '100%',
+	height: '50px',
+	padding: '0 20px'
+});
+
 class NavBtn extends React.PureComponent<NavProps, {}> {
 	render(){
 		const props = this.props;
@@ -53,7 +61,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
 		const {path} = this.props;
 		return (
-			<nav className="pt-navbar pt-dark" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
+			<nav className={`${siteNavbarClass}`} {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading" style={{height: '32px', display: 'flex', flexDirection:'row', alignItems:'center', justifyContent: 'center'}}>
 						<img style={{height:32, marginRight: 10}} src="icons/FireHabitLogo.png" />
