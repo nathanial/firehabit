@@ -52,7 +52,8 @@ const navBtnClass = cxs({
 	width: '100px',
 	padding: '7px 20px',
 	display: 'inline-block',
-	fontSize: '12px'
+	fontSize: '12px',
+	border: '1px solid transparent'
 });
 
 const navBtnActiveClass = cxs({
