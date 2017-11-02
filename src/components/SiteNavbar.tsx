@@ -45,14 +45,34 @@ const siteNavbarClass = cxs({
 	padding: '0 20px'
 });
 
+const navBtnClass = cxs({
+	borderRadius: 0,
+	cursor: 'pointer',
+	background: '#222C3C',
+	width: '100px',
+	padding: '7px 20px',
+	display: 'inline-block',
+	fontSize: '12px'
+});
+
+const navBtnActiveClass = cxs({
+	background: '#245785',
+	border: '1px solid #1A91EB'
+});
+
+const navItemsClass = cxs({
+	border: '1px solid #313D4F'
+})
+
 class NavBtn extends React.PureComponent<NavProps, {}> {
 	render(){
 		const props = this.props;
 		return (
-			<button onClick={() => props.onNavigate(props.goto)}
-					className={"pt-button pt-minimal " + props.icon + " " + (props.active ? 'pt-active' : '')}>
+			<div onClick={() => props.onNavigate(props.goto)}
+					className={(props.active ? navBtnActiveClass : '') + " " + navBtnClass}>
+				<span style={{marginRight: '10px'}} className={`pt-icon-small ${this.props.icon}`}></span>
 				{props.children}
-			</button>
+			</div>
 		);
 	}
 }
@@ -68,8 +88,10 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 						<span>Fire Habit</span>
 					</div>
 					<span className="pt-navbar-divider" />
-					<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-					<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+					<div className={navItemsClass}>
+						<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+						<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+					</div>
 				</div>
 				<div className="pt-navbar-group pt-align-left">
 					<span className="pt-navbar-divider" />
