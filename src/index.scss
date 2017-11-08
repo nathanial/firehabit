@@ -39,18 +39,18 @@ body {
     max-height: 0 !important;
     opacity: 0.01;
   }
-  
+
   &.todo-view-enter.todo-view-enter-active {
     opacity: 1;
     top: -15px;
     max-height: 500px !important;
     transition: opacity 150ms 150ms ease-out !important;
   }
-  
+
   &.todo-view-enter + .todo-view {
     margin-top: 15px !important;
   }
-  
+
   &.todo-view-enter ~ .todo-view {
     transition: transform 150ms ease-out !important;
     transform: translateY($downward-translate-y);
@@ -79,7 +79,7 @@ body {
   transform: translateY(-600px);
 }
 
-.settings-enter.settings-enter-active {  
+.settings-enter.settings-enter-active {
   transform: translateY(0);
   transition: transform 300ms ease-out !important;
 }
@@ -121,4 +121,18 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
 }
 
 .pt-overlay-backdrop {
+}
+
+.spinner-container {
+  text-align: center;
+  .pt-spinner {
+    display: inline-block;
+    margin-top:100px;
+    width: 10%;
+  }
+  p {
+    display: block;
+    font-size: 16px;
+    margin-top: 20px;
+  }
 }

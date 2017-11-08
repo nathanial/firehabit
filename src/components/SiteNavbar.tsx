@@ -31,12 +31,6 @@ const gravatarClass = cxs({
 	borderRadius: '50%'
 });
 
-const emailClass = cxs({
-	marginLeft: '10px',
-	position: 'relative',
-	top: '-5px'
-});
-
 const siteNavbarClass = cxs({
 	background: '#273142',
 	display: 'block',
@@ -120,7 +114,6 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 			<Popover content={compassMenu} position={Position.BOTTOM}>
 				<button className="pt-button pt-minimal" type="button">
 					<Gravatar email={this.props.user.email} className={gravatarClass} />
-					<span className={emailClass}>{this.props.user.email}</span>
 				</button>
 			</Popover>
 		);

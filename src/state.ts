@@ -19,6 +19,7 @@ export interface CaloriesState {
 }
 
 export interface AppState {
+	loadingData?: boolean;
 	showDevTools: boolean;
 	calories: CaloriesState;
 	todoColumns: TodoColumn[];

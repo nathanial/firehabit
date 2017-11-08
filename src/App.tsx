@@ -8,12 +8,20 @@ import TodoPage from './components/todo/TodoPage';
 import {history,db} from './util';
 import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
+import {Spinner} from '@blueprintjs/core';
+import cxs from 'cxs';
 
 interface Props {
     appState: AppState
 };
 
-
+const spinnerContainerClass = cxs({
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    zIndex: 99999,
+    background: 'rgba(10,10,10,0.9)'
+});
 
 export default class App extends React.PureComponent<Props> {
 
@@ -26,8 +34,20 @@ export default class App extends React.PureComponent<Props> {
                 <div className="app-content">
                     {this.renderPage()}
                 </div>
+                {this.renderSpinner()}
             </div>
         );
+    }
+
+    private renderSpinner = () => {
+        if(this.props.appState.loadingData){
+            return (
+                <div className={`spinner-container ${spinnerContainerClass}`}>
+                    <Spinner />
+                    <p>Syncing with Database...</p>
+                </div>
+            )
+        }
     }
 
     private renderPage(){

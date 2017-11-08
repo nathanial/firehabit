@@ -73,3 +73,14 @@
 .sketch-picker {
   margin-left: 20px;
   margin-top: 20px; }
+
+.spinner-container {
+  text-align: center; }
+  .spinner-container .pt-spinner {
+    display: inline-block;
+    margin-top: 100px;
+    width: 10%; }
+  .spinner-container p {
+    display: block;
+    font-size: 16px;
+    margin-top: 20px; }
