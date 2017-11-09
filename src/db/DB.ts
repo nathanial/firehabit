@@ -34,6 +34,7 @@ export class DB {
 	private deletedColumns: string[] = [];
 
 	private foodDefinitionsRef: Reference;
+	private versionRef: Reference;
 	private dirtyFoodDefinitions: string[] = [];
 	private deletedFoodDefinitions: string[] = [];
 
@@ -42,9 +43,13 @@ export class DB {
 	private dirtyCalorieSettings = false;
 	private syncInterval: number;
 	private loaded: boolean = false;
+	private serverVersion: number = 0;
+	private localVersion: number = 0;
 
-	async load(){
-
+	async load(options = {noChanges: false}){
+		if(this.syncInterval){
+			clearInterval(this.syncInterval);
+		}
 		this.db = firebase.database();
 
 		const user = firebase.auth().currentUser;
@@ -56,7 +61,7 @@ export class DB {
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
 		state.set({
-			todoColumns, 
+			todoColumns,
 			calories: {
 				selectedDate,
 				foodDefinitions,
@@ -72,9 +77,41 @@ export class DB {
 			this.loaded = true;
 			this.addListeners();
 		}
+		if(options.noChanges){
+			this.dirtyCalorieSettings = false;
+			this.dirtyFoodDefinitions = [];
+			this.dirtyColumns = [];
+			this.dirtyDays = [];
+		}
 		this.startSync(userId);
+		if(!this.versionRef){
+			this.versionRef = this.db.ref(`/users/${userId}/version`);
+			this.versionRef.once('value', (snapshot) => {
+				const version = snapshot.val();
+				this.serverVersion = version || 0;
+				this.localVersion = version || 0;
+			}).then(() => {
+				this.versionRef.on('value', (snapshot) => {
+					const version = snapshot.val();
+					this.serverVersion = version || 0;
+					if(this.serverVersion > this.localVersion){
+						this.localVersion = this.serverVersion;
+
+						this.dirtyCalorieSettings = false;
+						this.dirtyColumns = [];
+						this.dirtyDays = [];
+						this.dirtyFoodDefinitions = [];
+						this.load({noChanges: true});
+					} else {
+						this.localVersion = this.serverVersion;
+					}
+				});
+			});
+
+		}
+
 	}
-	
+
 
 	async reload(){
 		$('body').css({'pointer-events': 'none'});
@@ -116,7 +153,7 @@ export class DB {
 				}
 				for(let currentColumn of currentState.todoColumns){
 					if(!_.some(prevState.todoColumns, prevColumn => prevColumn === currentColumn)){
-						this.dirtyColumns.push(currentColumn.id);						
+						this.dirtyColumns.push(currentColumn.id);
 					}
 				}
 				if(prevState.calories !== currentState.calories){
@@ -155,6 +192,10 @@ export class DB {
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
 		this.syncDays(userId);
+		if(this.localVersion !== this.serverVersion){
+			this.serverVersion = this.localVersion;
+			this.versionRef.set(this.localVersion);
+		}
 	}
 
 	async syncTodoColumns(){
@@ -165,6 +206,9 @@ export class DB {
 		}
 		for(let columnID of _.uniq(this.deletedColumns)){
 			this.todoColumnsRef.child(columnID).remove();
+		}
+		if(this.dirtyColumns.length > 0 || this.deletedColumns.length > 0){
+			this.localVersion += 1;
 		}
 		this.dirtyColumns = [];
 		this.deletedColumns = [];
@@ -179,6 +223,9 @@ export class DB {
 		for(let foodDefinitionID of _.uniq(this.deletedFoodDefinitions)){
 			this.foodDefinitionsRef.child(foodDefinitionID).remove();
 		}
+		if(this.dirtyFoodDefinitions.length > 0 || this.deletedFoodDefinitions.length > 0){
+			this.localVersion += 1;
+		}
 		this.dirtyFoodDefinitions = [];
 		this.deletedFoodDefinitions = [];
 	}
@@ -190,11 +237,16 @@ export class DB {
 			const day = _.find(days, d => d.id === dayID);
 			this.daysRef.child(dayID).set(_.omit(day, 'id'));
 		}
+		if(this.dirtyDays.length > 0){
+			this.localVersion += 1;
+		}
 		this.dirtyDays = [];
 
 		if(this.dirtyCalorieSettings){
 			this.db.ref(`/users/${userId}/calorie-settings`).set({...appState.calories['calorie-settings']});
+			this.localVersion += 1;
 		}
+
 
 		this.dirtyCalorieSettings = false;
 	}

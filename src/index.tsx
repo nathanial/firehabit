@@ -79,11 +79,6 @@ async function init(){
 		document.getElementById('root')
 	);
 
-	window.addEventListener('focus', async () => {
-		state.get().set({loadingData: true});
-		await db.reload();
-		state.get().set({loadingData: false});
-	});
 }
 
 init();
