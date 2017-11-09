@@ -14,9 +14,6 @@ const deleteColumnBtnClass = cxs({
 const todoColumnSettingsPageClass = cxs({
 	position: 'absolute',
 	zIndex: 9,
-	left: 0,
-	top: 35,
-	right: 0,
 	paddingBottom: 10,
 	paddingLeft: 15
 });
