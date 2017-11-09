@@ -4,7 +4,7 @@ import * as React from 'react';
 import './App.css';
 import SiteNavbar from "./components/SiteNavbar";
 import CaloriesPage from './components/calories/CaloriesPage';
-import TodoPage from './components/todo/TodoPage';
+import TodoColumnPage from './components/todo/TodoColumnPage';
 import {history,db} from './util';
 import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
@@ -55,7 +55,7 @@ export default class App extends React.PureComponent<Props> {
         if(history.location.pathname === '/') {
             const {todoColumns, showDevTools} = appState;
             return 	(
-                <TodoPage todoColumns={todoColumns} showDevTools={showDevTools} />
+                <TodoColumnPage todoColumns={todoColumns} showDevTools={showDevTools} />
             );
         } else {
             return (

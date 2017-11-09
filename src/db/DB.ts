@@ -122,11 +122,15 @@ export class DB {
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		const todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
+		let todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
+		todoColumns = _.sortBy(todoColumns, column => column.index);
+		let index = 0;
 		for(let todoColumn of todoColumns){
 			if(_.isEmpty(todoColumn.todos)){
 				todoColumn.todos = [];
 			}
+			todoColumn.index = index;
+			index += 1;
 		}
 		return todoColumns;
 	}

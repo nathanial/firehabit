@@ -111,15 +111,16 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 	};
 
 	private onAddColumn = () => {
-		this.props.todoColumns.push({ 
-			id: generatePushID(), 
+		this.props.todoColumns.push({
+			id: generatePushID(),
 			name: 'New Column',
 			color: '#394B59',
 			confirmDeletion: true,
 			showClearButton: false,
 			showSettings: false,
 			todos: [],
-			editingName: false
+			editingName: false,
+			index: 0
 		});
 	};
 }

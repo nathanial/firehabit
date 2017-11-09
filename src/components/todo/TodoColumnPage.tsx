@@ -6,7 +6,7 @@ import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import cxs from 'cxs';
 import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
 
-const todoPageClass = cxs({
+const todoColumnPageClass = cxs({
     display: 'block',
     'text-align': 'left',
     position: 'absolute',
@@ -30,11 +30,12 @@ type Props = {
     showDevTools: boolean;
 }
 
-export default class TodoPage extends React.PureComponent<Props> {
+export default class TodoColumnPage extends React.PureComponent<Props> {
     render(){
-        const {todoColumns, showDevTools} = this.props;
+        let {todoColumns, showDevTools} = this.props;
+        todoColumns = _.sortBy(todoColumns, column => column.index);
         return (
-            <div className={todoPageClass}>
+            <div className={todoColumnPageClass}>
                 <div className={columnsContainerClass}>
                     {_.map(todoColumns, (column) => {
                         return <TodoColumnView key={column.id} column={column} onDeleteColumn={this.onDeleteColumn} />

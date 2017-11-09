@@ -48,6 +48,10 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 					Show Clear Button
 				</Checkbox>
 				<Button className={`pt-intent-danger ${deleteColumnBtnClass}`} onClick={this.onDeleteColumn}>Delete Column</Button>
+				<div className="move-buttons">
+					<Button onClick={this.onMoveLeft}>Move Left</Button>
+					<Button onClick={this.onMoveRight}>Move Right</Button>
+				</div>
 			</div>
 		);
 	}
@@ -78,4 +82,13 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 	private get columnID(){
 		return this.props.column.id;
 	}
+
+	private onMoveLeft = () => {
+		this.props.column.set({index: this.props.column.index - 1.1});
+	}
+
+	private onMoveRight = () => {
+		this.props.column.set({index: this.props.column.index + 1.1});
+	}
+
 }

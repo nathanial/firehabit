@@ -76,6 +76,7 @@ interface TodoColumn {
 	showClearButton: boolean;
 	todos: Todo[];
 	showSettings: boolean;
+	index: number;
 	set?(updates: Partial<TodoColumn>);
 }
 
@@ -89,6 +90,6 @@ interface DailyEntry {
 	records: {[day: string]: boolean};
 }
 
-interface Array<T> { 
+interface Array<T> {
 	reset(data: T[]): void;
 }

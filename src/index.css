@@ -60,6 +60,14 @@
     margin-top: 20px;
     box-shadow: none !important;
     outline: 1px solid black; }
+  .todo-column-settings .move-buttons {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    margin-left: -10px;
+    border-top: 1px solid #ccc;
+    padding-top: 30px; }
+    .todo-column-settings .move-buttons button {
+      margin-left: 10px; }
 
 .settings-enter {
   transform: translateY(-600px); }
