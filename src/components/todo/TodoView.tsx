@@ -1,6 +1,7 @@
 import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
+import * as Color from 'color';
 import {Spinner, EditableText, Button} from "@blueprintjs/core";
 import styled from 'styled-components';
 import DialogService from "../../services/DialogService";
@@ -10,6 +11,7 @@ import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
 import * as cloudinary from 'cloudinary-core';
+import TodoSettingsDialog from './TodoSettingsDialog';
 
 const cloudName = 'dsv1fug8x';
 const unsignedUploadPreset = 'fnddxf5w';
@@ -25,7 +27,7 @@ const todoContentWrapperClass = cxs({
     '.pt-editable-text': {
         'max-width': '180px'
     },
-    flex: '2 0 0' 
+    flex: '2 0 0'
 });
 
 const todoItemClass = cxs({
@@ -51,7 +53,7 @@ const TodoWrapper = styled.div`
         bottom: 0;
         width: 30px;
         font-size: 24px;
-        
+
         .inner-icon {
             position: absolute;
             top: 50%;
@@ -59,7 +61,7 @@ const TodoWrapper = styled.div`
         }
     }
     border-radius: 0;
-    
+
     &:hover {
         .todo-controls {
             opacity: 1;
@@ -97,10 +99,10 @@ const TodoWrapper = styled.div`
                 vertical-align: middle;
             }
         }
-        
+
         transition: opacity 0.2s ease-in-out;
-        
-        .add-subtask-btn, .file-upload-btn {
+
+        .add-subtask-btn, .file-upload-btn, .todo-settings-btn {
             min-width: 18px;
             height: 18px;
             min-height: 18px;
@@ -108,7 +110,7 @@ const TodoWrapper = styled.div`
             &:before {
                 font-size: 12px;
                 vertical-align: middle;
-            }		
+            }
         }
     }
 `;
@@ -147,13 +149,26 @@ type PreviewProps = {
     todo: Todo;
 }
 
+function getColorStyle(todo: Todo){
+    const backgroundColor = _.get(todo, 'settings.color', '#eee');
+    let foregroundColor;
+    if(Color(backgroundColor).light()){
+        foregroundColor = 'black';
+    } else {
+        foregroundColor = 'white';
+    }
+    const colorStyle = {background: backgroundColor, color: foregroundColor};
+    return colorStyle;
+}
+
 class TodoDragPreview extends React.PureComponent<PreviewProps> {
     render(){
+        const colorStyle = getColorStyle(this.props.todo);
         return (
             <div className={`pt-card pt-elevation-2 ${todoItemClass}`}
                  style={{padding:0, background: '#eee', margin: 0}}>
                 <div>
-                    <TodoWrapper className={todoWrapperClass} >
+                    <TodoWrapper className={todoWrapperClass} style={colorStyle} >
                         <div className="drag-handle">
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
@@ -167,7 +182,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
                             <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" />
                         </div>
                     </TodoWrapper>
-                    <SubtaskList subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  />
+                    <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  />
                 </div>
             </div>
         );
@@ -189,6 +204,7 @@ class TodoView extends React.Component<Props, State> {
         if(this.props.todo.dragged){
             extraClasses += ' dragged';
         }
+        const colorStyle = getColorStyle(this.props.todo);
         return (
             <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses}`}
                  data-todo-id={this.props.todo.id}
@@ -200,7 +216,7 @@ class TodoView extends React.Component<Props, State> {
                 }}
                  onDragStart={this.onDragStart}>
                 <div>
-                    <TodoWrapper className={todoWrapperClass} >
+                    <TodoWrapper className={todoWrapperClass} style={colorStyle} >
                         <div className="drag-handle" draggable={true}>
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
@@ -218,14 +234,15 @@ class TodoView extends React.Component<Props, State> {
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
                             <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" onClick={this.onAddAttachment} />
+                            <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
                         </div>
-                        <input type="file" 
-                               ref={fileInput => this.fileInput = fileInput } 
+                        <input type="file"
+                               ref={fileInput => this.fileInput = fileInput }
                                onChange={this.onFileChanged} />
                     </TodoWrapper>
-                    <SubtaskList subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
-                    <AttachmentList attachments={this.props.todo.attachments} 
-                                    onOpenAttachment={(attachment) => this.onOpenAttachment(attachment)} 
+                    <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
+                    <AttachmentList attachments={this.props.todo.attachments}
+                                    onOpenAttachment={(attachment) => this.onOpenAttachment(attachment)}
                                     onDelete={(i, attachment) => this.onDeleteAttachment(i, attachment)} />
                 </div>
                 {this.renderSpinner()}
@@ -317,12 +334,12 @@ class TodoView extends React.Component<Props, State> {
             });
         } else {
             this.props.todo.attachments.push(attachment);
-        }   
+        }
     }
 
     private onAddAttachment = () => {
         $(this.fileInput).trigger('click');
-     
+
     }
 
     private onOpenAttachment(attachment: Attachment){
@@ -333,6 +350,24 @@ class TodoView extends React.Component<Props, State> {
         this.props.todo.attachments.splice(index, 1);
     }
 
+    private onOpenTodoSettings = async () => {
+        let settings: TodoSettings = this.props.todo.settings || {
+            recurring: false,
+            color: '#eee'
+        };
+        function onChange(newSettings: TodoSettings){
+            settings = newSettings;
+        }
+        const result = await DialogService.showDialog("Todo Settings", "Save", "Cancel", (
+            <TodoSettingsDialog settings={settings} onChange={onChange}>
+            </TodoSettingsDialog>
+        ));
+
+        if(result){
+            this.props.todo.set({settings});
+        }
+    }
+
     // *********** Upload file to Cloudinary ******************** //
     uploadFile = async (file: File): Promise<Attachment> => {
         return new Promise<Attachment>((resolve) => {
@@ -341,7 +376,7 @@ class TodoView extends React.Component<Props, State> {
             var fd = new FormData();
             xhr.open('POST', url, true);
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        
+
             // Update progress (can be used to show progress indicator)
             xhr.upload.addEventListener("progress", (e) => {
                 var progress = Math.round((e.loaded * 100.0) / e.total);
@@ -351,7 +386,7 @@ class TodoView extends React.Component<Props, State> {
                 });
                 // console.log(`fileuploadprogress data.loaded: ${e.loaded}, data.total: ${e.total}`);
             });
-        
+
             xhr.onreadystatechange = (e) => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     // File uploaded successfully
@@ -366,7 +401,7 @@ class TodoView extends React.Component<Props, State> {
                     resolve(attachment);
                 }
             };
-        
+
             fd.append('upload_preset', unsignedUploadPreset);
             fd.append('tags', 'browser_upload'); // Optional - add tag for image admin in Cloudinary
             fd.append('file', file);

@@ -162,3 +162,13 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
     margin-top: 20px;
   }
 }
+
+.todo-settings-dialog {
+  .chrome-picker {
+    display: inline-block;
+    margin-left: 20px;
+    vertical-align: middle;
+    box-shadow: none !important;
+    border: 1px solid #aaa;
+  }
+}

@@ -57,11 +57,17 @@ interface Attachment {
 
 }
 
+interface TodoSettings {
+	recurring: boolean;
+	color: string;
+}
+
 interface Todo {
 	id: string;
 	name: string;
 	subtasks: Subtask[];
 	attachments: Attachment[];
+	settings?: TodoSettings;
 	dragged?: boolean;
 	editing?: boolean;
 	set?(updates: Partial<Todo>);

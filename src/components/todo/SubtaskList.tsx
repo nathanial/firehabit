@@ -64,6 +64,7 @@ const subtaskListClass = cxs({
 });
 
 interface Props {
+	style?: Object;
 	subtasks: Subtask[];
 	onChange(index: number, subtask: Partial<Subtask>);
 	onDelete(index: number, subtask: Subtask);
@@ -74,7 +75,7 @@ export class SubtaskList extends React.PureComponent<Props> {
 		const subtasks = this.props.subtasks;
 		if(!_.isEmpty(subtasks)) {
 			return (
-				<div className={subtaskListClass}>
+				<div className={subtaskListClass} style={this.props.style}>
 					{subtasks.map((task: Subtask, i: number) => {
 						let classes = "subtask-item";
 						if(task.complete) {
@@ -100,6 +101,6 @@ export class SubtaskList extends React.PureComponent<Props> {
 			return <div></div>;
 		}
 	}
-	
+
 
 }
