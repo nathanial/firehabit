@@ -47,14 +47,19 @@
 
 .todo-column-settings {
   top: 40px;
+  background: #efefef;
   width: 250px;
   left: 15px;
-  border: 1px solid #555 !important;
+  color: black;
+  border: 1px solid black !important;
   border-radius: 5px; }
+  .todo-column-settings .pt-checkbox {
+    color: black; }
   .todo-column-settings .sketch-picker {
     margin-left: 0px;
     margin-top: 20px;
-    box-shadow: none !important; }
+    box-shadow: none !important;
+    outline: 1px solid black; }
 
 .settings-enter {
   transform: translateY(-600px); }

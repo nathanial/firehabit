@@ -32,12 +32,8 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 		const column = this.props.column;
 		let confirmDeletion = column.confirmDeletion;
 		let showClearBtn = column.showClearButton;
-		const color = column.color || '#30404d';
-		const borderColor = Color(color).darken(0.2);
+		const color = column.color;
 		const style = _.extend({}, {
-			background: color,
-			borderBottom: `1px solid ${borderColor}`,
-			boxShadow: `1px 4px 7px 0px ${borderColor}`,
 		}, this.props.style);
 		return (
 			<div className={"todo-column-settings " + todoColumnSettingsPageClass} style={style}>
