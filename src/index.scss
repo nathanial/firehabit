@@ -73,6 +73,18 @@ body {
 }
 
 .todo-column-settings {
+  top: 40px;
+  width: 250px;
+  left: 15px;
+  border: 1px solid #555 !important;
+  border-radius: 5px;
+
+  .sketch-picker {
+    margin-left: 0px;
+    margin-top: 20px;
+    box-shadow: none !important;
+  }
+
 }
 
 .settings-enter{
@@ -113,11 +125,6 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
 .todo-view-leave ~ .todo-view {
   transition: $out-transition !important;
   transform: translateY(-$downward-translate-y);
-}
-
-.sketch-picker {
-  margin-left: 20px;
-  margin-top: 20px;
 }
 
 .pt-overlay-backdrop {

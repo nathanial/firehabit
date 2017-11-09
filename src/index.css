@@ -45,6 +45,17 @@
     position: relative;
     top: 20px; }
 
+.todo-column-settings {
+  top: 40px;
+  width: 250px;
+  left: 15px;
+  border: 1px solid #555 !important;
+  border-radius: 5px; }
+  .todo-column-settings .sketch-picker {
+    margin-left: 0px;
+    margin-top: 20px;
+    box-shadow: none !important; }
+
 .settings-enter {
   transform: translateY(-600px); }
 
@@ -69,10 +80,6 @@
 .todo-view-leave ~ .todo-view {
   transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transform 150ms ease-out 150ms !important;
   transform: translateY(-48px); }
-
-.sketch-picker {
-  margin-left: 20px;
-  margin-top: 20px; }
 
 .spinner-container {
   text-align: center; }
