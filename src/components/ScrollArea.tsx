@@ -50,7 +50,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private originalY: number;
     private startY: number;
     private interval: number;
-    private stayInPlace = true;
+    public stayInPlace = true;
 
     private previousScrollY = 0;
 
@@ -73,7 +73,7 @@ export default class ScrollArea extends React.Component<Props,State> {
             scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
         }
         this.previousScrollY = scrollY;
-        
+
         return (
             <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
                 <div ref={content => this.content = content} className={scrollAreaContent} style={{transform: `translateY(${-scrollY}px)`}}>
@@ -83,7 +83,7 @@ export default class ScrollArea extends React.Component<Props,State> {
             </div>
         );
     }
-    
+
     renderScrollbar(){
         if(this.state.hidden){
             return;
@@ -94,8 +94,8 @@ export default class ScrollArea extends React.Component<Props,State> {
         };
         return (
             <div className={scrollBarClass + ' custom-scrollbar'} onMouseDown={this.onScrollbarMouseDown} onTouchStart={this.onScrollbarTouchDown}>
-                <div className={scrollHandleClass + ' custom-scrollbar-handle'} 
-                    style={handleStyle} 
+                <div className={scrollHandleClass + ' custom-scrollbar-handle'}
+                    style={handleStyle}
                     onMouseDown={this.onHandleMouseDown}
                     onTouchStart={this.onHandleTouchDown}
                     ref={handle => this.handle = handle}>
@@ -139,7 +139,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private onScrollbarMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.stopPropagation();
-        
+
         this.startY = event.pageY;
         let scrollbarOffset = event.pageY - this.state.rootTop;
         scrollbarOffset -= this.state.handleHeight / 2;
@@ -150,7 +150,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private onScrollbarTouchDown = (event: React.TouchEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.stopPropagation();
-        
+
         this.startY = event.touches[0].pageY;
         let scrollbarOffset = event.touches[0].pageY - this.state.rootTop;
         scrollbarOffset -= this.state.handleHeight / 2;
@@ -196,7 +196,26 @@ export default class ScrollArea extends React.Component<Props,State> {
         document.removeEventListener('touchend', this.onTouchEnd, true);
     }
 
-    private resizeHandle = () => {
+    updateHeight(){
+        const root = this.root.getBoundingClientRect();
+        const rect = this.content.getBoundingClientRect();
+        const scrollHeight = this.content.scrollHeight + bottomMargin;
+        const offsetHeight = rect.height;
+        this.setState({
+            scrollHeight, contentHeight: offsetHeight,
+            rootTop: root.top
+        })
+    }
+
+    resetTop = (): Promise<void> => {
+        return new Promise<void>((resolve) => {
+            this.setState({
+                scrollY: 0
+            }, () => resolve());
+        });
+    }
+
+    resizeHandle = () => {
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
@@ -233,7 +252,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         }, () => {
             this.stayInPlace = true;
         });
-    } 
+    }
 
     private getPercentage = (pageY: number) => {
         let scrollPosition = (pageY - this.startY)  ;

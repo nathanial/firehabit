@@ -72,6 +72,7 @@ interface Props {
 
 export default class TodoColumnView extends React.PureComponent<Props> {
     private animating: boolean;
+    private scrollbar: ScrollArea;
     private unregisterDropTarget: () => void;
 
     render(){
@@ -148,7 +149,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             <div>
                 {this.renderSettings()}
                 {this.renderTabs()}
-                <ScrollArea className="todo-list">
+                <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="todo-list">
                     <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                         {this.renderTodos()}
                     </ReactCSSTransitionGroup>
@@ -314,6 +315,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 
     private onHandleTabChanged = (id: string) => {
         this.props.column.set({activeTab: id});
+        this.scrollbar.stayInPlace = false;
+        this.scrollbar.resetTop().then(() => {
+            this.scrollbar.stayInPlace = true;
+        });
     }
 
     private onDeleteColumn = (columnID: string) => {
