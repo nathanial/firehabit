@@ -1,0 +1,51 @@
+
+.todo-list {
+    list-style-type: none;
+    margin: 0;
+    padding-top: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 35px;
+    .todo-view {
+        margin-left: 20px;
+    }
+}
+
+.todo-column-tabs {
+    margin-top: 15px;
+    margin-left: -10px;
+    margin-right: -10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+
+    .pt-tab-list:first-child {
+        margin-left: 20px;
+    }
+
+    .pt-tab:active {
+        color: white;
+    }
+
+    .pt-tab:active, .pt-tab:hover, .pt-tab:focus {
+        outline-width:  0 !important;
+        box-shadow: unset !important;
+        color: white !important;
+        & > span {
+            color: white !important;
+        }
+    }
+
+    .pt-tab[aria-selected="true"] {
+        color: white;
+    }
+
+    .pt-tab-indicator {
+        background-color: white;
+    }
+}
+
+.todo-column-tabs + .todo-list {
+    margin-top: 36px;
+}

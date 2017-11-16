@@ -120,7 +120,8 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 			showSettings: false,
 			todos: [],
 			editingName: false,
-			index: 0
+			index: 0,
+			enableTabs: false
 		});
 	};
 }

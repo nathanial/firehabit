@@ -77,6 +77,7 @@ interface TodoColumn {
 	id: string;
 	name: string;
 	color: string;
+	enableTabs: boolean;
 	editingName: boolean;
 	confirmDeletion: boolean;
 	showClearButton: boolean;

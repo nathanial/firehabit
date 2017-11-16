@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as $ from 'jquery';
-import {Button, EditableText} from "@blueprintjs/core";
+import {Button, EditableText, Tabs2, Tab2} from "@blueprintjs/core";
 import {history} from '../../util';
 import {generatePushID} from '../../db/util';
 import styled from 'styled-components';
@@ -35,7 +35,7 @@ const todoColumnClass = cxs({
     'h4' : {
         'margin-top': '4px'
     }
-}) ;
+});
 
 const columnNameClass = cxs({
     marginTop: '-12px',
@@ -52,20 +52,6 @@ const trashBtnClass = cxs({
     position: 'absolute',
     right: 30,
     top: 0
-});
-
-const todoListClass = cxs({
-    'list-style-type': 'none',
-    margin: 0,
-    paddingTop: 0,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: '35px',
-    '.todo-view': {
-        marginLeft: '20px'
-    }
 });
 
 const toolbarBorderClass = cxs({
@@ -161,7 +147,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         return (
             <div>
                 {this.renderSettings()}
-                <ScrollArea className={todoListClass}>
+                {this.renderTabs()}
+                <ScrollArea className="todo-list">
                     <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                         {column.todos.map((todo) => {
                             return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
@@ -245,16 +232,35 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         };
     }
 
+    private renderTabs = () => {
+        if(!this.props.column.enableTabs){
+            return;
+        }
+        return (
+            <div className="todo-column-tabs">
+                <Tabs2 id="Tabs2Example" onChange={this.onHandleTabChanged}>
+                    <Tab2 id="rx" title="React" />
+                    <Tab2 id="ng" title="Angular" />
+                    <Tab2 id="mb" title="Ember" />
+                </Tabs2>
+            </div>
+        );
+    };
+
     private renderSettings = () => {
         return (
             <ReactCSSTransitionGroup transitionName="settings" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                {this.props.column.showSettings && 
-                    <TodoColumnSettingsPage column={this.props.column} 
+                {this.props.column.showSettings &&
+                    <TodoColumnSettingsPage column={this.props.column}
                                             onDelete={this.onDeleteColumn} />
                 }
             </ReactCSSTransitionGroup>
         );
     };
+
+    private onHandleTabChanged = (event) => {
+        console.log("Tab Changed", event);
+    }
 
     private onDeleteColumn = (columnID: string) => {
         this.props.onDeleteColumn(this.props.column);
@@ -272,7 +278,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 
     private onAddTodo = async () => {
         this.props.column.todos.unshift({
-            id: generatePushID(), 
+            id: generatePushID(),
             name: '',
             subtasks: [],
             attachments: [],

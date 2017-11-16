@@ -1,0 +1,35 @@
+.todo-list {
+  list-style-type: none;
+  margin: 0;
+  padding-top: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 35px; }
+  .todo-list .todo-view {
+    margin-left: 20px; }
+
+.todo-column-tabs {
+  margin-top: 15px;
+  margin-left: -10px;
+  margin-right: -10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2); }
+  .todo-column-tabs .pt-tab-list:first-child {
+    margin-left: 20px; }
+  .todo-column-tabs .pt-tab:active {
+    color: white; }
+  .todo-column-tabs .pt-tab:active, .todo-column-tabs .pt-tab:hover, .todo-column-tabs .pt-tab:focus {
+    outline-width: 0 !important;
+    box-shadow: unset !important;
+    color: white !important; }
+    .todo-column-tabs .pt-tab:active > span, .todo-column-tabs .pt-tab:hover > span, .todo-column-tabs .pt-tab:focus > span {
+      color: white !important; }
+  .todo-column-tabs .pt-tab[aria-selected="true"] {
+    color: white; }
+  .todo-column-tabs .pt-tab-indicator {
+    background-color: white; }
+
+.todo-column-tabs + .todo-list {
+  margin-top: 36px; }
