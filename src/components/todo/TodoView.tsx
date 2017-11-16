@@ -134,6 +134,7 @@ const spinnerClass = cxs({
 
 interface Props {
     todo: Todo;
+    style?: Object;
     confirmDeletion: boolean;
     isDragging?: boolean;
     onDelete(todo: Todo);
@@ -212,7 +213,8 @@ class TodoView extends React.Component<Props, State> {
                     padding:0,
                     background: '#eee',
                     opacity: this.state.dragging ? 0 : undefined,
-                    transition: 'none'
+                    transition: 'none',
+                    ...(this.props.style || {})
                 }}
                  onDragStart={this.onDragStart}>
                 <div>

@@ -70,6 +70,7 @@ interface Todo {
 	settings?: TodoSettings;
 	dragged?: boolean;
 	editing?: boolean;
+	tab?: string;
 	set?(updates: Partial<Todo>);
 }
 

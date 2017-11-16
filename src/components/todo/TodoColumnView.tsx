@@ -150,13 +150,25 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                 {this.renderTabs()}
                 <ScrollArea className="todo-list">
                     <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                        {column.todos.map((todo) => {
-                            return <TodoView key={todo.id} todo={todo} confirmDeletion={column.confirmDeletion} onDelete={this.onDeleteTodo} />;
-                        })}
+                        {this.renderTodos()}
                     </ReactCSSTransitionGroup>
                 </ScrollArea>
             </div>
         )
+    }
+
+    private renderTodos = () => {
+        const column = this.props.column;
+        return column.todos.map((todo) => {
+            const visible = _.isUndefined(column.activeTab) || (column.activeTab === '0' && _.isUndefined(todo.tab)) || todo.tab === column.activeTab;
+            return (
+                <TodoView key={todo.id}
+                          todo={todo}
+                          style={{display: visible ? 'block' : 'none'}}
+                          confirmDeletion={column.confirmDeletion}
+                          onDelete={this.onDeleteTodo} />
+            );
+        });
     }
 
     private onStartEditing = () => {
@@ -171,6 +183,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const newTodo = _.cloneDeep(todo);
         newTodo.id = generatePushID();
         newTodo.dragged = true;
+        newTodo.tab = this.props.column.activeTab || '0';
         this.props.column.todos.splice(index, 0, newTodo);
     }
 
@@ -243,8 +256,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         return <Tab2 id={tab.id} key={tab.id} title={tab.title} />
                     })}
                 </Tabs2>
-                <i className="pt-icon-standard pt-intent-danger pt-icon-trash remove-tab-btn" onClick={this.onRemoveActiveTab} />
-                <i className="pt-icon-standard pt-icon-plus add-tab-btn" onClick={this.onAddTab} />
+                <div className="tab-controls">
+                    <i className="pt-icon-standard pt-intent-danger pt-icon-trash remove-tab-btn" onClick={this.onRemoveActiveTab} />
+                    <i className="pt-icon-standard pt-icon-plus add-tab-btn" onClick={this.onAddTab} />
+                </div>
             </div>
         );
     };
@@ -255,16 +270,35 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             return;
         }
         const column = this.props.column.transact();
+        for(let todo of column.todos){
+            if(todo.tab === this.props.column.activeTab){
+                todo.set({tab: '0'});
+            }
+        }
         column.tabs.splice(activeTabIndex, 1);
         column.activeTab = _.last(column.tabs.map(t => t.id));
         this.props.column.run();
     }
 
-    private onAddTab = () => {
-        this.props.column.tabs.push({
-            id: generatePushID(),
-            title: 'New Tab'
-        })
+    private onAddTab = async () => {
+        let title = 'New Tab';
+
+        function onChange(event){
+            title = event.target.value;
+        }
+
+        const result = await DialogService.showDialog('Choose Tab Name', 'Create Tab', 'Cancel',
+            <div style={{margin: 20}}>
+                <label style={{marginRight: 20}}>Tab Name</label>
+                <input type="text" className="pt-input" onChange={onChange} />
+            </div>
+        );
+        if(result){
+            this.props.column.tabs.push({
+                id: generatePushID(),
+                title: title || 'New Tab'
+            });
+        }
     }
 
     private renderSettings = () => {
@@ -302,7 +336,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             name: '',
             subtasks: [],
             attachments: [],
-            editing: true
+            editing: true,
+            tab: this.props.column.activeTab || '0'
         });
     };
 

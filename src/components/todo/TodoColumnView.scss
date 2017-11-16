@@ -48,20 +48,29 @@
         top: 27px;
     }
 
-    .add-tab-btn, .remove-tab-btn {
+    .tab-controls {
         position: absolute;
-        right: 20px;
-        top: 37px;
-        font-size: 22px;
+        right: 0px;
+        top: 40px;
+        padding: 0 5px;
+        &:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+    }
+
+    .add-tab-btn, .remove-tab-btn {
+        position: relative;
+        font-size: 14px;
         font-style: normal;
         opacity: 0;
         transition: opacity 0.2s ease-out;
         cursor: pointer;
     }
     .remove-tab-btn {
-        right: 45px;
-        font-size: 16px;
-        top: 42px;
+        position: relative;
+        font-size: 10px;
+        margin-right: 10px;
+        top:-1px;
     }
     &:hover {
         .add-tab-btn {
