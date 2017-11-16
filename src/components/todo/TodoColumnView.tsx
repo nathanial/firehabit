@@ -238,14 +238,34 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         }
         return (
             <div className="todo-column-tabs">
-                <Tabs2 id="Tabs2Example" onChange={this.onHandleTabChanged}>
-                    <Tab2 id="rx" title="React" />
-                    <Tab2 id="ng" title="Angular" />
-                    <Tab2 id="mb" title="Ember" />
+                <Tabs2 id="Tabs2Example" selectedTabId={this.props.column.activeTab} onChange={this.onHandleTabChanged}>
+                    {this.props.column.tabs.map(tab => {
+                        return <Tab2 id={tab.id} key={tab.id} title={tab.title} />
+                    })}
                 </Tabs2>
+                <i className="pt-icon-standard pt-intent-danger pt-icon-trash remove-tab-btn" onClick={this.onRemoveActiveTab} />
+                <i className="pt-icon-standard pt-icon-plus add-tab-btn" onClick={this.onAddTab} />
             </div>
         );
     };
+
+    private onRemoveActiveTab = () => {
+        const activeTabIndex = _.findIndex(this.props.column.tabs, tab => tab.id === this.props.column.activeTab);
+        if(this.props.column.activeTab === '0'){
+            return;
+        }
+        const column = this.props.column.transact();
+        column.tabs.splice(activeTabIndex, 1);
+        column.activeTab = _.last(column.tabs.map(t => t.id));
+        this.props.column.run();
+    }
+
+    private onAddTab = () => {
+        this.props.column.tabs.push({
+            id: generatePushID(),
+            title: 'New Tab'
+        })
+    }
 
     private renderSettings = () => {
         return (
@@ -258,8 +278,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         );
     };
 
-    private onHandleTabChanged = (event) => {
-        console.log("Tab Changed", event);
+    private onHandleTabChanged = (id: string) => {
+        this.props.column.set({activeTab: id});
     }
 
     private onDeleteColumn = (columnID: string) => {

@@ -129,6 +129,14 @@ export class DB {
 			if(_.isEmpty(todoColumn.todos)){
 				todoColumn.todos = [];
 			}
+			if(_.isUndefined(todoColumn.tabs)){
+				todoColumn.tabs = [
+					{
+						id: '0',
+						title: 'Default'
+					}
+				];
+			}
 			todoColumn.index = index;
 			index += 1;
 		}

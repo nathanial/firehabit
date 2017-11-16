@@ -73,11 +73,18 @@ interface Todo {
 	set?(updates: Partial<Todo>);
 }
 
+interface TodoTab {
+	id: string;
+	title: string;
+}
+
 interface TodoColumn {
 	id: string;
 	name: string;
 	color: string;
 	enableTabs: boolean;
+	activeTab: string;
+	tabs: TodoTab[];
 	editingName: boolean;
 	confirmDeletion: boolean;
 	showClearButton: boolean;
@@ -85,6 +92,8 @@ interface TodoColumn {
 	showSettings: boolean;
 	index: number;
 	set?(updates: Partial<TodoColumn>);
+	transact?(): TodoColumn;
+	run?();
 }
 
 interface DBSection {
