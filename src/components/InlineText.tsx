@@ -34,11 +34,11 @@ export default class InlineText extends React.PureComponent<Props> {
         _.extend(style, this.props.style || {});
         return (
             <div style={style} ref={root => this.root = root} className={className} onClick={this.onStartEditing}>
-                <input style={inputStyle} 
-                       ref={input => this.input = input} 
-                       key="input" className="pt-editable-input" 
+                <input style={inputStyle}
+                       ref={input => this.input = input}
+                       key="input" className="pt-editable-input"
                        type="text"
-                       value={this.props.value} 
+                       value={this.props.value}
                        onKeyDown={this.onKeyDown}
                        onChange={this.onChange} />
                 {this.renderText()}
@@ -55,8 +55,8 @@ export default class InlineText extends React.PureComponent<Props> {
     }
 
     componentWillReceiveProps(nextProps: Props){
-        if(nextProps.editing){
-            this.input.focus(); 
+        if(nextProps.editing && !this.props.editing){
+            this.input.focus();
             this.input.setSelectionRange(0, this.props.value.length);
         }
     }
