@@ -137,6 +137,9 @@ export class DB {
 					}
 				];
 			}
+			todoColumn.todos = _.map(todoColumn.todos, todo => {
+				return {...todo, name: _.trim(todo.name)};
+			})
 			todoColumn.index = index;
 			index += 1;
 		}

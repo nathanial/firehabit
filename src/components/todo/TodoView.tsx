@@ -2,10 +2,10 @@ import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
 import * as Color from 'color';
-import {Spinner, EditableText, Button} from "@blueprintjs/core";
-import styled from 'styled-components';
+import {Spinner, Button} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
+import InlineText from '../InlineText';
 import {AttachmentList} from './AttachmentList';
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
@@ -46,74 +46,6 @@ const todoWrapperClass = cxs({
     display: 'flex',
     'flex-direction': 'row'
 });
-
-const TodoWrapper = styled.div`
-    position: relative;
-    .drag-handle {
-        bottom: 0;
-        width: 30px;
-        font-size: 24px;
-
-        .inner-icon {
-            position: absolute;
-            top: 50%;
-            margin-top: -17px;
-        }
-    }
-    border-radius: 0;
-
-    &:hover {
-        .todo-controls {
-            opacity: 1;
-        }
-    }
-
-    input[type="file"] {
-        display: none;
-    }
-
-    .todo-controls {
-        position: relative;
-        display: flex;
-        height: 20px;
-        flex-direction: row;
-        position: absolute;
-        right: 0;
-        top: 0;
-        background: white;
-        border-left: 1px solid #ccc;
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        border-top-left-radius: 3px;
-        border-bottom-left-radius: 3px;
-        opacity: 0;
-        .delete-btn {
-            height: 18px;
-            min-width: 18px;
-            min-height: 18px;
-            line-height: 18px;
-            transition: opacity 0.2s ease-out;
-            &:before {
-                font-size: 11px;
-                line-height: 14px;
-                vertical-align: middle;
-            }
-        }
-
-        transition: opacity 0.2s ease-in-out;
-
-        .add-subtask-btn, .file-upload-btn, .todo-settings-btn {
-            min-width: 18px;
-            height: 18px;
-            min-height: 18px;
-            line-height: 10px;
-            &:before {
-                font-size: 12px;
-                vertical-align: middle;
-            }
-        }
-    }
-`;
 
 const spinnerContainerClass = cxs({
     background: 'rgba(0,0,0,0.6)',
@@ -166,24 +98,29 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
     render(){
         const colorStyle = getColorStyle(this.props.todo);
         return (
-            <div className={`pt-card pt-elevation-2 ${todoItemClass}`}
+            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
                  style={{padding:0, background: '#eee', margin: 0}}>
                 <div>
-                    <TodoWrapper className={todoWrapperClass} style={colorStyle} >
+                    <div className={'todo-wrapper ' + todoWrapperClass} style={colorStyle} >
                         <div className="drag-handle">
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
                         <div className={todoContentWrapperClass}>
-                            <EditableText value={this.props.todo.name}
-                                          multiline={true}/>
+                            <InlineText value={this.props.todo.name}
+                                        editing={this.props.todo.editing}
+                                        style={colorStyle}
+                                        multiline={true}
+                                        onChange={() => {}}
+                                        onStartEditing={()=>{}}
+                                        onStopEditing={()=>{}}/>
                         </div>
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
                             <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" />
                         </div>
-                    </TodoWrapper>
-                    <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  />
+                    </div>
+                    {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  /> }
                 </div>
             </div>
         );
@@ -206,8 +143,9 @@ class TodoView extends React.Component<Props, State> {
             extraClasses += ' dragged';
         }
         const colorStyle = getColorStyle(this.props.todo);
+        const editingClass = this.props.todo.editing ? 'editing' : '';
         return (
-            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses}`}
+            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses} ${editingClass}`}
                  data-todo-id={this.props.todo.id}
                  style={{
                     padding:0,
@@ -218,19 +156,19 @@ class TodoView extends React.Component<Props, State> {
                 }}
                  onDragStart={this.onDragStart}>
                 <div>
-                    <TodoWrapper className={todoWrapperClass} style={colorStyle} >
+                    <div className={'todo-wrapper ' + todoWrapperClass} style={colorStyle} >
                         <div className="drag-handle" draggable={true}>
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
                         <div className={todoContentWrapperClass}>
-                            <EditableText value={this.props.todo.name}
-                                          multiline={true}
-                                          placeholder="New Todo"
-                                          isEditing={this.props.todo.editing || false}
-                                          onChange={this.onNameChanged}
-                                          onEdit={this.onStartEditing}
-                                          onConfirm={this.onStopEditing}
-                                          onCancel={this.onStopEditing} />
+                            <InlineText value={this.props.todo.name}
+                                        multiline={true}
+                                        style={colorStyle}
+                                        placeholder="New Todo"
+                                        editing={this.props.todo.editing || false}
+                                        onChange={this.onNameChanged}
+                                        onStartEditing={this.onStartEditing}
+                                        onStopEditing={this.onStopEditing} />
                         </div>
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
@@ -241,8 +179,8 @@ class TodoView extends React.Component<Props, State> {
                         <input type="file"
                                ref={fileInput => this.fileInput = fileInput }
                                onChange={this.onFileChanged} />
-                    </TodoWrapper>
-                    <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>
+                    </div>
+                    {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                     <AttachmentList attachments={this.props.todo.attachments}
                                     onOpenAttachment={(attachment) => this.onOpenAttachment(attachment)}
                                     onDelete={(i, attachment) => this.onDeleteAttachment(i, attachment)} />

@@ -1,0 +1,24 @@
+
+.inline-text {
+    max-width: 200px;
+    text-overflow: unset;
+    white-space: normal;
+    p {
+        margin-bottom: 0;
+    }
+    textarea, input {
+        text-align: left;
+        border-width: 0;
+        resize: none;
+        overflow: hidden;
+        outline-width: 0;
+        background:transparent;
+        width: 100%;
+        padding: 0;
+    }
+
+    input {
+        margin-top:-1px;
+    }
+
+}

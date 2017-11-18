@@ -57,10 +57,18 @@ export default class App extends React.PureComponent<Props> {
             return 	(
                 <TodoColumnPage todoColumns={todoColumns} showDevTools={showDevTools} />
             );
-        } else {
+        } else if(history.location.pathname === '/calories') {
             return (
                 <CaloriesPage caloriesState={appState.calories} />
             );
+        } else if(history.location.pathname === '/notes') {
+            return (
+                <h1>Notes</h1>
+            );
+        } else {
+            return (
+                <h1>Unknown Route</h1>
+            )
         }
     }
 

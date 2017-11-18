@@ -1,10 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as TextArea from 'react-textarea-autosize';
 
 type Props = {
     className?: string;
     value: string;
     style?: Object;
+    placeholder?: string;
+    multiline?: boolean;
     editing: boolean;
     onChange(newValue: string);
     onStartEditing();
@@ -13,35 +16,27 @@ type Props = {
 
 export default class InlineText extends React.PureComponent<Props> {
     private root: HTMLElement;
-    private input: HTMLInputElement;
 
     render(){
         const className = this.getClassName();
         const style = {} as any;
-        const inputStyle = {
-            opacity: 1,
-            height: '18px',
-            lineHeight: '18px',
-            textAlign: 'center',
-            position: 'relative'
-        } as any;
-        if(!this.props.editing){
-            style.overflow = 'hidden';
-            style.textOverflow = 'ellipsis';
-            inputStyle.opacity = 0;
-            inputStyle.width = 0;
-        }
         _.extend(style, this.props.style || {});
         return (
-            <div style={style} ref={root => this.root = root} className={className} onClick={this.onStartEditing}>
-                <input style={inputStyle}
-                       ref={input => this.input = input}
-                       key="input" className="pt-editable-input"
-                       type="text"
-                       value={this.props.value}
-                       onKeyDown={this.onKeyDown}
-                       onChange={this.onChange} />
-                {this.renderText()}
+            <div style={style} ref={root => this.root = root} className={className + " inline-text"} onClick={this.onStartEditing}>
+                {this.props.multiline &&
+                    <TextArea key="input"
+                        type="text"
+                        style={style}
+                        value={this.props.value}
+                        onKeyDown={this.onKeyDown}
+                        onChange={this.onChange} />}
+                {!this.props.multiline &&
+                    <input key="input"
+                        type="text"
+                        style={style}
+                        value={this.props.value}
+                        onKeyDown={this.onKeyDown}
+                        onChange={this.onChange} />}
             </div>
         );
     }
@@ -55,10 +50,10 @@ export default class InlineText extends React.PureComponent<Props> {
     }
 
     componentWillReceiveProps(nextProps: Props){
-        if(nextProps.editing && !this.props.editing){
-            this.input.focus();
-            this.input.setSelectionRange(0, this.props.value.length);
-        }
+        // if(nextProps.editing && !this.props.editing){
+        //     this.input.focus();
+        //     this.input.setSelectionRange(0, this.props.value.length);
+        // }
     }
 
     private onKeyDown = (event: any) => {
@@ -80,18 +75,18 @@ export default class InlineText extends React.PureComponent<Props> {
     private renderText() {
         if(!this.props.editing){
             return (
-                <span style={{marginLeft: '2px'}} className="pt-editable-content">{this.props.value}</span>
+                <p>{this.props.value}</p>
             );
         }
     }
 
     private getClassName(){
-        let base = "pt-editable-text";
+        let base = "";
         if(this.props.className){
-            base += " " + this.props.className;
+            base += this.props.className;
         }
         if(this.props.editing){
-            base += " pt-editable-editing";
+            base += " editing";
         }
         return base;
     }

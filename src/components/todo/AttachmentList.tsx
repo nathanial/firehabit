@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import cxs from 'cxs';
-import {EditableText, Button, Icon} from '@blueprintjs/core';
+import {Button, Icon} from '@blueprintjs/core';
+import InlineText from '../InlineText';
 
 type Props = {
     attachments: Attachment[];
@@ -35,7 +36,7 @@ const attachmentListClass = cxs({
 			minWidth: 10,
 			fontSize: '10px',
 			lineHeight: '15px',
-			opacity: 0  
+			opacity: 0
         },
         '.delete-btn': {
             position: 'absolute',
@@ -74,9 +75,12 @@ export class AttachmentList extends React.PureComponent<Props> {
                     return (
                         <li key={i}>
                             <Icon iconName="document" style={{marginRight: '5px', fontSize: '14px'}} />
-                            <EditableText value={attachment.name}
-											  multiline={true}
-											  onChange={(newName) => attachment.set({name: newName})} />
+                            <InlineText value={attachment.name}
+                                        multiline={true}
+                                        editing={false}
+                                        onStartEditing={() => {}}
+                                        onStopEditing={() => {}}
+                                        onChange={(newName) => attachment.set({name: newName})} />
                             <Button className="open-btn pt-minimal pt-intent-success"
                                     iconName="document-open"
                                     onClick={() => this.onOpenAttachment(attachment)} />

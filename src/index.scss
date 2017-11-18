@@ -1,4 +1,5 @@
 @import "components/todo/TodoColumnView.scss";
+@import "components/InlineText.scss";
 
 $fh-color-1: #30404D;
 $fh-color-2: #647583;
@@ -58,20 +59,6 @@ body {
   }
 }
 
-.todo-column-header {
-  z-index: 19;
-  box-sizing: border-box;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  height: 33px;
-
-  .pt-editable-text {
-    position: relative;
-    top: 20px;
-  }
-}
 
 .todo-column-settings {
   top: 40px;

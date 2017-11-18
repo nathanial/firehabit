@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import styled from 'styled-components';
 import TodoColumnView from "./TodoColumnView";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import cxs from 'cxs';

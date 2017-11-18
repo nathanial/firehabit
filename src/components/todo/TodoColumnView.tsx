@@ -4,7 +4,6 @@ import * as $ from 'jquery';
 import {Button, EditableText, Tabs2, Tab2} from "@blueprintjs/core";
 import {history} from '../../util';
 import {generatePushID} from '../../db/util';
-import styled from 'styled-components';
 import TodoView from "./TodoView";
 import ScrollArea from '../ScrollArea';
 import * as colors from '../../theme/colors';
@@ -38,7 +37,8 @@ const todoColumnClass = cxs({
 });
 
 const columnNameClass = cxs({
-    marginTop: '-12px',
+    marginTop: '7px',
+    marginLeft: '30px',
     width: '200px'
 });
 
