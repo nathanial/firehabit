@@ -78,6 +78,14 @@ export default class NotesPage extends React.Component<Props, State> {
         return (
             <div className="notes-page">
                 <NoteList notes={this.props.notes} />
+                {this.renderEditor()}
+            </div>
+        );
+    }
+
+    renderEditor() {
+        return (
+            <div className="editor-panel">
                 <Editor editorState={this.state.editorState} onEditorStateChange={this.onEditorStateChange} />
             </div>
         );
