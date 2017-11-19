@@ -18,11 +18,13 @@ export interface CaloriesState {
 	set?(newState: Partial<CaloriesState>);
 }
 
+
 export interface AppState {
 	loadingData?: boolean;
 	showDevTools: boolean;
 	calories: CaloriesState;
 	todoColumns: TodoColumn[];
+	notes: Note[];
 	set?(name: string, value: any);
 	set?(newState: Partial<AppState>);
 }
@@ -44,6 +46,7 @@ const initialAppState: AppState = {
 			weightStasisGoal: 0
 		}
 	},
+	notes: [],
 	todoColumns: []
 };
 

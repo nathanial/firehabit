@@ -8,10 +8,11 @@ type Props = {
     style?: Object;
     placeholder?: string;
     multiline?: boolean;
-    editing: boolean;
+    editing?: boolean;
+    disabled?: boolean;
     onChange(newValue: string);
-    onStartEditing();
-    onStopEditing();
+    onStartEditing?();
+    onStopEditing?();
 }
 
 export default class InlineText extends React.PureComponent<Props> {
@@ -26,6 +27,7 @@ export default class InlineText extends React.PureComponent<Props> {
                 {this.props.multiline &&
                     <TextArea key="input"
                         type="text"
+                        disabled={this.props.disabled}
                         style={style}
                         value={this.props.value}
                         onKeyDown={this.onKeyDown}
@@ -33,6 +35,7 @@ export default class InlineText extends React.PureComponent<Props> {
                 {!this.props.multiline &&
                     <input key="input"
                         type="text"
+                        disabled={this.props.disabled}
                         style={style}
                         value={this.props.value}
                         onKeyDown={this.onKeyDown}
@@ -96,11 +99,15 @@ export default class InlineText extends React.PureComponent<Props> {
     }
 
     private onStartEditing = () => {
-        this.props.onStartEditing();
+        if(this.props.onStartEditing){
+            this.props.onStartEditing();
+        }
     }
 
     private onStopEditing = () => {
-        this.props.onStopEditing();
+        if(this.props.onStopEditing){
+            this.props.onStopEditing();
+        }
     }
 
     private getParents = (a: Node) => {

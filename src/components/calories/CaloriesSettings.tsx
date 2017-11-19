@@ -1,15 +1,8 @@
 import * as React from 'react';
 import {Button} from '@blueprintjs/core';
 import {history, db} from '../../util';
-import styled from 'styled-components';
 import {CaloriesState} from '../../state';
 
-const CaloriesSettingsWrapper = styled.div`
-`;
-
-const SettingsForm = styled.div`
-    margin-top: 20px;
-`;
 
 type Props = {
     caloricGoal: number;
@@ -33,7 +26,7 @@ export default class CaloriesSettings extends React.Component<Props,State> {
         const {caloricGoal, weightStasisGoal} = this.state;
         return (
             <div>
-                <SettingsForm>
+                <div style={{marginTop:20}}>
                     <label className="pt-label">
                         Caloric Goal
                         <input className="pt-input"
@@ -50,7 +43,7 @@ export default class CaloriesSettings extends React.Component<Props,State> {
                                     value={weightStasisGoal}
                                     onChange={this.onWeightStasisGoalChanged}/>
                     </label>
-                </SettingsForm>
+                </div>
             </div>
         );
     }

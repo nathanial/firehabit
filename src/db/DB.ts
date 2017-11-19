@@ -45,8 +45,12 @@ export class DB {
 	private loaded: boolean = false;
 	private serverVersion: number = 0;
 	private localVersion: number = 0;
+	private notesRef: Reference;
+	private dirtyNotes: string[] = [];
+	private deletedNotes: string[] = [];
 
 	async load(options = {noChanges: false}){
+		console.log("Load");
 		if(this.syncInterval){
 			clearInterval(this.syncInterval);
 		}
@@ -55,6 +59,7 @@ export class DB {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 
+		const notes = await this.loadNotes(userId);
 		const todoColumns = await this.loadTodoColumns(userId);
 		const foodDefinitions = await this.loadFoodDefinitions(userId);
 		const days = await this.loadDays(userId);
@@ -70,7 +75,8 @@ export class DB {
 					caloricGoal: _.get(calorieSettings, 'caloricGoal', 0),
 					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
 				}
-			}
+			},
+			notes
 		});
 
 		if(!this.loaded){
@@ -120,6 +126,13 @@ export class DB {
 		$('body').css({'pointer-events': 'auto'});
 	}
 
+	async loadNotes(userId: string): Promise<Note[]> {
+		this.notesRef = this.db.ref(`/users/${userId}/notes`);
+		let notes = await downloadCollection<Note>(this.notesRef);
+		console.log("Notes", notes);
+		return notes;
+	}
+
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		let todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
@@ -161,6 +174,16 @@ export class DB {
 	addListeners(){
 		setTimeout(() => {
 			state.on('update', (currentState, prevState) => {
+				for(let prevNote of prevState.notes){
+					if(!_.some(currentState.notes, n => n.id === prevNote.id)){
+						this.deletedNotes.push(prevNote.id);
+					}
+				}
+				for(let currentNote of currentState.notes){
+					if(!_.some(prevState.notes, prevNote => prevNote === currentNote)){
+						this.dirtyNotes.push(currentNote.id);
+					}
+				}
 				for(let prevColumn of prevState.todoColumns){
 					if(!_.some(currentState.todoColumns, c => c.id === prevColumn.id)){
 						this.deletedColumns.push(prevColumn.id);
@@ -204,6 +227,7 @@ export class DB {
 	}
 
 	async sync(userId){
+		this.syncNotes();
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
 		this.syncDays(userId);
@@ -211,6 +235,22 @@ export class DB {
 			this.serverVersion = this.localVersion;
 			this.versionRef.set(this.localVersion);
 		}
+	}
+
+	async syncNotes(){
+		const notes = state.get().notes;
+		for(let noteID of _.uniq(this.dirtyNotes)){
+			const note = _.find(notes, n => n.id === noteID);
+			this.notesRef.child(noteID).set(_.omit(note, 'id'));
+		}
+		for(let noteID of _.uniq(this.deletedNotes)) {
+			this.notesRef.child(noteID).remove();
+		}
+		if(this.dirtyNotes.length > 0 || this.deletedNotes.length > 0){
+			this.localVersion += 1;
+		}
+		this.dirtyNotes = [];
+		this.deletedNotes = [];
 	}
 
 	async syncTodoColumns(){

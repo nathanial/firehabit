@@ -86,7 +86,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 					<div className={navItemsClass}>
 						<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
 						<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
-						{/* <NavBtn goto="notes" icon="pt-icon-text" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn> */}
+						<NavBtn goto="notes" icon="pt-icon-highlight" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
 					</div>
 				</div>
 				<div className="pt-navbar-group pt-align-left">

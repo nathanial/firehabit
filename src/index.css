@@ -143,6 +143,132 @@
   .inline-text input {
     margin-top: -1px; }
 
+.notes-page {
+  color: black;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  overflow: hidden; }
+  .notes-page .rdw-editor-toolbar {
+    background: transparent;
+    border-width: 0;
+    padding: 0;
+    margin-bottom: 30px;
+    margin-left: 30px;
+    margin-top: 30px; }
+    .notes-page .rdw-editor-toolbar .rdw-option-wrapper {
+      background: #aaa;
+      border: 1px solid black; }
+    .notes-page .rdw-editor-toolbar .rdw-dropdown-wrapper {
+      background: #aaa;
+      border: 1px solid black; }
+      .notes-page .rdw-editor-toolbar .rdw-dropdown-wrapper .rdw-dropdown-selectedtext {
+        color: white; }
+  .notes-page .public-DraftStyleDefault-block {
+    margin: 0; }
+  .notes-page .DraftEditor-root {
+    color: white;
+    margin-left: 35px;
+    height: calc(100% - 100px); }
+  .notes-page .note-toolbar {
+    text-align: left; }
+  .notes-page .rdw-editor-wrapper {
+    position: absolute;
+    left: 200px;
+    top: 0;
+    right: 0;
+    bottom: 0px; }
+  .notes-page .note-list {
+    text-align: left;
+    position: absolute;
+    background: white;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    overflow-y: auto;
+    background: #273142; }
+    .notes-page .note-list .note-list-item {
+      position: relative;
+      display: block;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 0;
+      border: 1px solid transparent; }
+      .notes-page .note-list .note-list-item.editing {
+        background: #245785;
+        border: 1px solid #1a91eb; }
+      .notes-page .note-list .note-list-item .inline-text > input {
+        color: white; }
+        .notes-page .note-list .note-list-item .inline-text > input:disabled {
+          cursor: pointer; }
+      .notes-page .note-list .note-list-item .delete-btn {
+        position: absolute;
+        right: 0;
+        top: 2px;
+        display: none; }
+        .notes-page .note-list .note-list-item .delete-btn::before {
+          font-size: 11px; }
+      .notes-page .note-list .note-list-item.editing:hover .delete-btn {
+        display: block; }
+
+.search-results-wrapper {
+  list-style-type: none;
+  padding: 20px;
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto; }
+  .search-results-wrapper > li {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    margin: 10px 0; }
+    .search-results-wrapper > li > .food-name {
+      display: inline-block;
+      left: 30px;
+      position: absolute;
+      max-width: 230px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis; }
+    .search-results-wrapper > li > .calories {
+      display: inline-block;
+      position: absolute;
+      right: 150px; }
+    .search-results-wrapper > li > .pt-button-group {
+      display: inline-block;
+      position: absolute;
+      right: 10px;
+      top: 0px; }
+
+.calories-list-wrapper {
+  border: 1px solid #000;
+  min-height: 100px;
+  overflow-y: scroll;
+  list-style-type: none;
+  text-align: left;
+  padding: 0; }
+  .calories-list-wrapper > li:nth-child(odd) {
+    background: #475969; }
+  .calories-list-wrapper > li {
+    padding: 20px;
+    position: relative; }
+    .calories-list-wrapper > li > .food-name {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 220px; }
+    .calories-list-wrapper > li > .calories {
+      position: absolute;
+      right: 200px; }
+    .calories-list-wrapper > li > .pt-button-group {
+      position: absolute;
+      right: 10px;
+      top: 15px; }
+
 .visible-when-opened {
   position: absolute;
   opacity: 0;

@@ -1,0 +1,103 @@
+
+.notes-page {
+    color: black;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    overflow: hidden;
+
+    .rdw-editor-toolbar {
+        background: transparent;
+        border-width: 0;
+        padding: 0;
+        margin-bottom:30px;
+        margin-left: 30px;
+        margin-top: 30px;
+
+        .rdw-option-wrapper {
+            background:#aaa;
+            border: 1px solid black;
+        }
+        .rdw-dropdown-wrapper {
+            background:#aaa;
+            border: 1px solid black;
+            .rdw-dropdown-selectedtext {
+                color: white;
+            }
+        }
+    }
+
+    .public-DraftStyleDefault-block {
+        margin: 0;
+    }
+
+    .DraftEditor-root {
+        color: white;
+        margin-left: 35px;
+        height: calc(100% - 100px);
+    }
+
+
+    .note-toolbar {
+        text-align: left;
+    }
+
+    .rdw-editor-wrapper {
+        position: absolute;
+        left: 200px;
+        top: 0;
+        right: 0;
+        bottom: 0px;
+    }
+    
+    .note-list {
+        text-align: left;
+        position: absolute;
+        background: white;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 200px;
+        overflow-y: auto;
+        background: rgb(39,49,66);
+        .note-list-item {
+            position: relative;
+            display: block;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 0;
+            border: 1px solid transparent;
+
+            &.editing {
+                background: #245785;
+                border: 1px solid #1a91eb;
+            }
+            .inline-text {
+                & > input {
+                    color: white;
+                    &:disabled {
+                        cursor: pointer;
+                    }
+                }
+            }            
+            .delete-btn {
+                position: absolute;
+                right: 0;
+                top: 2px;
+                display: none;
+                &::before {
+                    font-size: 11px;
+                }
+            }
+            &.editing:hover {
+                .delete-btn {
+                    display: block;
+                }
+            }
+
+        }
+    }
+}
+

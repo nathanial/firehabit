@@ -3,13 +3,8 @@ import * as React from 'react';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import {Dialog} from "@blueprintjs/core/dist/components/dialog/dialog";
 import {Intent} from '@blueprintjs/core';
-import styled from 'styled-components';
 import {db} from '../../util';
 import {generatePushID} from '../../db/util';
-const NewFoodDialogWrapper = styled.div`
-	margin-top: 20px;
-`;
-
 interface Props {
 	defaultName: string;
 	foodDefinitions: FoodDefinition[];
@@ -32,7 +27,7 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 
 	render(){
 		return (
-			<NewFoodDialogWrapper>
+			<div style={{marginTop:20}}>
 				<Button onClick={this.openDialog} text="Add New Food..." />
 				<Dialog
 					iconName="inbox"
@@ -66,7 +61,7 @@ export default class NewFoodDialog extends React.Component<Props, State> {
 						</div>
 					</div>
 				</Dialog>
-			</NewFoodDialogWrapper>
+			</div>
 		);
 	}
 

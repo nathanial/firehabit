@@ -86,6 +86,7 @@ export class SubtaskList extends React.PureComponent<Props> {
 							<InlineText value={task.name}
 										multiline={true}
 										editing={false}
+										style={this.props.style}
 										onChange={(newName) => this.props.onChange(i, {name: newName})}
 										onStartEditing={() => {}}
 										onStopEditing={() => {}} />
