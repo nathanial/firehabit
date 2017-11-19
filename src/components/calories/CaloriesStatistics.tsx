@@ -1,5 +1,4 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import * as _ from 'lodash';
 import {db, history} from '../../util';
 import {Button} from '@blueprintjs/core';

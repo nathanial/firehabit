@@ -1,44 +1,7 @@
 import * as React from 'react';
 import {db} from '../../util';
-import styled from 'styled-components';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import * as _ from 'lodash';
-
-const CaloriesListWrapper = styled.ul`
-	border: 1px solid #000;
-	min-height: 100px;
-	overflow-y: scroll;
-	list-style-type: none;
-	text-align: left;
-	padding: 0;
-	
-	&> li:nth-child(odd) {
-		background: #475969;
-	}
-	& > li {
-		padding: 20px;
-		position: relative;
-		
-		& > .food-name {
-			display: inline-block;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			width: 220px;
-		}
-		
-		& > .calories {
-			position: absolute;
-			right: 200px;
-		}
-		
-		& > .pt-button-group {
-			position: absolute;
-			right: 10px;
-			top: 15px;
-		}
-	}
-`;
 
 interface Props {
 	day: Day;
@@ -53,7 +16,7 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 			groups = this.getEntryGroups(day);
 		}
 		return (
-			<CaloriesListWrapper>
+			<div className="calories-list-wrapper">
 				{groups.map((entry, index) => {
 					let name = entry.name;
 					if(entry.count > 1){
@@ -70,7 +33,7 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 						</li>
 					);
 				})}
-			</CaloriesListWrapper>
+			</div>
 		);
 	}
 

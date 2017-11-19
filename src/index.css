@@ -188,6 +188,61 @@
         background: #245785;
         border: 1px solid #1a91eb; }
 
+.search-results-wrapper {
+  list-style-type: none;
+  padding: 20px;
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto; }
+  .search-results-wrapper > li {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    margin: 10px 0; }
+    .search-results-wrapper > li > .food-name {
+      display: inline-block;
+      left: 30px;
+      position: absolute;
+      max-width: 230px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis; }
+    .search-results-wrapper > li > .calories {
+      display: inline-block;
+      position: absolute;
+      right: 150px; }
+    .search-results-wrapper > li > .pt-button-group {
+      display: inline-block;
+      position: absolute;
+      right: 10px;
+      top: 0px; }
+
+.calories-list-wrapper {
+  border: 1px solid #000;
+  min-height: 100px;
+  overflow-y: scroll;
+  list-style-type: none;
+  text-align: left;
+  padding: 0; }
+  .calories-list-wrapper > li:nth-child(odd) {
+    background: #475969; }
+  .calories-list-wrapper > li {
+    padding: 20px;
+    position: relative; }
+    .calories-list-wrapper > li > .food-name {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 220px; }
+    .calories-list-wrapper > li > .calories {
+      position: absolute;
+      right: 200px; }
+    .calories-list-wrapper > li > .pt-button-group {
+      position: absolute;
+      right: 10px;
+      top: 15px; }
+
 .visible-when-opened {
   position: absolute;
   opacity: 0;

@@ -9,6 +9,7 @@
     "cloudinary-jquery-file-upload": "^2.3.0",
     "color": "^1.0.3",
     "cxs": "^3.0.4",
+    "draft-js": "^0.10.4",
     "file-saver": "^1.3.3",
     "firebase": "^3.9.0",
     "freezer-js": "^0.13.0",
@@ -28,9 +29,9 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "@types/jquery": "^3.2.4",
     "@types/lodash": "^4.14.66",
     "@types/react": "^16.0.25",
-    "@types/jquery": "^3.2.4",
     "autoprefixer": "6.7.2",
     "awesome-typescript-loader": "^3.1.3",
     "babel-core": "6.22.1",

@@ -18,7 +18,7 @@ export default class WeightForm extends React.Component<WeightFormProps, {}> {
 	render(){
 		const days = this.props.days;
 		const day = _.find(days, day => day.date === this.props.date);
-		const weight = _.get(day, 'weight', '');
+		const weight = _.get(day, 'weight', '') as string;
 		return (
 			<div className={`pt-card pt-elevation-2 ${weightFormClass}`} >
 				<div className="pt-input-group">
