@@ -46,6 +46,8 @@ export class DB {
 	private serverVersion: number = 0;
 	private localVersion: number = 0;
 	private notesRef: Reference;
+	private dirtyNotes: string[] = [];
+	private deletedNotes: string[] = [];
 
 	async load(options = {noChanges: false}){
 		if(this.syncInterval){
@@ -126,6 +128,7 @@ export class DB {
 	async loadNotes(userId: string): Promise<Note[]> {
 		this.notesRef = this.db.ref(`/users/${userId}/notes`);
 		let notes = await downloadCollection<Note>(this.notesRef);
+		console.log("Notes", notes);
 		return notes;
 	}
 
@@ -170,6 +173,16 @@ export class DB {
 	addListeners(){
 		setTimeout(() => {
 			state.on('update', (currentState, prevState) => {
+				for(let prevNote of prevState.notes){
+					if(!_.some(currentState.notes, n => n.id === prevNote.id)){
+						this.deletedNotes.push(prevNote.id);
+					}
+				}
+				for(let currentNote of currentState.notes){
+					if(!_.some(prevState.notes, prevNote => prevNote === currentNote)){
+						this.dirtyNotes.push(currentNote.id);
+					}
+				}
 				for(let prevColumn of prevState.todoColumns){
 					if(!_.some(currentState.todoColumns, c => c.id === prevColumn.id)){
 						this.deletedColumns.push(prevColumn.id);
@@ -224,6 +237,21 @@ export class DB {
 	}
 
 	async syncNotes(){
+		const notes = state.get().notes;
+		for(let noteID of _.uniq(this.dirtyNotes)){
+			const note = _.find(notes, n => n.id === noteID);
+			console.log("SET IT", note);
+			this.notesRef.child(noteID).set(_.omit(note, 'id'));
+		}
+		for(let noteID of _.uniq(this.deletedNotes)) {
+			console.log("Remove", noteID);
+			this.notesRef.child(noteID).remove();
+		}
+		if(this.dirtyNotes.length > 0 || this.deletedNotes.length > 0){
+			this.localVersion += 1;
+		}
+		this.dirtyNotes = [];
+		this.deletedNotes = [];
 	}
 
 	async syncTodoColumns(){
