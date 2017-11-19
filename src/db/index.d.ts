@@ -2,6 +2,8 @@ interface Note {
 	id: string;
 	title: string;
 	text: string;
+	editing?: boolean;
+	set?(note: Partial<Note>);
 }
 
 interface CalorieSettings {

@@ -240,11 +240,9 @@ export class DB {
 		const notes = state.get().notes;
 		for(let noteID of _.uniq(this.dirtyNotes)){
 			const note = _.find(notes, n => n.id === noteID);
-			console.log("SET IT", note);
 			this.notesRef.child(noteID).set(_.omit(note, 'id'));
 		}
 		for(let noteID of _.uniq(this.deletedNotes)) {
-			console.log("Remove", noteID);
 			this.notesRef.child(noteID).remove();
 		}
 		if(this.dirtyNotes.length > 0 || this.deletedNotes.length > 0){
