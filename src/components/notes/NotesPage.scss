@@ -1,0 +1,24 @@
+
+.notes-page {
+    width: 1000px;
+    margin: 0 auto;
+    margin-top: 30px;
+    height: 100%;
+    color: black;
+
+    .rdw-editor-toolbar {
+        background: transparent;
+        border-width: 0;
+        padding: 0;
+        margin-bottom:30px;
+    }
+
+    .DraftEditor-editorContainer {
+        color: white;
+    }
+
+    .note-toolbar {
+        text-align: left;
+    }
+}
+

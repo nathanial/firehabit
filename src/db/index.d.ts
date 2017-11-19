@@ -1,3 +1,8 @@
+interface Note {
+	id: string;
+	title: string;
+	text: string;
+}
 
 interface CalorieSettings {
 	caloricGoal: number;

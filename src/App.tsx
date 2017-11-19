@@ -5,6 +5,8 @@ import './App.css';
 import SiteNavbar from "./components/SiteNavbar";
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoColumnPage from './components/todo/TodoColumnPage';
+import NotesPage from './components/notes/NotesPage';
+import NotesTopbar from './components/notes/NotesTopbar';
 import {history,db} from './util';
 import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
@@ -63,7 +65,7 @@ export default class App extends React.PureComponent<Props> {
             );
         } else if(history.location.pathname === '/notes') {
             return (
-                <h1>Notes</h1>
+                <NotesPage notes={appState.notes} />
             );
         } else {
             return (
@@ -77,7 +79,7 @@ export default class App extends React.PureComponent<Props> {
             const {todoColumns, showDevTools} = this.props.appState;
 			return <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
 		} else {
-			return <div />
+			return <NotesTopbar notes={this.props.appState.notes} />
 		}
 	}
 

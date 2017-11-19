@@ -143,6 +143,22 @@
   .inline-text input {
     margin-top: -1px; }
 
+.notes-page {
+  width: 1000px;
+  margin: 0 auto;
+  margin-top: 30px;
+  height: 100%;
+  color: black; }
+  .notes-page .rdw-editor-toolbar {
+    background: transparent;
+    border-width: 0;
+    padding: 0;
+    margin-bottom: 30px; }
+  .notes-page .DraftEditor-editorContainer {
+    color: white; }
+  .notes-page .note-toolbar {
+    text-align: left; }
+
 .visible-when-opened {
   position: absolute;
   opacity: 0;

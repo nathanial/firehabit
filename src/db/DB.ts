@@ -45,6 +45,7 @@ export class DB {
 	private loaded: boolean = false;
 	private serverVersion: number = 0;
 	private localVersion: number = 0;
+	private notesRef: Reference;
 
 	async load(options = {noChanges: false}){
 		if(this.syncInterval){
@@ -55,6 +56,7 @@ export class DB {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 
+		const notes = await this.loadNotes(userId);
 		const todoColumns = await this.loadTodoColumns(userId);
 		const foodDefinitions = await this.loadFoodDefinitions(userId);
 		const days = await this.loadDays(userId);
@@ -70,7 +72,8 @@ export class DB {
 					caloricGoal: _.get(calorieSettings, 'caloricGoal', 0),
 					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
 				}
-			}
+			},
+			notes
 		});
 
 		if(!this.loaded){
@@ -118,6 +121,12 @@ export class DB {
 		clearInterval(this.syncInterval);
 		await this.load();
 		$('body').css({'pointer-events': 'auto'});
+	}
+
+	async loadNotes(userId: string): Promise<Note[]> {
+		this.notesRef = this.db.ref(`/users/${userId}/notes`);
+		let notes = await downloadCollection<Note>(this.notesRef);
+		return notes;
 	}
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
@@ -204,6 +213,7 @@ export class DB {
 	}
 
 	async sync(userId){
+		this.syncNotes();
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
 		this.syncDays(userId);
@@ -211,6 +221,9 @@ export class DB {
 			this.serverVersion = this.localVersion;
 			this.versionRef.set(this.localVersion);
 		}
+	}
+
+	async syncNotes(){
 	}
 
 	async syncTodoColumns(){
