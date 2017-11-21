@@ -22,6 +22,7 @@ export class TodoColumnTabs extends React.PureComponent<Props,{}>{
                     return (
                         <div key={tab.id} className={classes} onClick={() => this.onSelectTab(tab)}>
                             <InlineText value={tab.title} onChange={(newText) => tab.set({title: newText})} />
+                            <span>{tab.title}</span>
                         </div>
                     );
                 })}

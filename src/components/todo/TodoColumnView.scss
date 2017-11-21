@@ -191,8 +191,21 @@
         display: inline-block;
         margin: 5px 6px;
         cursor: pointer;
+        & > span {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+        }
         &.tab-active {
             border-bottom: 2px solid white;
+            & > span {
+                display: none;
+            }
+        }
+        &:not(.tab-active) {
+            .inline-text {
+                display: none;
+            }
         }
         user-select: none;
         .inline-text {

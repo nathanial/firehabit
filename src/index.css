@@ -135,8 +135,16 @@
     margin: 5px 6px;
     cursor: pointer;
     user-select: none; }
+    .todo-column-tabs .todo-column-tab > span {
+      display: inline-block;
+      width: 50px;
+      text-align: center; }
     .todo-column-tabs .todo-column-tab.tab-active {
       border-bottom: 2px solid white; }
+      .todo-column-tabs .todo-column-tab.tab-active > span {
+        display: none; }
+    .todo-column-tabs .todo-column-tab:not(.tab-active) .inline-text {
+      display: none; }
     .todo-column-tabs .todo-column-tab .inline-text > input {
       color: white;
       max-width: 50px;
