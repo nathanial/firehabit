@@ -151,6 +151,13 @@
   bottom: 0;
   top: 0;
   overflow: hidden; }
+  .notes-page .editor-panel {
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 200px; }
   .notes-page .rdw-editor-toolbar {
     background: transparent;
     border-width: 0;
@@ -176,7 +183,7 @@
     text-align: left; }
   .notes-page .rdw-editor-wrapper {
     position: absolute;
-    left: 200px;
+    left: 0px;
     top: 0;
     right: 0;
     bottom: 0px; }
