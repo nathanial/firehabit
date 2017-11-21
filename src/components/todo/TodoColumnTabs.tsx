@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {generatePushID} from '../../db/util';
 import DialogService from "../../services/DialogService";
+import InlineText from '../InlineText';
 import * as _ from 'lodash';
 
 type Props = {
@@ -18,7 +19,11 @@ export class TodoColumnTabs extends React.PureComponent<Props,{}>{
                     if(isActive){
                         classes += ' tab-active';
                     }
-                    return <div key={tab.id} className={classes} onClick={() => this.onSelectTab(tab)}>{tab.title}</div>;
+                    return (
+                        <div key={tab.id} className={classes} onClick={() => this.onSelectTab(tab)}>
+                            <InlineText value={tab.title} onChange={(newText) => tab.set({title: newText})} />
+                        </div>
+                    );
                 })}
                 <div className="tab-controls">
                     <i className="pt-icon-standard pt-intent-danger pt-icon-trash remove-tab-btn" onClick={this.onRemoveActiveTab} />

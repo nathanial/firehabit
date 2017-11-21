@@ -195,5 +195,14 @@
             border-bottom: 2px solid white;
         }
         user-select: none;
+        .inline-text {
+            & > input {
+                color: white;
+                max-width: 50px;
+                width: auto;
+                text-align: center;
+                cursor: pointer;
+            }
+        }
     }
 }

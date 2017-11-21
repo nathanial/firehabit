@@ -137,6 +137,12 @@
     user-select: none; }
     .todo-column-tabs .todo-column-tab.tab-active {
       border-bottom: 2px solid white; }
+    .todo-column-tabs .todo-column-tab .inline-text > input {
+      color: white;
+      max-width: 50px;
+      width: auto;
+      text-align: center;
+      cursor: pointer; }
 
 .inline-text {
   max-width: 200px;

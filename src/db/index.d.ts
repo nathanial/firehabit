@@ -84,6 +84,7 @@ interface Todo {
 interface TodoTab {
 	id: string;
 	title: string;
+	set?(updates: Partial<TodoTab>);
 }
 
 interface TodoColumn {
