@@ -177,8 +177,15 @@
     margin: 0; }
   .notes-page .DraftEditor-root {
     color: white;
-    margin-left: 35px;
-    height: calc(100% - 100px); }
+    margin-left: 35px; }
+  .notes-page .rdw-editor-main {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 130px;
+    height: calc(100% - 130px);
+    bottom: 0;
+    overflow: auto; }
   .notes-page .note-toolbar {
     text-align: left; }
   .notes-page .rdw-editor-wrapper {
@@ -186,7 +193,8 @@
     left: 0px;
     top: 0;
     right: 0;
-    bottom: 0px; }
+    bottom: 0;
+    overflow: hidden; }
   .notes-page .note-list {
     text-align: left;
     position: absolute;

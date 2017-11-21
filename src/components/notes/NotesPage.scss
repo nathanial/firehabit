@@ -45,9 +45,17 @@
     .DraftEditor-root {
         color: white;
         margin-left: 35px;
-        height: calc(100% - 100px);
     }
 
+    .rdw-editor-main {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 130px;
+        height: calc(100% - 130px);
+        bottom: 0;
+        overflow: auto;
+    }
 
     .note-toolbar {
         text-align: left;
@@ -58,7 +66,8 @@
         left: 0px;
         top: 0;
         right: 0;
-        bottom: 0px;
+        bottom: 0;
+        overflow: hidden;
     }
 
     .note-list {
