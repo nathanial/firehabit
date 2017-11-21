@@ -88,6 +88,7 @@ export class DB {
 			this.dirtyFoodDefinitions = [];
 			this.dirtyColumns = [];
 			this.dirtyDays = [];
+			this.dirtyNotes = [];
 		}
 		this.startSync(userId);
 		if(!this.versionRef){
@@ -107,6 +108,7 @@ export class DB {
 						this.dirtyColumns = [];
 						this.dirtyDays = [];
 						this.dirtyFoodDefinitions = [];
+						console.log("Load it Again");
 						this.load({noChanges: true});
 					} else {
 						this.localVersion = this.serverVersion;
