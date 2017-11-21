@@ -22,6 +22,8 @@ interface Props {
 	style?: Object;
 	column: TodoColumn;
 	onDelete(columnID: string);
+	onMoveLeft(column: TodoColumn);
+	onMoveRight(column: TodoColumn);
 }
 
 export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
@@ -89,11 +91,11 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 	}
 
 	private onMoveLeft = () => {
-		this.props.column.set({index: this.props.column.index - 1.1});
+		this.props.onMoveLeft(this.props.column);
 	}
 
 	private onMoveRight = () => {
-		this.props.column.set({index: this.props.column.index + 1.1});
+		this.props.onMoveRight(this.props.column);
 	}
 
 }

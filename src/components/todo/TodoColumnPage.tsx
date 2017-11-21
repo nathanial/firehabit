@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import TodoColumnView from "./TodoColumnView";
-import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import cxs from 'cxs';
 import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
 
@@ -37,7 +36,13 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
             <div className={todoColumnPageClass}>
                 <div className={columnsContainerClass}>
                     {_.map(todoColumns, (column) => {
-                        return <TodoColumnView key={column.id} column={column} onDeleteColumn={this.onDeleteColumn} />
+                        return (
+                            <TodoColumnView key={column.id}
+                                            column={column}
+                                            onDeleteColumn={this.onDeleteColumn}
+                                            onMoveColumnLeft={this.onMoveColumnLeft}
+                                            onMoveColumnRight={this.onMoveColumnRight} />
+                        );
                     })}
                 </div>
                 <DragAndDropLayer />
@@ -47,6 +52,34 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
 
     onDeleteColumn = (column) => {
         this.props.todoColumns.splice(_.findIndex(this.props.todoColumns, c => c.id === column.id), 1);
+    }
+
+    private onMoveColumnLeft = (column: TodoColumn) => {
+        const sortedColumns = _.sortBy(this.props.todoColumns, c => c.index);
+        const index = sortedColumns.indexOf(column);
+        if(index === -1){
+            throw new Error(`Column Not Found`);
+        }
+        const nextColumn = sortedColumns[index-1];
+        if(nextColumn){
+            const oldIndex = column.index;
+            column.set({index: nextColumn.index});
+            nextColumn.set({index: oldIndex});
+        }
+    }
+
+    private onMoveColumnRight = (column: TodoColumn) => {
+        const sortedColumns = _.sortBy(this.props.todoColumns, c => c.index);
+        const index = sortedColumns.indexOf(column);
+        if(index === -1){
+            throw new Error(`Column Not Found`);
+        }
+        const nextColumn = sortedColumns[index+1];
+        if(nextColumn){
+            const oldIndex = column.index;
+            column.set({index: nextColumn.index});
+            nextColumn.set({index: oldIndex});
+        }
     }
 
 

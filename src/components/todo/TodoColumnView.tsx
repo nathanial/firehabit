@@ -68,6 +68,8 @@ const toolbarBorderClass = cxs({
 
 interface Props {
     column: TodoColumn;
+    onMoveColumnLeft(column: TodoColumn);
+    onMoveColumnRight(column: TodoColumn);
     onDeleteColumn(column: TodoColumn);
 }
 
@@ -256,7 +258,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             <ReactCSSTransitionGroup transitionName="settings" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                 {this.props.column.showSettings &&
                     <TodoColumnSettingsPage column={this.props.column}
-                                            onDelete={this.onDeleteColumn} />
+                                            onDelete={this.onDeleteColumn}
+                                            onMoveLeft={this.props.onMoveColumnLeft}
+                                            onMoveRight={this.props.onMoveColumnRight} />
                 }
             </ReactCSSTransitionGroup>
         );
