@@ -5,6 +5,7 @@ import {Button, EditableText, Tabs2, Tab2} from "@blueprintjs/core";
 import {history} from '../../util';
 import {generatePushID} from '../../db/util';
 import TodoView from "./TodoView";
+import {TodoColumnTabs} from './TodoColumnTabs';
 import ScrollArea from '../ScrollArea';
 import * as colors from '../../theme/colors';
 import cxs from 'cxs';
@@ -148,7 +149,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         return (
             <div>
                 {this.renderSettings()}
-                {this.renderTabs()}
+                {this.props.column.enableTabs &&
+                    <TodoColumnTabs column={column}
+                                    onHandleTabChanged={this.onHandleTabChanged} />}
                 <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="todo-list">
                     <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
                         {this.renderTodos()}
@@ -246,61 +249,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         };
     }
 
-    private renderTabs = () => {
-        if(!this.props.column.enableTabs){
-            return;
-        }
-        return (
-            <div className="todo-column-tabs">
-                <Tabs2 id="Tabs2Example" selectedTabId={this.props.column.activeTab} onChange={this.onHandleTabChanged}>
-                    {this.props.column.tabs.map(tab => {
-                        return <Tab2 id={tab.id} key={tab.id} title={tab.title} />
-                    })}
-                </Tabs2>
-                <div className="tab-controls">
-                    <i className="pt-icon-standard pt-intent-danger pt-icon-trash remove-tab-btn" onClick={this.onRemoveActiveTab} />
-                    <i className="pt-icon-standard pt-icon-plus add-tab-btn" onClick={this.onAddTab} />
-                </div>
-            </div>
-        );
-    };
 
-    private onRemoveActiveTab = () => {
-        const activeTabIndex = _.findIndex(this.props.column.tabs, tab => tab.id === this.props.column.activeTab);
-        if(this.props.column.activeTab === '0'){
-            return;
-        }
-        const column = this.props.column.transact();
-        for(let todo of column.todos){
-            if(todo.tab === this.props.column.activeTab){
-                todo.set({tab: '0'});
-            }
-        }
-        column.tabs.splice(activeTabIndex, 1);
-        column.activeTab = _.last(column.tabs.map(t => t.id));
-        this.props.column.run();
-    }
-
-    private onAddTab = async () => {
-        let title = 'New Tab';
-
-        function onChange(event){
-            title = event.target.value;
-        }
-
-        const result = await DialogService.showDialog('Choose Tab Name', 'Create Tab', 'Cancel',
-            <div style={{margin: 20}}>
-                <label style={{marginRight: 20}}>Tab Name</label>
-                <input type="text" className="pt-input" onChange={onChange} />
-            </div>
-        );
-        if(result){
-            this.props.column.tabs.push({
-                id: generatePushID(),
-                title: title || 'New Tab'
-            });
-        }
-    }
 
     private renderSettings = () => {
         return (

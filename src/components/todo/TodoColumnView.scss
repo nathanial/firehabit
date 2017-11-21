@@ -181,3 +181,19 @@
         }
     }
 }
+
+.todo-column-tabs {
+    text-align: left;
+    padding-left: 13px;
+    .todo-column-tab {
+        position: relative;
+        top: 2px;
+        display: inline-block;
+        margin: 5px 6px;
+        cursor: pointer;
+        &.tab-active {
+            border-bottom: 2px solid white;
+        }
+        user-select: none;
+    }
+}
