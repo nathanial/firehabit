@@ -6,18 +6,16 @@ import {history} from '../../util';
 import * as _ from 'lodash';
 import cxs from 'cxs';
 import {generatePushID} from '../../db/util';
+import WeightGraph from './WeightGraph';
 
 type Props = {
     caloriesState: CaloriesState;
 }
 
 const caloriesPageClass = cxs({
-    display: 'flex',
     width: 900,
     margin: '0 auto',
-    flexDirection: 'row'
 });
-
 
 export default class CaloriesPage extends React.Component<Props,{}> {
     render() {
@@ -38,6 +36,7 @@ export default class CaloriesPage extends React.Component<Props,{}> {
 
         return (
             <div className={caloriesPageClass}>
+                <WeightGraph days={days} />
                 <CalorieStatistics style={statisticsStyle} date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
                 <CaloriesForm date={selectedDate} 
                             days={days}

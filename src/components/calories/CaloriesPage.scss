@@ -1,3 +1,32 @@
+.weight-graph {
+	background:transparent;
+	position: relative;
+	color: black;
+	margin: 30px;
+	.ct-chart {
+		height: 400px;
+	}
+	.ct-label {
+		color: white;
+	}
+	.ct-grid {
+		stroke: rgba(255,255,255,0.5);
+		stroke-dasharray: 5px;
+	}
+
+	.ct-line {
+		stroke: white;
+	}
+	.ct-point {
+		display: none;
+	}
+
+	& > h1 {
+		position: absolute;
+		left: 350px;
+		top: 150px;
+	}
+}
 
 .search-results-wrapper {
     list-style-type: none;

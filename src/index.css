@@ -256,6 +256,27 @@
       .notes-page .note-list .note-list-item.editing:hover .delete-btn {
         display: block; }
 
+.weight-graph {
+  background: transparent;
+  position: relative;
+  color: black;
+  margin: 30px; }
+  .weight-graph .ct-chart {
+    height: 400px; }
+  .weight-graph .ct-label {
+    color: white; }
+  .weight-graph .ct-grid {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-dasharray: 5px; }
+  .weight-graph .ct-line {
+    stroke: white; }
+  .weight-graph .ct-point {
+    display: none; }
+  .weight-graph > h1 {
+    position: absolute;
+    left: 350px;
+    top: 150px; }
+
 .search-results-wrapper {
   list-style-type: none;
   padding: 20px;
