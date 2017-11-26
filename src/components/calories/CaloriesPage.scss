@@ -1,10 +1,56 @@
+.calories-page {
+	position: relative;
+
+	.calorie-statistics {
+		width: 200px;
+		text-align: left;
+		position: absolute;
+		left: 30px;
+		top: 70px;
+		padding: 20px;
+		.settings-btn {
+			position: absolute;
+			right: 10px;
+			top: 17px;
+		}
+	}
+
+	.day-picker {
+		position: absolute;
+		left: 35px;
+		top: 20px;
+	}
+
+	.weight-form {
+		position: absolute;
+		left: 30px;
+		top:270px;
+		width: 200px;
+	}
+
+	.calories-form-outer-wrapper {
+		position: absolute;
+		left: 30px;
+		top: 440px;
+		right: 30px;
+		text-align: left;
+		h2 {
+			margin-bottom: 20px;
+		}
+		.calories-list-wrapper {
+			margin-top: 20px;
+		}
+	}
+}
+
 .weight-graph {
 	background:transparent;
-	position: relative;
+	position: absolute;
+	left: 300px;
+	right: 20px;
 	color: black;
-	margin: 30px;
 	.ct-chart {
-		height: 400px;
+		height: 420px;
 	}
 	.ct-label {
 		color: white;

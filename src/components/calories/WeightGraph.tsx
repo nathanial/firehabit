@@ -14,7 +14,7 @@ type WeightSample = {
     weight: number;
 }
 
-export default class WeightGraph extends React.Component<Props,{}> {
+export default class WeightGraph extends React.PureComponent<Props,{}> {
     render() {
         let days = this.getDays();
         const data = {

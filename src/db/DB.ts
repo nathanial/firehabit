@@ -108,7 +108,6 @@ export class DB {
 						this.dirtyColumns = [];
 						this.dirtyDays = [];
 						this.dirtyFoodDefinitions = [];
-						console.log("Load it Again");
 						this.load({noChanges: true});
 					} else {
 						this.localVersion = this.serverVersion;
@@ -131,7 +130,6 @@ export class DB {
 	async loadNotes(userId: string): Promise<Note[]> {
 		this.notesRef = this.db.ref(`/users/${userId}/notes`);
 		let notes = await downloadCollection<Note>(this.notesRef);
-		console.log("Notes", notes);
 		return notes;
 	}
 

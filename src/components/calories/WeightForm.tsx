@@ -20,7 +20,7 @@ export default class WeightForm extends React.Component<WeightFormProps, {}> {
 		const day = _.find(days, day => day.date === this.props.date);
 		const weight = _.get(day, 'weight', '') as string;
 		return (
-			<div className={`pt-card pt-elevation-2 ${weightFormClass}`} >
+			<div className={`pt-card pt-elevation-2 ${weightFormClass} weight-form`} >
 				<div className="pt-input-group">
 					<span className="pt-icon pt-icon-step-chart" />
 					<input type="text" className="pt-input" placeholder="Weight of the day..." value={weight} onChange={this.onUpdateWeight}/>
