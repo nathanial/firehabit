@@ -256,6 +256,61 @@
       .notes-page .note-list .note-list-item.editing:hover .delete-btn {
         display: block; }
 
+.calories-page {
+  position: relative; }
+  .calories-page .calorie-statistics {
+    width: 200px;
+    text-align: left;
+    position: absolute;
+    left: 30px;
+    top: 70px;
+    padding: 20px; }
+    .calories-page .calorie-statistics .settings-btn {
+      position: absolute;
+      right: 10px;
+      top: 17px; }
+  .calories-page .day-picker {
+    position: absolute;
+    left: 35px;
+    top: 20px; }
+  .calories-page .weight-form {
+    position: absolute;
+    left: 30px;
+    top: 270px;
+    width: 200px; }
+  .calories-page .calories-form-outer-wrapper {
+    position: absolute;
+    left: 30px;
+    top: 440px;
+    right: 30px;
+    text-align: left; }
+    .calories-page .calories-form-outer-wrapper h2 {
+      margin-bottom: 20px; }
+    .calories-page .calories-form-outer-wrapper .calories-list-wrapper {
+      margin-top: 20px; }
+
+.weight-graph {
+  background: transparent;
+  position: absolute;
+  left: 300px;
+  right: 20px;
+  color: black; }
+  .weight-graph .ct-chart {
+    height: 420px; }
+  .weight-graph .ct-label {
+    color: white; }
+  .weight-graph .ct-grid {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-dasharray: 5px; }
+  .weight-graph .ct-line {
+    stroke: white; }
+  .weight-graph .ct-point {
+    display: none; }
+  .weight-graph > h1 {
+    position: absolute;
+    left: 350px;
+    top: 150px; }
+
 .search-results-wrapper {
   list-style-type: none;
   padding: 20px;

@@ -78,7 +78,7 @@ export default class App extends React.PureComponent<Props> {
 		if(history.location.pathname === '/') {
             const {todoColumns, showDevTools} = this.props.appState;
 			return <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
-		} else {
+		} else if(history.location.pathname === '/notes') {
 			return <NotesTopbar notes={this.props.appState.notes} />
 		}
 	}

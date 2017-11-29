@@ -7,31 +7,10 @@ import CaloriesSettings from "./CaloriesSettings";
 import cxs from 'cxs';
 import {CaloriesState} from '../../state';
 
-const calorieStatisticsClass = cxs({
-	position: 'relative',
-	padding: '50px',
-	textAlign: 'center',
-	margin: '20px',
-	width: 250,
-	minWidth: 250,
-	alignSelf: 'flex-start'
-});
-
-const settingsBtn = cxs({
-	position: 'absolute',
-	right: '7px',
-	top: '7px'
-});
-
-const smileyClass = cxs({
-	textAlign: 'center'
-})
-
 interface CalorieStatisticsProps {
 	date: string;
 	days: Day[];
 	caloriesState: CaloriesState;
-	style?: Object;
 }
 
 export default class CalorieStatistics extends React.Component<CalorieStatisticsProps, {}> {
@@ -51,14 +30,12 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 		const caloriesInPound = 3500;
 		const poundsLost = Math.round(((weightStasisGoal - dailyTotal) / caloriesInPound) * 100) / 100;
 		return (
-			<div style={this.props.style || {}} className={`pt-card pt-elevation-2 ${calorieStatisticsClass}` }>
-				{this.renderSmileyFace(poundsLost)}
-				<div style={{marginTop:30}} />
+			<div className={`pt-card pt-elevation-2 calorie-statistics` }>
 				{this.renderDailyTotal(dailyTotal)}
 				{this.renderGoal(goal)}
 				{this.renderRemaining(remaining)}
 				{this.renderPoundsLost(poundsLost)}
-				<Button className={`pt-minimal ${settingsBtn}`}
+				<Button className={`pt-minimal settings-btn`}
 						iconName="settings"
 						onClick={this.gotoSettings} />
 			</div>
@@ -81,22 +58,6 @@ export default class CalorieStatistics extends React.Component<CalorieStatistics
 				<span>{goal}</span>
 			</p>
 		);
-	};
-
-	private renderSmileyFace = (poundsLost: number) => {
-		if(poundsLost > (2 / 7)) {
-			return (
-				<img className={smileyClass} src="icons/happy.png" width="128" />
-			);
-		} else if(poundsLost > 0) {
-			return (
-				<img className={smileyClass} src="icons/dread.png" width="128"  />
-			);
-		} else {
-			return (
-				<img className={smileyClass} src="icons/crying.png" width="128"/>
-			);
-		}
 	};
 
 	private renderRemaining = (remaining: number) => {

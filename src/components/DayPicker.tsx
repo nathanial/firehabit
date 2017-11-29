@@ -34,7 +34,7 @@ export default function DayPicker(props){
 	};
 
 	return (
-		<div className={dayPickerClass}>
+		<div className={dayPickerClass + " day-picker"}>
 			<span>Date</span>
 			<Button iconName="chevron-left" className="pt-minimal" onClick={prevDay} />
 			<span>{props.date}</span>

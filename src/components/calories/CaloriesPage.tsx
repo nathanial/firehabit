@@ -6,17 +6,13 @@ import {history} from '../../util';
 import * as _ from 'lodash';
 import cxs from 'cxs';
 import {generatePushID} from '../../db/util';
+import WeightGraph from './WeightGraph';
+import WeightForm from "./WeightForm";
+import DayPicker from '../DayPicker';
 
 type Props = {
     caloriesState: CaloriesState;
 }
-
-const caloriesPageClass = cxs({
-    display: 'flex',
-    width: 900,
-    margin: '0 auto',
-    flexDirection: 'row'
-});
 
 
 export default class CaloriesPage extends React.Component<Props,{}> {
@@ -30,18 +26,14 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         }
         const consumedFoods = selectedDay.consumed;
 
-        const statisticsStyle = {
-            left :0,
-            top: 0,
-            flex: '0'
-        };
-
         return (
-            <div className={caloriesPageClass}>
-                <CalorieStatistics style={statisticsStyle} date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
+            <div className="calories-page">
+                <WeightGraph days={days} />
+                <CalorieStatistics date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
+                <WeightForm date={selectedDate} days={days} />
+                <DayPicker date={selectedDate} onChange={(newDate) => this.onChangeDate(newDate)} />
                 <CaloriesForm date={selectedDate} 
                             days={days}
-                            onChangeDate={this.onChangeDate} 
                             foodDefinitions={foodDefinitions} 
                             consumedFoods={consumedFoods} />
             </div>
