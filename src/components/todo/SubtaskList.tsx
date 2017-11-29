@@ -5,7 +5,7 @@ import InlineText from '../InlineText';
 import cxs from 'cxs';
 
 const subtaskCompleted = cxs({
-	'.pt-editable-text:not(.pt-editable-editing)': {
+	'textarea': {
 		textDecoration: 'line-through'
 	}
 });
