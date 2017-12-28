@@ -64,6 +64,7 @@ async function setInitialData(){
 
 function loadDay(appState: AppState){
 	if(!_.some(appState.calories.days, d => d.date ===  appState.calories.selectedDate)){
+		console.log("Load Day");
 		appState.calories.days.push({id: generatePushID(), date: appState.calories.selectedDate, consumed: [], weight: 0});
 	}
 }
@@ -78,16 +79,14 @@ async function init(){
 		<App appState={appState} />,
 		document.getElementById('root')
 	);
-
+	state.on('update', () => {
+		const appState = state.get();
+		loadDay(appState);
+		ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
+	});
 }
 
 init();
-
-state.on('update', () => {
-	const appState = state.get();
-	loadDay(appState);
-	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
-});
 
 history.listen(() =>{
 	const appState = state.get();

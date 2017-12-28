@@ -49,16 +49,9 @@ export class DB {
 	private dirtyNotes: string[] = [];
 	private deletedNotes: string[] = [];
 
-	async load(options = {noChanges: false}){
-		console.log("Load");
-		if(this.syncInterval){
-			clearInterval(this.syncInterval);
-		}
-		this.db = firebase.database();
-
+	private async loadData(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
-
 		const notes = await this.loadNotes(userId);
 		const todoColumns = await this.loadTodoColumns(userId);
 		const foodDefinitions = await this.loadFoodDefinitions(userId);
@@ -83,6 +76,74 @@ export class DB {
 			this.loaded = true;
 			this.addListeners();
 		}
+	}
+
+	private async loadFromCache(){
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+		this.notesRef = this.db.ref(`/users/${userId}/notes`);
+		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
+		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
+		this.daysRef = this.db.ref(`/users/${userId}/days`);
+		const selectedDate = moment().format('MM/DD/YY');
+
+		const notes = JSON.parse(localStorage.getItem('notes'));
+		const todoColumns = JSON.parse(localStorage.getItem('todo-columns'));
+		const foodDefinitions = JSON.parse(localStorage.getItem('food-definitions'));
+		const days = JSON.parse(localStorage.getItem('days'));
+		const calorieSettings = JSON.parse(localStorage.getItem('calorie-settings'));
+		state.set({
+			todoColumns,
+			calories: {
+				selectedDate,
+				foodDefinitions,
+				days,
+				'calorie-settings': {
+					caloricGoal: _.get(calorieSettings, 'caloricGoal', 0),
+					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
+				}
+			},
+			notes
+		});
+
+		if(!this.loaded){
+			this.loaded = true;
+			this.addListeners();
+		}
+	}
+
+	private async getServerVersion(userId: string): Promise<number> {
+		return new Promise<number>(resolve => {
+			this.versionRef = this.db.ref(`/users/${userId}/version`);
+			this.versionRef.once('value', (snapshot) => {
+				const version = snapshot.val() as number;
+				resolve(version);
+			});
+			this.versionRef = null;
+		});
+	}
+
+	async load(options = {noChanges: false}){
+		const started = moment();
+		if(this.syncInterval){
+			clearInterval(this.syncInterval);
+		}
+		this.db = firebase.database();
+
+
+		const user = firebase.auth().currentUser;
+		const userId = user.uid;
+
+		const serverVersion = await this.getServerVersion(userId);
+
+		console.log("Server Version", serverVersion, localStorage.getItem('version'))
+		if(parseInt(localStorage.getItem('version'), 10) !== serverVersion){
+			await this.loadData();
+			localStorage.setItem('version', serverVersion.toString());
+		} else {
+			await this.loadFromCache();
+		}
+
 		if(options.noChanges){
 			this.dirtyCalorieSettings = false;
 			this.dirtyFoodDefinitions = [];
@@ -98,7 +159,7 @@ export class DB {
 				this.serverVersion = version || 0;
 				this.localVersion = version || 0;
 			}).then(() => {
-				this.versionRef.on('value', (snapshot) => {
+				this.versionRef.on('value', _.debounce((snapshot) => {
 					const version = snapshot.val();
 					this.serverVersion = version || 0;
 					if(this.serverVersion > this.localVersion){
@@ -112,11 +173,12 @@ export class DB {
 					} else {
 						this.localVersion = this.serverVersion;
 					}
-				});
+				}, 3000));
 			});
 
 		}
 
+		console.log("Load Finished in", moment().diff(started), "milliseconds");
 	}
 
 
@@ -233,12 +295,14 @@ export class DB {
 		this.syncDays(userId);
 		if(this.localVersion !== this.serverVersion){
 			this.serverVersion = this.localVersion;
+			localStorage.setItem('version', this.localVersion.toString());
 			this.versionRef.set(this.localVersion);
 		}
 	}
 
 	async syncNotes(){
 		const notes = state.get().notes;
+		localStorage.setItem('notes', JSON.stringify(notes));
 		for(let noteID of _.uniq(this.dirtyNotes)){
 			const note = _.find(notes, n => n.id === noteID);
 			this.notesRef.child(noteID).set(_.omit(note, 'id'));
@@ -255,6 +319,7 @@ export class DB {
 
 	async syncTodoColumns(){
 		const todoColumns = state.get().todoColumns;
+		localStorage.setItem('todo-columns', JSON.stringify(todoColumns));
 		for(let columnID of _.uniq(this.dirtyColumns)){
 			const column = _.find(todoColumns, c => c.id === columnID);
 			this.todoColumnsRef.child(columnID).set(_.omit(column, 'id'));
@@ -271,6 +336,7 @@ export class DB {
 
 	async syncFoodDefinitions(){
 		const foodDefinitions = state.get().calories.foodDefinitions;
+		localStorage.setItem('food-definitions', JSON.stringify(foodDefinitions));
 		for(let foodDefinitionID of _.uniq(this.dirtyFoodDefinitions)){
 			const foodDefinition = _.find(foodDefinitions, f => f.id === foodDefinitionID);
 			this.foodDefinitionsRef.child(foodDefinitionID).set(_.omit(foodDefinition, 'id'));
@@ -288,6 +354,7 @@ export class DB {
 	async syncDays(userId){
 		const appState = state.get();
 		const days = appState.calories.days;
+		localStorage.setItem('days', JSON.stringify(days));
 		for(let dayID of _.uniq(this.dirtyDays)){
 			const day = _.find(days, d => d.id === dayID);
 			this.daysRef.child(dayID).set(_.omit(day, 'id'));
