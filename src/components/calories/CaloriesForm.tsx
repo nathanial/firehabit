@@ -16,7 +16,6 @@ interface CaloriesFormProps {
 	consumedFoods: ConsumedFood[];
 }
 
-
 export default class CaloriesForm extends React.Component<CaloriesFormProps,{}> {
 
 	state = {

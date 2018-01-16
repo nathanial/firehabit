@@ -21,6 +21,7 @@
     "lpf": "^1.0.0",
     "moment": "^2.18.1",
     "node-sass-chokidar": "^0.0.1",
+    "plotly.js": "^1.32.0",
     "react": "15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
     "react-chartist": "^0.13.0",
@@ -28,6 +29,7 @@
     "react-dom": "15.6.2",
     "react-draft-wysiwyg": "1.10.12",
     "react-gravatar": "^2.6.3",
+    "react-plotly.js": "^1.1.1",
     "react-textarea-autosize": "^5.2.1",
     "uuid": "^3.0.1"
   },

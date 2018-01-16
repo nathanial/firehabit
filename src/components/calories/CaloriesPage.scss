@@ -80,7 +80,7 @@
 	text-align: left;
 	max-height: 300px;
 	overflow-y: auto;
-	
+
 	& > li {
 		position: relative;
 		height: 30px;
@@ -116,14 +116,14 @@
 	list-style-type: none;
 	text-align: left;
 	padding: 0;
-	
+
 	&> li:nth-child(odd) {
 		background: #475969;
 	}
 	& > li {
 		padding: 20px;
 		position: relative;
-		
+
 		& > .food-name {
 			display: inline-block;
 			white-space: nowrap;
@@ -131,12 +131,12 @@
 			text-overflow: ellipsis;
 			width: 220px;
 		}
-		
+
 		& > .calories {
 			position: absolute;
 			right: 200px;
 		}
-		
+
 		& > .pt-button-group {
 			position: absolute;
 			right: 10px;

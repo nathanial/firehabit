@@ -4,44 +4,55 @@ import * as Chartist from 'chartist';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as LPF from 'lpf';
+import * as Plot from 'react-plotly.js';
 
 type Props = {
     days: Day[];
 }
 
 type WeightSample = {
-    date: string; 
+    date: string;
     weight: number;
 }
 
 export default class WeightGraph extends React.PureComponent<Props,{}> {
     render() {
-        let days = this.getDays();
-        const data = {
-            labels: _.map(days, d => d.date),
-            series: [
-                _.map(days, d => d.weight)
-            ]
-        };
-        const options = {
-            type: Chartist.AutoScaleAxis,
-            axisX: {
-                labelInterpolationFnc: function(value, index) {
-                    return (new Date(value)).toLocaleDateString();
-                }
-            },
-        };
-        const type = 'Line'
+        let months = this.getLastSixMonths();
+        var data = _.map(_.keys(months), (month) => {
+            const days = months[month];
+            return {
+                type: 'box',
+                name: month,
+                y: _.map(days, d => d.weight)
+            };
+        });
         return (
             <div className="weight-graph">
-                <ChartistGraph data={data} options={options} type={type} />
-                {days.length <= 1 && <h1>No Data</h1>}
+              <Plot data={data} layout={{title: "Weight"}} />
             </div>
         );
     }
 
+    shouldComponentUpdate(nextProps: Props, nextState) {
+        const oldWeights = _.map(this.props.days, d => d.weight);
+        const newWeights = _.map(nextProps.days, d => d.weight);
+        if(_.isEqual(oldWeights, newWeights)){
+            return false;
+        }
+        return true;
+    }
+
+    private getLastSixMonths() {
+        const days = this.getDays();
+        const months = _.groupBy(days, d => {
+            const m = moment(d.date);
+            return `${m.month()+1}/${m.year()}`;
+        });
+        return months;
+    }
+
     private getDays() {
-        return this.downSample(5);
+        return this.filledInDays();
     }
 
     private downSample(count: number): WeightSample[] {
@@ -102,7 +113,7 @@ export default class WeightGraph extends React.PureComponent<Props,{}> {
             return this.lerp(date, nearestDayBefore, nearestDayAfter);
         }
     }
-    
+
     private lerp(date: moment.Moment, before: Day, after: Day): number {
         const beforeDate = moment(before.date);
         const afterDate = moment(after.date);
