@@ -136,7 +136,6 @@ export class DB {
 
 		const serverVersion = await this.getServerVersion(userId);
 
-		console.log("Server Version", serverVersion, localStorage.getItem('version'))
 		if(parseInt(localStorage.getItem('version'), 10) !== serverVersion){
 			await this.loadData();
 			localStorage.setItem('version', serverVersion.toString());
@@ -177,8 +176,6 @@ export class DB {
 			});
 
 		}
-
-		console.log("Load Finished in", moment().diff(started), "milliseconds");
 	}
 
 
@@ -365,6 +362,7 @@ export class DB {
 		this.dirtyDays = [];
 
 		if(this.dirtyCalorieSettings){
+			localStorage.setItem('calorie-settings', JSON.stringify({...appState.calories['calorie-settings']}));
 			this.db.ref(`/users/${userId}/calorie-settings`).set({...appState.calories['calorie-settings']});
 			this.localVersion += 1;
 		}

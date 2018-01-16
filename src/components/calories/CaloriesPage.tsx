@@ -32,9 +32,9 @@ export default class CaloriesPage extends React.Component<Props,{}> {
                 <CalorieStatistics date={selectedDate} days={days} caloriesState={this.props.caloriesState} />
                 <WeightForm date={selectedDate} days={days} />
                 <DayPicker date={selectedDate} onChange={(newDate) => this.onChangeDate(newDate)} />
-                <CaloriesForm date={selectedDate} 
+                <CaloriesForm date={selectedDate}
                             days={days}
-                            foodDefinitions={foodDefinitions} 
+                            foodDefinitions={foodDefinitions}
                             consumedFoods={consumedFoods} />
             </div>
         );
