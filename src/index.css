@@ -261,7 +261,8 @@
   width: 1000px;
   margin: 30px auto;
   position: relative;
-  height: 600px; }
+  height: 810px;
+  overflow: hidden; }
   .calories-page .left-column {
     background: #222;
     position: absolute;
@@ -313,6 +314,16 @@
         .calories-page .left-column .weight-form > h1 .suffix {
           font-weight: lighter;
           font-size: 11px; }
+  .calories-page .right-column {
+    overflow: hidden !important;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 270px;
+    overflow: auto; }
+    .calories-page .right-column .graphs {
+      overflow: hidden; }
 
 body {
   background: #111; }

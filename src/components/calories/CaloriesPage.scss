@@ -3,7 +3,8 @@
 	width: 1000px;
 	margin: 30px auto;
 	position: relative;
-	height: 600px;
+	height: 810px;
+	overflow: hidden;
 	.left-column {
 		background: #222;
 		position: absolute;
@@ -30,9 +31,6 @@
 				}
 				&.DayPicker-Day--zeroCalories:hover {
 					background-color: transparent !important;
-				}
-
-				&.DayPicker-Day--tooManyCalories {
 				}
 			}
 
@@ -75,5 +73,16 @@
 			}
 		}
 	}
-
+	.right-column {
+		overflow: hidden !important;
+		position: absolute;
+		top:0;
+		bottom: 0;
+		right: 0;
+		left: 270px;
+		overflow: auto;
+		.graphs {
+			overflow :hidden;
+		}
+	}
 }
