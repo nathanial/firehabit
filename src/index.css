@@ -257,37 +257,37 @@
         display: block; }
 
 .calories-page {
-  background: #03101d !important;
+  background: #333 !important;
   width: 1000px;
   margin: 30px auto;
   position: relative;
   height: 600px; }
   .calories-page .left-column {
-    background: #062544;
+    background: #222;
     position: absolute;
     left: 0;
     top: 0;
-    width: 300px;
+    width: 270px;
     bottom: 0;
     border-right: 1px solid black; }
     .calories-page .left-column .DayPicker {
       position: absolute;
       left: 0;
       top: 0;
-      font-size: 18px;
-      outline-width: 0 !important; }
+      outline-width: 0 !important;
+      font-family: 'Open Sans', sans-serif; }
       .calories-page .left-column .DayPicker .DayPicker-wrapper {
         outline-width: 0 !important; }
       .calories-page .left-column .DayPicker .DayPicker-Day.DayPicker-Day--selected, .calories-page .left-column .DayPicker .DayPicker-Day:hover {
         border-radius: 0% !important;
-        outline: 1px solid yellow;
+        outline: 1px dashed rgba(255, 255, 0, 0.5);
         background-color: transparent; }
       .calories-page .left-column .DayPicker .DayPicker-Day.DayPicker-Day--zeroCalories:hover {
         background-color: transparent !important; }
     .calories-page .left-column .weight-form {
-      border-top: 1px solid #03101d;
+      border-top: 1px solid #191919;
       position: absolute;
-      top: 300px;
+      top: 280px;
       left: 25px;
       font-size: 22px;
       right: 25px; }
@@ -313,6 +313,9 @@
         .calories-page .left-column .weight-form > h1 .suffix {
           font-weight: lighter;
           font-size: 11px; }
+
+body {
+  background: #111; }
 
 .visible-when-opened {
   position: absolute;

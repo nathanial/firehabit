@@ -32,7 +32,7 @@ const gravatarClass = cxs({
 });
 
 const siteNavbarClass = cxs({
-	background: '#273142',
+	background: '#333',
 	display: 'block',
 	width: '100%',
 	height: '50px',
@@ -42,7 +42,7 @@ const siteNavbarClass = cxs({
 const navBtnClass = cxs({
 	borderRadius: 0,
 	cursor: 'pointer',
-	background: '#222C3C',
+	background: '#222',
 	width: '100px',
 	padding: '7px 20px',
 	display: 'inline-block',

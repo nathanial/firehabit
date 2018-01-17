@@ -11,7 +11,6 @@ import DayPicker from 'react-day-picker';
 import * as moment from 'moment';
 import 'react-day-picker/lib/style.css';
 import InlineText from '../InlineText';
-import * as uuidv4 from 'uuid/v4';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -67,12 +66,13 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         };
         const modifiersStyles = {
             tooManyCalories: {
-                color: 'white',
-                backgroundColor: `rgba(200,0,0,0.5)`,
+                color: '#AA2222',
+                backgroundColor: `transparent`,
             },
             justRight: {
-                color: 'white',
-                backgroundColor: `rgba(0,200,0,0.5)`
+                color: 'green',
+                fontWeight: 'bold',
+                backgroundColor: `transparent`
             },
             zeroCalories: {
             }
@@ -102,7 +102,7 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         const dayObj = _.find(this.props.caloriesState.days, (d: Day) => d.date === day);
         if(_.isUndefined(dayObj)){
             this.props.caloriesState.days.push({
-                id: uuidv4(),
+                id: generatePushID(),
                 date: day,
                 weight: newWeight,
                 consumed: []
