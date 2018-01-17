@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^1.27.0",
+    "@blueprintjs/datetime": "^1.25.1",
     "blueimp-file-upload": "^9.19.1",
     "chartist": "^0.11.0",
     "cloudinary-core": "^2.3.0",
@@ -24,8 +25,10 @@
     "plotly.js": "^1.32.0",
     "react": "15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
+    "react-big-calendar": "^0.17.0",
     "react-chartist": "^0.13.0",
     "react-color": "^2.11.7",
+    "react-day-picker": "^7.0.7",
     "react-dom": "15.6.2",
     "react-draft-wysiwyg": "1.10.12",
     "react-gravatar": "^2.6.3",

@@ -1,146 +1,76 @@
 .calories-page {
+	background: #03101d !important;
+	width: 1000px;
+	margin: 30px auto;
 	position: relative;
-
-	.calorie-statistics {
-		width: 200px;
-		text-align: left;
+	height: 600px;
+	.left-column {
+		background: #062544;
 		position: absolute;
-		left: 30px;
-		top: 70px;
-		padding: 20px;
-		.settings-btn {
+		left: 0;
+		top:0;
+		width: 300px;
+		bottom: 0;
+		border-right: 1px solid rgb(0, 0, 0);
+
+		.DayPicker {
 			position: absolute;
-			right: 10px;
-			top: 17px;
+			left: 0;
+			top: 0;
+			font-size: 18px;
+			outline-width: 0 !important;
+			.DayPicker-wrapper {
+				outline-width: 0 !important;
+			}
+			.DayPicker-Day {
+				&.DayPicker-Day--selected, &:hover {
+					border-radius: 0% !important;
+					outline: 1px solid yellow;
+					background-color: transparent;
+				}
+				&.DayPicker-Day--zeroCalories:hover {
+					background-color: transparent !important;
+				}
+			}
+
 		}
-	}
 
-	.day-picker {
-		position: absolute;
-		left: 35px;
-		top: 20px;
-	}
-
-	.weight-form {
-		position: absolute;
-		left: 30px;
-		top:270px;
-		width: 200px;
-	}
-
-	.calories-form-outer-wrapper {
-		position: absolute;
-		left: 30px;
-		top: 440px;
-		right: 30px;
-		text-align: left;
-		h2 {
-			margin-bottom: 20px;
-		}
-		.calories-list-wrapper {
-			margin-top: 20px;
-		}
-	}
-}
-
-.weight-graph {
-	background:transparent;
-	position: absolute;
-	left: 300px;
-	right: 20px;
-	color: black;
-	.ct-chart {
-		height: 420px;
-	}
-	.ct-label {
-		color: white;
-	}
-	.ct-grid {
-		stroke: rgba(255,255,255,0.5);
-		stroke-dasharray: 5px;
-	}
-
-	.ct-line {
-		stroke: white;
-	}
-	.ct-point {
-		display: none;
-	}
-
-	& > h1 {
-		position: absolute;
-		left: 350px;
-		top: 150px;
-	}
-}
-
-.search-results-wrapper {
-    list-style-type: none;
-	padding: 20px;
-	text-align: left;
-	max-height: 300px;
-	overflow-y: auto;
-
-	& > li {
-		position: relative;
-		height: 30px;
-		line-height: 30px;
-		margin: 10px 0;
-		& > .food-name {
-			display: inline-block;
-			left: 30px;
+		.weight-form {
+			border-top: 1px solid #03101d;
 			position: absolute;
-			max-width: 230px;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
-		& > .calories {
-			display: inline-block;
-			position: absolute;
-			right: 150px;
-		}
-		& > .pt-button-group {
-			display: inline-block;
-			position: absolute;
-			right: 10px;
-			top: 0px;
+			top: 300px;
+			left: 25px;
+			font-size: 22px;
+			right: 25px;
+			& > h1 {
+				font-weight: normal;
+				font-size: 16px;
+				margin-top: 30px;
+				text-align: left;
+
+				.date {
+					font-weight: bold;
+					margin-left: 8px;
+				}
+				.weight {
+					display: inline-block;
+					& > input {
+						color: white;
+						width: 30px;
+						text-decoration: underline;
+					}
+					margin-left: 10px;
+					font-weight: bold;
+					margin-right: 2px;
+					letter-spacing: 1px;
+					text-decoration: underline;
+				}
+				.suffix {
+					font-weight: lighter;
+					font-size: 11px;
+				}
+			}
 		}
 	}
-}
 
-.calories-list-wrapper {
-    border: 1px solid #000;
-	min-height: 100px;
-	overflow-y: scroll;
-	list-style-type: none;
-	text-align: left;
-	padding: 0;
-
-	&> li:nth-child(odd) {
-		background: #475969;
-	}
-	& > li {
-		padding: 20px;
-		position: relative;
-
-		& > .food-name {
-			display: inline-block;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			width: 220px;
-		}
-
-		& > .calories {
-			position: absolute;
-			right: 200px;
-		}
-
-		& > .pt-button-group {
-			position: absolute;
-			right: 10px;
-			top: 15px;
-		}
-	}
 }
