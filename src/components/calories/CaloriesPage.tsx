@@ -84,10 +84,14 @@ export default class CaloriesPage extends React.Component<Props,State> {
         }
         return (
             <div className={classes}>
-                <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
-                       onChange={this.onSearchChanged}/>
+                <div className="search-input-container">
+                    <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
+                        onChange={this.onSearchChanged}/>
+                </div>
                 <div className="search-results">
-                    {this.renderSearchResults()}
+                    <ScrollArea className="search-results-content">
+                        {this.renderSearchResults()}
+                    </ScrollArea>
                 </div>
             </div>
         );
@@ -100,12 +104,20 @@ export default class CaloriesPage extends React.Component<Props,State> {
     }
 
     private renderSearchResults(){
-        return <div />;
-        // const foodDefinitions = this.props.caloriesState.foodDefinitions;
-        // const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
-        //     return definition.name === this.
-        // });
-
+        const foodDefinitions = this.props.caloriesState.foodDefinitions;
+        const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
+            return _.includes(definition.name.toLowerCase(), this.state.search.toLowerCase())
+        });
+        return (
+            _.map(matches, match => {
+                return (
+                    <div className="search-result">
+                        <span className="food-name">{match.name}</span>
+                        <span className="food-calories">{match.calories}</span>
+                    </div>
+                );
+            })
+        );
     }
 
     private onToggleAddFood = () => {

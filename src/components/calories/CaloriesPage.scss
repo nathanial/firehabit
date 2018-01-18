@@ -194,6 +194,7 @@
 	left: 0;
 	top: 0;
 	bottom: 0;
+	overflow: hidden;
 	width: 300px;
 	transform: translateX(-300px);
 	background: #333;
@@ -205,18 +206,62 @@
 	}
 	z-index: 2;
 
-	.food-search-input {
-		display: block;
+	.search-input-container {
+		padding-bottom: 20px;
+		border-bottom: 1px solid #222;
+		box-shadow: rgba(0,0,0,0.08) 0px 3px 10px;
+
+		.food-search-input {
+			display: block;
+			margin-left: 20px;
+			width: calc(100% - 40px);
+			margin-top: 20px;
+			background: #222;
+			box-shadow: none;
+			color: white;
+			outline-width: 0;
+			padding-left: 10px;
+			border-width: 0;
+			height: 30px;
+		}
+
+	}
+
+
+	.search-results {
 		position: absolute;
-		margin-left: 20px;
-		width: calc(100% - 40px);
-		margin-top: 20px;
-		background: #222;
-		box-shadow: none;
-		color: white;
-		outline-width: 0;
-		padding-left: 10px;
-		border-width: 0;
-		height: 30px;
+		top: 71px;
+		bottom: 10px;
+		right: 0px;
+		left: 22px;
+		text-align: left;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+
+		.search-result {
+			padding-top: 10px;
+		}
+
+		.search-results-content {
+			height: 100%;
+		}
+
+		.food-name {
+			display: inline-block;
+			width: 200px;
+			overflow :hidden;
+			text-align: left;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			vertical-align: middle;
+		}
+
+		.food-calories {
+			display: inline-block;
+			text-align: right;
+			width: 55px;
+			vertical-align: middle;
+		}
 	}
 }
