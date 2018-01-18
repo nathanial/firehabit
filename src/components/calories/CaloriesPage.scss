@@ -89,6 +89,10 @@
 				&.DayPicker-Day--zeroCalories:hover {
 					background-color: transparent !important;
 				}
+
+				&.DayPicker-Day--today {
+					color: white;
+				}
 			}
 
 		}
@@ -212,10 +216,17 @@
 		border-bottom: 1px solid #222;
 		box-shadow: rgba(0,0,0,0.08) 0px 3px 10px;
 
+		.search-icon {
+			position: absolute;
+			left: 7px;
+			top: 14px;
+			color: #888;
+		}
+
 		.food-search-input {
 			display: block;
-			margin-left: 10px;
-			width: calc(100% - 20px);
+			margin-left: 28px;
+			width: calc(100% - 40px);
 			margin-top: 10px;
 			background: #222;
 			box-shadow: none;
@@ -224,6 +235,7 @@
 			padding-left: 10px;
 			border-width: 0;
 			height: 25px;
+			border-radius: 3px;
 		}
 
 	}
@@ -240,23 +252,32 @@
 		white-space: nowrap;
 		overflow: hidden;
 
+		.add-new-food-btn {
+			position: relative;
+			left: 50%;
+			width: 150px;
+			margin-top: 40px;
+			margin-left: -75px;
+			background-color: #333;
+		}
+
 		.search-result {
 			padding-top: 5px;
-			padding-left: 22px;
+			padding-left: 5px;
 			padding-bottom: 5px;
+			vertical-align: middle;
+			line-height: 30px;
 			cursor: pointer;
-			&:hover {
-				background: rgba(255,255,255,0.1);
-			}
-
-			&:active {
-				background: rgba(255,255,255,0.25);
-			}
 			user-select: none;
 		}
 
 		.search-results-content {
 			height: 100%;
+		}
+
+		.edit-btn {
+			opacity: 0;
+			margin-right: 5px;
 		}
 
 		.food-name {
@@ -267,6 +288,14 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			vertical-align: middle;
+			&.inline-text {
+				padding-left: 15px;
+				& > input {
+					display: inline-block;
+					width: 200px !important;
+					color: white;
+				}
+			}
 		}
 
 		.food-calories {
@@ -274,6 +303,18 @@
 			text-align: right;
 			width: 55px;
 			vertical-align: middle;
+			position: relative;
+			right: 10px;
+
+			&.inline-text {
+				position: absolute;
+				right: 15px;
+				& > input {
+					display: inline-block;
+					color: white;
+					text-align: right;
+				}
+			}
 		}
 	}
 }

@@ -231,8 +231,9 @@
     bottom: 0;
     width: 200px;
     overflow-y: auto;
-    background: #273142; }
+    background: #222; }
     .notes-page .note-list .note-list-item {
+      background: #333;
       position: relative;
       display: block;
       padding: 10px 20px;
@@ -328,6 +329,8 @@
         background-color: transparent; }
       .calories-page .left-column .DayPicker .DayPicker-Day.DayPicker-Day--zeroCalories:hover {
         background-color: transparent !important; }
+      .calories-page .left-column .DayPicker .DayPicker-Day.DayPicker-Day--today {
+        color: white; }
     .calories-page .left-column .weight-form {
       border-top: 1px solid #191919;
       position: absolute;
@@ -423,10 +426,15 @@
     padding-bottom: 10px;
     border-bottom: 1px solid #222;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 3px 10px; }
+    .new-food-dialog .search-input-container .search-icon {
+      position: absolute;
+      left: 7px;
+      top: 14px;
+      color: #888; }
     .new-food-dialog .search-input-container .food-search-input {
       display: block;
-      margin-left: 10px;
-      width: calc(100% - 20px);
+      margin-left: 28px;
+      width: calc(100% - 40px);
       margin-top: 10px;
       background: #222;
       box-shadow: none;
@@ -434,7 +442,8 @@
       outline-width: 0;
       padding-left: 10px;
       border-width: 0;
-      height: 25px; }
+      height: 25px;
+      border-radius: 3px; }
   .new-food-dialog .search-results {
     position: absolute;
     top: 46px;
@@ -445,18 +454,26 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden; }
+    .new-food-dialog .search-results .add-new-food-btn {
+      position: relative;
+      left: 50%;
+      width: 150px;
+      margin-top: 40px;
+      margin-left: -75px;
+      background-color: #333; }
     .new-food-dialog .search-results .search-result {
       padding-top: 5px;
-      padding-left: 22px;
+      padding-left: 5px;
       padding-bottom: 5px;
+      vertical-align: middle;
+      line-height: 30px;
       cursor: pointer;
       user-select: none; }
-      .new-food-dialog .search-results .search-result:hover {
-        background: rgba(255, 255, 255, 0.1); }
-      .new-food-dialog .search-results .search-result:active {
-        background: rgba(255, 255, 255, 0.25); }
     .new-food-dialog .search-results .search-results-content {
       height: 100%; }
+    .new-food-dialog .search-results .edit-btn {
+      opacity: 0;
+      margin-right: 5px; }
     .new-food-dialog .search-results .food-name {
       display: inline-block;
       width: 200px;
@@ -465,11 +482,26 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: middle; }
+      .new-food-dialog .search-results .food-name.inline-text {
+        padding-left: 15px; }
+        .new-food-dialog .search-results .food-name.inline-text > input {
+          display: inline-block;
+          width: 200px !important;
+          color: white; }
     .new-food-dialog .search-results .food-calories {
       display: inline-block;
       text-align: right;
       width: 55px;
-      vertical-align: middle; }
+      vertical-align: middle;
+      position: relative;
+      right: 10px; }
+      .new-food-dialog .search-results .food-calories.inline-text {
+        position: absolute;
+        right: 15px; }
+        .new-food-dialog .search-results .food-calories.inline-text > input {
+          display: inline-block;
+          color: white;
+          text-align: right; }
 
 body {
   background: #111; }

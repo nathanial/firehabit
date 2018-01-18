@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import {CaloriesState} from "../../state";
 import * as moment from 'moment';
 import {generatePushID} from '../../db/util';
+import {Icon, Button} from '@blueprintjs/core';
+import InlineText from '../InlineText';
 
 type Props = {
     visible: boolean;
@@ -15,39 +17,103 @@ type Props = {
 
 type State = {
     search: string;
+    active: string;
 }
 
 export class NewFoodDialog extends React.PureComponent<Props,State> {
     private scrollbar: any;
 
     state = {
-        search: ''
+        search: '',
+        active: ''
     }
 
     render(){
         let classes = "new-food-dialog";
         if(this.props.visible){
             classes += " visible";
+        }
+        return (
+            <div className={classes}>
+                <div className="search-input-container">
+                    <Icon iconName="search" className="search-icon" />
+                    <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
+                        onChange={this.onSearchChanged}
+                        onKeyDown={this.onKeyDown}/>
+                </div>
+                {this.renderSearchResults()}
+            </div>
+        );
+    }
+
+    componentWillReceiveProps(nextProps: Props) {
+        if(nextProps.visible && !this.props.visible){
             if(!$(".food-search-input").is(":focus")){
                 setTimeout(() => {
                     $(".food-search-input").focus();
                 }, 500);
             }
         }
-        return (
-            <div className={classes}>
-                <div className="search-input-container">
-                    <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
-                        onChange={this.onSearchChanged}
-                        onKeyDown={this.onKeyDown}/>
+    }
+
+    private renderSearchResults(){
+        const results = this.filteredDefinitions();
+        if(results.length === 0){
+            return (
+                <div className="search-results">
+                    <Button text="Add New Food" className="add-new-food-btn" onClick={this.onAddNewFood} />
                 </div>
+            );
+        } else {
+            return (
                 <div className="search-results">
                     <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="search-results-content">
-                        {this.renderSearchResults()}
+                        {_.map(results, match => {
+                            return (
+                                <div key={match.id} className="search-result">
+                                    <Button className="add-btn pt-minimal" iconName="plus" onClick={() => this.onSelectResult(match)} />
+                                    <InlineText className="food-name"
+                                                value={match.name}
+                                                onChange={(newValue) => this.onNameChanged(match, newValue)} />
+                                    <InlineText className="food-calories"
+                                                value={match.calories}
+                                                onChange={(newValue) => this.onCaloriesChanged(match, newValue)} />
+                                </div>
+                            );
+                        })}
                     </ScrollArea>
                 </div>
-            </div>
-        );
+            );
+        }
+    }
+
+    private onNameChanged = (definition: FoodDefinition, newValue) => {
+        definition.set({
+            name: newValue
+        });
+    }
+
+    private onCaloriesChanged = (definition: FoodDefinition, newValue) => {
+        definition.set({
+            calories: newValue
+        });
+    }
+
+    private onEditClick = (event, id) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.setState({
+            active: id
+        });
+    };
+
+    private onAddNewFood = () => {
+        const search = this.state.search;
+        this.props.caloriesState.foodDefinitions.push({
+            id: generatePushID(),
+            name: search,
+            calories: '0'
+        });
     }
 
     private onKeyDown = (event) => {
@@ -66,30 +132,23 @@ export class NewFoodDialog extends React.PureComponent<Props,State> {
         const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
             return _.includes(definition.name.toLowerCase(), this.state.search.toLowerCase())
         });
-        return matches;
+        return _.sortBy(matches, (m: FoodDefinition) => m.id);
     }
 
-    private renderSearchResults(){
-        return (
-            _.map(this.filteredDefinitions(), match => {
-                return (
-                    <div key={match.id} className="search-result" onClick={() => this.onSelectResult(match)}>
-                        <span className="food-name">{match.name}</span>
-                        <span className="food-calories">{match.calories}</span>
-                    </div>
-                );
-            })
-        );
+    private onEditDefinition = (match: FoodDefinition) => {
+        console.log("Edit Definition", match);
     }
 
     private onSearchChanged = (event) => {
         this.setState({
             search: event.target.value
         });
-        this.scrollbar.stayInPlace = false;
-        this.scrollbar.resetTop().then(() => {
-            this.scrollbar.stayInPlace = true;
-        });
+        if(this.scrollbar){
+            this.scrollbar.stayInPlace = false;
+            this.scrollbar.resetTop().then(() => {
+                this.scrollbar.stayInPlace = true;
+            });
+        }
     }
 
     private onSelectResult = (match: FoodDefinition) => {
