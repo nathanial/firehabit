@@ -261,7 +261,7 @@
   width: 1000px;
   margin: 30px auto;
   position: relative;
-  height: 810px;
+  height: 807px;
   overflow: hidden; }
   .calories-page .left-column {
     background: #222;
@@ -271,6 +271,45 @@
     width: 270px;
     bottom: 0;
     border-right: 1px solid black; }
+    .calories-page .left-column .calories-percentage {
+      position: absolute;
+      left: 10px;
+      bottom: 5px;
+      right: 10px;
+      overflow: hidden;
+      height: 15px;
+      background: #444;
+      border: 1px solid #777; }
+      .calories-page .left-column .calories-percentage .percentage-marker {
+        height: 100%;
+        background: #22AA22; }
+        .calories-page .left-column .calories-percentage .percentage-marker.danger {
+          background: #AA2222; }
+        .calories-page .left-column .calories-percentage .percentage-marker.warning {
+          background: #555522; }
+      .calories-page .left-column .calories-percentage > span {
+        position: absolute;
+        top: 0;
+        font-size: 11px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        display: inline-block; }
+    .calories-page .left-column .food-eaten {
+      position: absolute;
+      top: 350px;
+      border-top: 1px solid #191919;
+      left: 25px;
+      right: 25px;
+      text-align: left; }
+      .calories-page .left-column .food-eaten > h3 {
+        font-size: 22px;
+        margin-top: 30px;
+        margin-bottom: 20px; }
+      .calories-page .left-column .food-eaten .add-food-btn {
+        position: absolute;
+        right: 0;
+        top: 24px; }
     .calories-page .left-column .DayPicker {
       position: absolute;
       left: 0;
@@ -324,6 +363,42 @@
     overflow: auto; }
     .calories-page .right-column .graphs {
       overflow: hidden; }
+
+.consumed-foods-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none; }
+  .consumed-foods-list > li {
+    padding: 0;
+    margin: 5px 0;
+    text-align: left; }
+    .consumed-foods-list > li .food-name {
+      position: relative;
+      top: 4px;
+      width: 140px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-align: left;
+      display: inline-block;
+      text-overflow: ellipsis;
+      text-decoration: underline; }
+    .consumed-foods-list > li .calories {
+      display: inline-block;
+      width: 40px;
+      text-align: center; }
+    .consumed-foods-list > li .pt-icon-standard {
+      font-size: 11px;
+      display: inline-block;
+      line-height: 15px;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+      margin-left: 4px;
+      color: #666;
+      cursor: pointer; }
+      .consumed-foods-list > li .pt-icon-standard:hover {
+        font-weight: bold;
+        color: white; }
 
 body {
   background: #111; }

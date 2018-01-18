@@ -13,11 +13,14 @@ import 'react-day-picker/lib/style.css';
 import InlineText from '../InlineText';
 import ScrollArea from '../ScrollArea';
 import * as Plot from 'react-plotly.js'
+import {Button} from '@blueprintjs/core';
+import {ConsumedFoodsList} from './ConsumedFoodsList';
 
 type Props = {
     caloriesState: CaloriesState;
 }
 
+const plotBackground = "#FFF";
 
 // smoothing whole array
 function lpf(values: number[], smoothing: number){
@@ -36,8 +39,80 @@ export default class CaloriesPage extends React.Component<Props,{}> {
     };
 
     render() {
+        return (
+            <div className="calories-page pt-card pt-elevation-3">
+                <div className="left-column">
+                    {this.renderCalendar()}
+                    {this.renderWeight()}
+                    {this.renderFoodEaten()}
+                    {this.renderCaloriesPercentage()}
+                </div>
+                <div className="right-column">
+                    <div className="graphs">
+                        {this.renderWeightPlot()}
+                        {this.renderCaloriesPlot()}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    private renderCaloriesPercentage(){
+        const caloriesState = this.props.caloriesState;
+        let day = moment(this.state.selectedDay).format("MM/DD/YY");
+        const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+        const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings']
+        const caloriesOfTheDay = _.sumBy(dayObj.consumed, c => parseInt(c.calories, 10));
+        const percentage = Math.round(caloriesOfTheDay / weightStasisGoal * 100);
+        let classes = "percentage-marker ";
+        if(percentage > 100) {
+            classes += "danger";
+        } else if(percentage > 75){
+            classes += "warning";
+        }
+        return (
+            <div className="calories-percentage">
+                <div className={classes} style={{width: `${percentage}%`}} />
+                <span>{percentage}%</span>
+            </div>
+        );
+    }
+
+    private renderFoodEaten() {
+        const caloriesState = this.props.caloriesState;
+        let day = moment(this.state.selectedDay).format("MM/DD/YY");
+        const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+        return (
+            <div className="food-eaten">
+                <h3>Consumed Foods</h3>
+                <Button iconName="plus" className="pt-minimal add-food-btn" />
+                <ConsumedFoodsList day={dayObj} />
+            </div>
+        );
+    }
+
+    private renderWeight(){
+        const caloriesState = this.props.caloriesState;
+        let day = moment(this.state.selectedDay).format("MM/DD/YY");
+        const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+        const weight = _.get(dayObj, 'weight', 0).toString();
+        return (
+            <div className="weight-form">
+                <h1>Weight on
+                    <span className="date">{moment(this.state.selectedDay).format('MMM DD ')}</span>
+                    :
+                    <InlineText className="weight" value={weight} onChange={this.onWeightChanged}></InlineText>
+                    <span className="suffix">lbs</span>
+                </h1>
+            </div>
+        );
+    }
+
+    private renderCalendar() {
         const caloriesState = this.props.caloriesState;
         const goal = parseInt(caloriesState['calorie-settings'].weightStasisGoal as any, 10);
+
+        let day = moment(this.state.selectedDay).format("MM/DD/YY");
         const modifiers = {
             tooManyCalories: (day) => {
                 day = moment(day).format("MM/DD/YY");
@@ -89,30 +164,8 @@ export default class CaloriesPage extends React.Component<Props,{}> {
             zeroCalories: {
             }
         };
-        let day = moment(this.state.selectedDay).format("MM/DD/YY");
-        const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-        const weight = _.get(dayObj, 'weight', 0).toString();
-
         return (
-            <div className="calories-page pt-card pt-elevation-3">
-                <div className="left-column">
-                    <DayPicker selectedDays={this.state.selectedDay} modifiers={modifiers} modifiersStyles={modifiersStyles} onDayClick={this.onDayClick}/>
-                    <div className="weight-form">
-                        <h1>Weight on
-                            <span className="date">{moment(this.state.selectedDay).format('MMM DD ')}</span>
-                            :
-                            <InlineText className="weight" value={weight} onChange={this.onWeightChanged}></InlineText>
-                            <span className="suffix">lbs</span>
-                        </h1>
-                    </div>
-                </div>
-                <div className="right-column">
-                    <div className="graphs">
-                        {this.renderWeightPlot()}
-                        {this.renderCaloriesPlot()}
-                    </div>
-                </div>
-            </div>
+            <DayPicker selectedDays={this.state.selectedDay} modifiers={modifiers} modifiersStyles={modifiersStyles} onDayClick={this.onDayClick}/>
         );
     }
 
@@ -144,7 +197,9 @@ export default class CaloriesPage extends React.Component<Props,{}> {
             },
             yaxis: {
                 fixedrange: true
-            }
+            },
+            paper_bgcolor: plotBackground,
+            plot_bgcolor: plotBackground
         };
         return (
             <Plot data={data} layout={layout} config={{displayModeBar:false, editable: false, scrollZoom: false}}/>
@@ -179,7 +234,9 @@ export default class CaloriesPage extends React.Component<Props,{}> {
             },
             yaxis: {
                 fixedrange: true
-            }
+            },
+            paper_bgcolor: plotBackground,
+            plot_bgcolor: plotBackground
         };
         return (
             <Plot data={data} layout={layout} config={{displayModeBar:false, editable: false, scrollZoom: false}}/>

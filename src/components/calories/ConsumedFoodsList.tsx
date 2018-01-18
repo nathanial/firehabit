@@ -2,12 +2,13 @@ import * as React from 'react';
 import {db} from '../../util';
 import {Button} from "@blueprintjs/core/dist/components/button/buttons";
 import * as _ from 'lodash';
+import { Icon } from '@blueprintjs/core';
 
 interface Props {
 	day: Day;
 }
 
-export default class ConsumedFoodsList extends React.Component<Props, {}> {
+export class ConsumedFoodsList extends React.Component<Props, {}> {
 
 	render(){
 		const day = this.props.day;
@@ -16,7 +17,7 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 			groups = this.getEntryGroups(day);
 		}
 		return (
-			<div className="calories-list-wrapper">
+			<ul className="consumed-foods-list">
 				{groups.map((entry, index) => {
 					let name = entry.name;
 					if(entry.count > 1){
@@ -26,27 +27,25 @@ export default class ConsumedFoodsList extends React.Component<Props, {}> {
 						<li key={JSON.stringify(entry)}>
 							<span className="food-name">{name}</span>
 							<span className="calories">{entry.calories}</span>
-							<div className="pt-button-group">
-								<Button iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))} />
-								<Button iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
-							</div>
+							<Icon iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))}/>
+							<Icon iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
 						</li>
 					);
 				})}
-			</div>
+			</ul>
 		);
 	}
 
 	getEntryGroups = (day: Day) => {
 		const pairs = _.toPairs(_.groupBy(day.consumed, 'name'));
-		return _.map(pairs, ([name, group]) => {
+		return _.sortBy(_.map(pairs, ([name, group]) => {
 			return {
 				name,
 				count: group.length,
 				calories: _.sumBy(group, (e: ConsumedFood) => parseInt(e.calories, 10)),
 				group: group
 			};
-		});
+		}), group => group.name);
 	};
 
 	onRepeatFood = (day: Day, entry) => {

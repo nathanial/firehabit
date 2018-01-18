@@ -4,7 +4,7 @@ import NewFoodDialog from './NewFoodDialog';
 import * as _ from 'lodash';
 import SearchResults from './SearchResults';
 import {db} from '../../util';
-import ConsumedFoodsList from './ConsumedFoodsList';
+import {ConsumedFoodsList} from './ConsumedFoodsList';
 import DialogService from "../../services/DialogService";
 import FoodDefinitionForm from "./FoodDefinitionForm";
 import cxs from 'cxs';
