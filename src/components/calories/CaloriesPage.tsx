@@ -14,6 +14,7 @@ import * as Plot from 'react-plotly.js'
 import {Button} from '@blueprintjs/core';
 import {ConsumedFoodsList} from './ConsumedFoodsList';
 import {Calendar} from './Calendar';
+import {WeightForm} from './WeightForm';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -54,7 +55,7 @@ export default class CaloriesPage extends React.Component<Props,State> {
             <div className="calories-page pt-card pt-elevation-3">
                 <div className={classes}>
                     <Calendar selectedDay={this.state.selectedDay} caloriesState={this.props.caloriesState} onChange={this.onDateChanged} />
-                    {this.renderWeight()}
+                    <WeightForm caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} />
                     {this.renderFoodEaten()}
                     {this.renderCaloriesPercentage()}
                 </div>
@@ -149,24 +150,6 @@ export default class CaloriesPage extends React.Component<Props,State> {
         });
     }
 
-    private renderWeight(){
-        const caloriesState = this.props.caloriesState;
-        let day = moment(this.state.selectedDay).format("MM/DD/YY");
-        const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-        const weight = _.get(dayObj, 'weight', 0).toString();
-        return (
-            <div className="weight-form">
-                <h1>Weight on
-                    <span className="date">{moment(this.state.selectedDay).format('MMM DD ')}</span>
-                    :
-                    <InlineText className="weight" value={weight} onChange={this.onWeightChanged}></InlineText>
-                    <span className="suffix">lbs</span>
-                </h1>
-            </div>
-        );
-    }
-
-
     private renderWeightPlot(){
         var months = this.getMonths();
 
@@ -175,7 +158,7 @@ export default class CaloriesPage extends React.Component<Props,State> {
             return {
                 type: 'box',
                 name: month,
-                y: _.filter(_.map(days, d => d.weight), x => x !== 0)
+                y: _.filter(_.map(days, d => d.weight), x => x > 0)
             };
         });
         const layout = {
@@ -248,21 +231,6 @@ export default class CaloriesPage extends React.Component<Props,State> {
         });
         return months;
     };
-
-    private onWeightChanged = (newWeight) => {
-        const day = moment(this.state.selectedDay).format('MM/DD/YY');
-        const dayObj = _.find(this.props.caloriesState.days, (d: Day) => d.date === day);
-        if(_.isUndefined(dayObj)){
-            this.props.caloriesState.days.push({
-                id: generatePushID(),
-                date: day,
-                weight: newWeight,
-                consumed: []
-            })
-        } else {
-            dayObj.set({weight: newWeight});
-        }
-    }
 
     private onDayClick = (newDate) => {
         this.setState({

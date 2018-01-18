@@ -275,9 +275,9 @@
     z-index: 1; }
     .calories-page .left-column .calories-percentage {
       position: absolute;
-      left: 10px;
-      bottom: 5px;
-      right: 10px;
+      left: 25px;
+      bottom: 15px;
+      right: 25px;
       overflow: hidden;
       height: 15px;
       background: #444;
