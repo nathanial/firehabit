@@ -136,15 +136,11 @@ export default class CaloriesPage extends React.Component<Props,State> {
         let day = moment(this.state.selectedDay).format("MM/DD/YY");
         const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
         return (
-            <div className="food-eaten">
-                <h3>Consumed Foods</h3>
-                <Button iconName="plus" className="pt-minimal add-food-btn" onClick={this.onAddFoodClick}/>
-                <ConsumedFoodsList day={dayObj} />
-            </div>
+            <ConsumedFoodsList day={dayObj} onToggleAddFood={this.onToggleAddFood}/>
         );
     }
 
-    private onAddFoodClick = () => {
+    private onToggleAddFood = () => {
         this.setState({
             showAddFoodDialog: !this.state.showAddFoodDialog
         });

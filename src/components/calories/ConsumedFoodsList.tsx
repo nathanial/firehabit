@@ -6,9 +6,10 @@ import { Icon } from '@blueprintjs/core';
 
 interface Props {
 	day: Day;
+	onToggleAddFood();
 }
 
-export class ConsumedFoodsList extends React.Component<Props, {}> {
+export class ConsumedFoodsList extends React.PureComponent<Props, {}> {
 
 	render(){
 		const day = this.props.day;
@@ -17,24 +18,34 @@ export class ConsumedFoodsList extends React.Component<Props, {}> {
 			groups = this.getEntryGroups(day);
 		}
 		return (
-			<ul className="consumed-foods-list">
-				{groups.map((entry, index) => {
-					let name = entry.name;
-					if(entry.count > 1){
-						name += ` x${entry.count}`;
-					}
-					return (
-						<li key={JSON.stringify(entry)}>
-							<span className="food-name">{name}</span>
-							<span className="calories">{entry.calories}</span>
-							<Icon iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))}/>
-							<Icon iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
-						</li>
-					);
-				})}
-			</ul>
+			<div className="food-eaten">
+				<h3>Consumed Foods</h3>
+				<Button iconName="plus" className="pt-minimal add-food-btn" onClick={this.onAddFoodClick}/>
+				<ul className="consumed-foods-list">
+					{groups.map((entry, index) => {
+						let name = entry.name;
+						if(entry.count > 1){
+							name += ` x${entry.count}`;
+						}
+						return (
+							<li key={JSON.stringify(entry)}>
+								<span className="food-name">{name}</span>
+								<span className="calories">{entry.calories}</span>
+								<Icon iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))}/>
+								<Icon iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
+							</li>
+						);
+					})}
+				</ul>
+			</div>
 		);
 	}
+
+
+    private onAddFoodClick = () => {
+		this.props.onToggleAddFood();
+    }
+
 
 	getEntryGroups = (day: Day) => {
 		const pairs = _.toPairs(_.groupBy(day.consumed, 'name'));
