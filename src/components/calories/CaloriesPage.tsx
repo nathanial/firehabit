@@ -39,6 +39,8 @@ export default class CaloriesPage extends React.Component<Props,State> {
         search: ''
     };
 
+    scrollbar: any;
+
     render() {
         let classes = "left-column";
         if(this.state.showAddFoodDialog){
@@ -89,7 +91,7 @@ export default class CaloriesPage extends React.Component<Props,State> {
                         onChange={this.onSearchChanged}/>
                 </div>
                 <div className="search-results">
-                    <ScrollArea className="search-results-content">
+                    <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="search-results-content">
                         {this.renderSearchResults()}
                     </ScrollArea>
                 </div>
@@ -100,6 +102,10 @@ export default class CaloriesPage extends React.Component<Props,State> {
     private onSearchChanged = (event) => {
         this.setState({
             search: event.target.value
+        });
+        this.scrollbar.stayInPlace = false;
+        this.scrollbar.resetTop().then(() => {
+            this.scrollbar.stayInPlace = true;
         });
     }
 

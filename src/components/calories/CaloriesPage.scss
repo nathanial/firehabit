@@ -103,7 +103,8 @@
 			& > h1 {
 				font-weight: normal;
 				font-size: 16px;
-				margin-top: 30px;
+				margin-top: 26px;
+				margin-left: 8px;
 				text-align: left;
 
 				.date {
@@ -207,22 +208,22 @@
 	z-index: 2;
 
 	.search-input-container {
-		padding-bottom: 20px;
+		padding-bottom: 10px;
 		border-bottom: 1px solid #222;
 		box-shadow: rgba(0,0,0,0.08) 0px 3px 10px;
 
 		.food-search-input {
 			display: block;
-			margin-left: 20px;
-			width: calc(100% - 40px);
-			margin-top: 20px;
+			margin-left: 10px;
+			width: calc(100% - 20px);
+			margin-top: 10px;
 			background: #222;
 			box-shadow: none;
 			color: white;
 			outline-width: 0;
 			padding-left: 10px;
 			border-width: 0;
-			height: 30px;
+			height: 25px;
 		}
 
 	}
@@ -230,8 +231,8 @@
 
 	.search-results {
 		position: absolute;
-		top: 71px;
-		bottom: 10px;
+		top: 46px;
+		bottom: 0px;
 		right: 0px;
 		left: 22px;
 		text-align: left;
