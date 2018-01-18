@@ -1,12 +1,9 @@
 import * as React from 'react';
-import CaloriesForm from "./CaloriesForm";
-import CalorieStatistics from "./CaloriesStatistics";
 import {CaloriesState} from "../../state";
 import {history} from '../../util';
 import * as _ from 'lodash';
 import cxs from 'cxs';
 import {generatePushID} from '../../db/util';
-import WeightGraph from './WeightGraph';
 import DayPicker from 'react-day-picker';
 import * as moment from 'moment';
 import 'react-day-picker/lib/style.css';
@@ -32,16 +29,26 @@ function lpf(values: number[], smoothing: number){
     }
 }
 
-export default class CaloriesPage extends React.Component<Props,{}> {
+type State = {
+    selectedDay: Date;
+    showAddFoodDialog: boolean;
+}
+
+export default class CaloriesPage extends React.Component<Props,State> {
 
     state = {
-        selectedDay: new Date()
+        selectedDay: new Date(),
+        showAddFoodDialog: false
     };
 
     render() {
+        let classes = "left-column";
+        if(this.state.showAddFoodDialog){
+            classes += " hide-shadow";
+        }
         return (
             <div className="calories-page pt-card pt-elevation-3">
-                <div className="left-column">
+                <div className={classes}>
                     {this.renderCalendar()}
                     {this.renderWeight()}
                     {this.renderFoodEaten()}
@@ -52,7 +59,20 @@ export default class CaloriesPage extends React.Component<Props,{}> {
                         {this.renderWeightPlot()}
                         {this.renderCaloriesPlot()}
                     </div>
+                    {this.renderNewFoodDialog()}
                 </div>
+            </div>
+        );
+    }
+
+    private renderNewFoodDialog(){
+        let classes = "new-food-dialog";
+        if(this.state.showAddFoodDialog){
+            classes += " visible";
+        }
+        return (
+            <div className={classes}>
+
             </div>
         );
     }
@@ -72,8 +92,8 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         }
         return (
             <div className="calories-percentage">
-                <div className={classes} style={{width: `${percentage}%`}} />
-                <span>{percentage}%</span>
+                <div className={classes} style={{width: `${Math.min(percentage, 100)}%`}} />
+                <span>{caloriesOfTheDay}/{weightStasisGoal}</span>
             </div>
         );
     }
@@ -85,10 +105,16 @@ export default class CaloriesPage extends React.Component<Props,{}> {
         return (
             <div className="food-eaten">
                 <h3>Consumed Foods</h3>
-                <Button iconName="plus" className="pt-minimal add-food-btn" />
+                <Button iconName="plus" className="pt-minimal add-food-btn" onClick={this.onAddFoodClick}/>
                 <ConsumedFoodsList day={dayObj} />
             </div>
         );
+    }
+
+    private onAddFoodClick = () => {
+        this.setState({
+            showAddFoodDialog: !this.state.showAddFoodDialog
+        });
     }
 
     private renderWeight(){
@@ -181,7 +207,7 @@ export default class CaloriesPage extends React.Component<Props,{}> {
             };
         });
         const layout = {
-            width: 726,
+            width: 728,
             height: 500,
             showlegend: false,
             title: 'Weight',
@@ -218,7 +244,7 @@ export default class CaloriesPage extends React.Component<Props,{}> {
            y: calories
         }];
         const layout = {
-            width: 726,
+            width: 728,
             height: 300,
             showlegend: false,
             title: 'Calories Per Day',

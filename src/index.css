@@ -264,13 +264,15 @@
   height: 807px;
   overflow: hidden; }
   .calories-page .left-column {
+    box-shadow: rgba(0, 0, 0, 0.1) 6px 0px 5px;
     background: #222;
     position: absolute;
     left: 0;
     top: 0;
     width: 270px;
     bottom: 0;
-    border-right: 1px solid black; }
+    border-right: 1px solid black;
+    z-index: 1; }
     .calories-page .left-column .calories-percentage {
       position: absolute;
       left: 10px;
@@ -290,6 +292,8 @@
       .calories-page .left-column .calories-percentage > span {
         position: absolute;
         top: 0;
+        left: 0;
+        right: 0;
         font-size: 11px;
         color: white;
         font-weight: bold;
@@ -399,6 +403,20 @@
       .consumed-foods-list > li .pt-icon-standard:hover {
         font-weight: bold;
         color: white; }
+
+.new-food-dialog {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  transform: translateX(-300px);
+  background: #333;
+  transition: transform 0.5s ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.3) 3px 0px 8px;
+  z-index: 2; }
+  .new-food-dialog.visible {
+    transform: translateX(0px); }
 
 body {
   background: #111; }
