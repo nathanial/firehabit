@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import * as React from 'react';
 import {CaloriesState} from "../../state";
 import {history} from '../../util';
@@ -32,13 +33,15 @@ function lpf(values: number[], smoothing: number){
 type State = {
     selectedDay: Date;
     showAddFoodDialog: boolean;
+    search: string;
 }
 
 export default class CaloriesPage extends React.Component<Props,State> {
 
     state = {
         selectedDay: new Date(),
-        showAddFoodDialog: false
+        showAddFoodDialog: false,
+        search: ''
     };
 
     render() {
@@ -69,12 +72,34 @@ export default class CaloriesPage extends React.Component<Props,State> {
         let classes = "new-food-dialog";
         if(this.state.showAddFoodDialog){
             classes += " visible";
+            setTimeout(() => {
+                $(".food-search-input").focus();
+            }, 500);
         }
         return (
             <div className={classes}>
-
+                <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
+                       onChange={this.onSearchChanged}/>
+                <div className="search-results">
+                    {this.renderSearchResults()}
+                </div>
             </div>
         );
+    }
+
+    private onSearchChanged = (event) => {
+        this.setState({
+            search: event.target.value
+        });
+    }
+
+    private renderSearchResults(){
+        return <div />;
+        // const foodDefinitions = this.props.caloriesState.foodDefinitions;
+        // const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
+        //     return definition.name === this.
+        // });
+
     }
 
     private renderCaloriesPercentage(){
