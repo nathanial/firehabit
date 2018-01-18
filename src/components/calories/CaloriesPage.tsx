@@ -13,6 +13,7 @@ import ScrollArea from '../ScrollArea';
 import * as Plot from 'react-plotly.js'
 import {Button} from '@blueprintjs/core';
 import {ConsumedFoodsList} from './ConsumedFoodsList';
+import {Calendar} from './Calendar';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -52,7 +53,7 @@ export default class CaloriesPage extends React.Component<Props,State> {
         return (
             <div className="calories-page pt-card pt-elevation-3">
                 <div className={classes}>
-                    {this.renderCalendar()}
+                    <Calendar selectedDay={this.state.selectedDay} caloriesState={this.props.caloriesState} onChange={this.onDateChanged} />
                     {this.renderWeight()}
                     {this.renderFoodEaten()}
                     {this.renderCaloriesPercentage()}
@@ -66,6 +67,12 @@ export default class CaloriesPage extends React.Component<Props,State> {
                 </div>
             </div>
         );
+    }
+
+    private onDateChanged = (newDate) => {
+        this.setState({
+            selectedDay: newDate
+        });
     }
 
     private renderNewFoodDialog(){
@@ -159,66 +166,6 @@ export default class CaloriesPage extends React.Component<Props,State> {
         );
     }
 
-    private renderCalendar() {
-        const caloriesState = this.props.caloriesState;
-        const goal = parseInt(caloriesState['calorie-settings'].weightStasisGoal as any, 10);
-
-        let day = moment(this.state.selectedDay).format("MM/DD/YY");
-        const modifiers = {
-            tooManyCalories: (day) => {
-                day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-                if(!dayObj){
-                    return false;
-                }
-                const calories = _.sumBy(dayObj.consumed, (c: ConsumedFood) => parseInt(c.calories, 10))
-                if(calories > goal) {
-                    return true;
-                }
-                return false;
-            },
-            zeroCalories: (day) => {
-                day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-                if(!dayObj){
-                    return true;
-                }
-                const calories = _.sumBy(dayObj.consumed, (c: ConsumedFood) => parseInt(c.calories, 10))
-                if(calories === 0) {
-                    return true;
-                }
-                return false;
-            },
-            justRight: (day) => {
-                day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-                if(!dayObj){
-                    return false;
-                }
-                const calories = _.sumBy(dayObj.consumed, (c: ConsumedFood) => parseInt(c.calories, 10))
-                if(calories < goal && calories > 0) {
-                    return true;
-                }
-                return false;
-            }
-        };
-        const modifiersStyles = {
-            tooManyCalories: {
-                color: '#AA2222',
-                backgroundColor: `transparent`,
-            },
-            justRight: {
-                color: 'green',
-                fontWeight: 'bold',
-                backgroundColor: `transparent`
-            },
-            zeroCalories: {
-            }
-        };
-        return (
-            <DayPicker selectedDays={this.state.selectedDay} modifiers={modifiers} modifiersStyles={modifiersStyles} onDayClick={this.onDayClick}/>
-        );
-    }
 
     private renderWeightPlot(){
         var months = this.getMonths();
