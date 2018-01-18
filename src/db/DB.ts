@@ -134,7 +134,7 @@ export class DB {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 
-		const serverVersion = await this.getServerVersion(userId);
+		const serverVersion = await this.getServerVersion(userId) || 0;
 
 		if(parseInt(localStorage.getItem('version'), 10) !== serverVersion){
 			await this.loadData();
