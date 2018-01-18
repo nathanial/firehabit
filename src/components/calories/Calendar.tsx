@@ -77,7 +77,6 @@ export class Calendar extends React.PureComponent<Props,{}> {
     }
 
     private onDayClick = (newDate) => {
-        console.log("New Date", newDate);
         this.props.onChange(newDate);
     }
 

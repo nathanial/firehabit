@@ -11,9 +11,9 @@ type Props = {
 export class CaloriesPercentage extends React.PureComponent<Props,{}>{
     render(){
         const caloriesState = this.props.caloriesState;
+        const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings']
         let day = moment(this.props.selectedDay).format("MM/DD/YY");
         const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
-        const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings']
         const caloriesOfTheDay = _.sumBy(dayObj.consumed, c => parseInt(c.calories, 10));
         const percentage = Math.round(caloriesOfTheDay / weightStasisGoal * 100);
         let classes = "percentage-marker ";

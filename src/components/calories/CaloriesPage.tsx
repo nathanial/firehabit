@@ -18,6 +18,7 @@ import {WeightForm} from './WeightForm';
 import {CaloriesPercentage} from './CaloriesPercentage';
 import {WeightPlot} from './WeightPlot';
 import {CaloriesPlot} from './CaloriesPlot';
+import { NewFoodDialog } from './NewFoodDialog';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -39,7 +40,6 @@ export default class CaloriesPage extends React.Component<Props,State> {
         search: ''
     };
 
-    scrollbar: any;
 
     render() {
         let classes = "left-column";
@@ -62,68 +62,26 @@ export default class CaloriesPage extends React.Component<Props,State> {
                         <WeightPlot caloriesState={this.props.caloriesState} />
                         <CaloriesPlot caloriesState={this.props.caloriesState} />
                     </div>
-                    {this.renderNewFoodDialog()}
+                    <NewFoodDialog caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} visible={this.state.showAddFoodDialog} onClose={this.onCloseFoodDialog} />
                 </div>
             </div>
         );
     }
 
     private onDateChanged = (newDate) => {
+        let day = moment(newDate).format("MM/DD/YY");
+        const dayObj = _.find(this.props.caloriesState.days, (d: Day) => d.date === day);
+        if(_.isUndefined(dayObj)){
+            this.props.caloriesState.days.push({
+                id: generatePushID(),
+                date: day,
+                weight: 0,
+                consumed: []
+            });
+        }
         this.setState({
             selectedDay: newDate
         });
-    }
-
-    private renderNewFoodDialog(){
-        let classes = "new-food-dialog";
-        if(this.state.showAddFoodDialog){
-            classes += " visible";
-            if(!$(".food-search-input").is(":focus")){
-                setTimeout(() => {
-                    $(".food-search-input").focus();
-                }, 500);
-            }
-        }
-        return (
-            <div className={classes}>
-                <div className="search-input-container">
-                    <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
-                        onChange={this.onSearchChanged}/>
-                </div>
-                <div className="search-results">
-                    <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="search-results-content">
-                        {this.renderSearchResults()}
-                    </ScrollArea>
-                </div>
-            </div>
-        );
-    }
-
-    private onSearchChanged = (event) => {
-        this.setState({
-            search: event.target.value
-        });
-        this.scrollbar.stayInPlace = false;
-        this.scrollbar.resetTop().then(() => {
-            this.scrollbar.stayInPlace = true;
-        });
-    }
-
-    private renderSearchResults(){
-        const foodDefinitions = this.props.caloriesState.foodDefinitions;
-        const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
-            return _.includes(definition.name.toLowerCase(), this.state.search.toLowerCase())
-        });
-        return (
-            _.map(matches, match => {
-                return (
-                    <div className="search-result">
-                        <span className="food-name">{match.name}</span>
-                        <span className="food-calories">{match.calories}</span>
-                    </div>
-                );
-            })
-        );
     }
 
     private onToggleAddFood = () => {
@@ -132,9 +90,9 @@ export default class CaloriesPage extends React.Component<Props,State> {
         });
     }
 
-    private onDayClick = (newDate) => {
+    private onCloseFoodDialog = () => {
         this.setState({
-            selectedDay: newDate
+            showAddFoodDialog: false
         });
     }
 

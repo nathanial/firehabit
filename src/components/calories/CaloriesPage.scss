@@ -234,14 +234,25 @@
 		top: 46px;
 		bottom: 0px;
 		right: 0px;
-		left: 22px;
+		left: 0;
 		text-align: left;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
 
 		.search-result {
-			padding-top: 10px;
+			padding-top: 5px;
+			padding-left: 22px;
+			padding-bottom: 5px;
+			cursor: pointer;
+			&:hover {
+				background: rgba(255,255,255,0.1);
+			}
+
+			&:active {
+				background: rgba(255,255,255,0.25);
+			}
+			user-select: none;
 		}
 
 		.search-results-content {
