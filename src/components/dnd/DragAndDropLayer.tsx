@@ -85,45 +85,50 @@ export class DragAndDropLayer extends React.Component<{},State>{
 
 	componentDidMount(){
 		dndService.registerLayer(this);
-		document.addEventListener('mousemove', (event) => {
-			if(!_.isEmpty(this.state.draggables)){
-				for(let draggable of this.state.draggables){
-					draggable.x = event.pageX - 10;
-					draggable.y = event.pageY - 30;
-					this.forceUpdate();
-
-					for(let dropTarget of this.state.dropTargets){
-						if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
-							dropTarget.onHover(draggable);
-							// draggable.onHover(dropTarget);
-							break;
-						}
-					}
-				}
-			}
-		});
-		document.addEventListener('mouseup', (event) => {
-			event.preventDefault();
-			for(let draggable of this.state.draggables){
-				let dropped = false;
-				for(let dropTarget of this.state.dropTargets){
-					if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
-						draggable.onDrop(dropTarget);
-						dropped = true;
-						break;
-					}
-				}
-				if(!dropped){
-					draggable.onCancel();
-				}
-			}
-			this.setState({draggables: []});
-		}, true);
-
+		document.addEventListener('mousemove', this.onMouseMove)
+		document.addEventListener('mouseup', this.onMouseUp, true);
 	}
 
 	componentWillUnmount(){
 		dndService.layer = null;
+		document.removeEventListener('mousemove', this.onMouseMove);
+		document.removeEventListener('mouseup', this.onMouseUp, true);
+	}
+
+	onMouseMove = (event) => {
+		if(!_.isEmpty(this.state.draggables)){
+			for(let draggable of this.state.draggables){
+				draggable.x = event.pageX - 10;
+				draggable.y = event.pageY - 30;
+				this.forceUpdate();
+
+				for(let dropTarget of this.state.dropTargets){
+					if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
+						dropTarget.onHover(draggable);
+						// draggable.onHover(dropTarget);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	onMouseUp = (event) => {
+		event.preventDefault();
+		for(let draggable of this.state.draggables){
+			let dropped = false;
+			for(let dropTarget of this.state.dropTargets){
+				if(intersects(draggable, dropTarget.element.getBoundingClientRect()) && dropTarget.canDrop(draggable)){
+					draggable.onDrop(dropTarget);
+					dropped = true;
+					break;
+				}
+			}
+			if(!dropped){
+				draggable.onCancel();
+			}
+		}
+		this.setState({draggables: []});
 	}
 
 	async startDrag(pageX: number, pageY: number, width: number, height: number, data:any, element: React.ReactElement<any>): Promise<() => void>{
