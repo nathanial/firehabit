@@ -19,6 +19,7 @@ import {CaloriesPercentage} from './CaloriesPercentage';
 import {WeightPlot} from './WeightPlot';
 import {CaloriesPlot} from './CaloriesPlot';
 import { NewFoodDialog } from './NewFoodDialog';
+import {SettingsDialog} from './SettingsDialog';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -30,6 +31,7 @@ type State = {
     selectedDay: Date;
     showAddFoodDialog: boolean;
     search: string;
+    showSettingsDialog: boolean;
 }
 
 export default class CaloriesPage extends React.Component<Props,State> {
@@ -37,7 +39,8 @@ export default class CaloriesPage extends React.Component<Props,State> {
     state = {
         selectedDay: new Date(),
         showAddFoodDialog: false,
-        search: ''
+        search: '',
+        showSettingsDialog: false
     };
 
 
@@ -56,6 +59,7 @@ export default class CaloriesPage extends React.Component<Props,State> {
                     <WeightForm caloriesState={caloriesState} selectedDay={this.state.selectedDay} />
                     <ConsumedFoodsList day={dayObj} onToggleAddFood={this.onToggleAddFood}/>
                     <CaloriesPercentage caloriesState={caloriesState} selectedDay={this.state.selectedDay} />
+                    <Button className="calories-settings pt-minimal" iconName="settings" onClick={this.onOpenSettings} />
                 </div>
                 <div className="right-column">
                     <div className="graphs">
@@ -63,9 +67,20 @@ export default class CaloriesPage extends React.Component<Props,State> {
                         <CaloriesPlot caloriesState={this.props.caloriesState} />
                     </div>
                     <NewFoodDialog caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} visible={this.state.showAddFoodDialog} onClose={this.onCloseFoodDialog} />
+                    <SettingsDialog
+                         caloriesState={this.props.caloriesState}
+                         visible={this.state.showSettingsDialog}
+                         onClose={this.onOpenSettings} />
                 </div>
             </div>
         );
+    }
+
+    private onOpenSettings = () => {
+        this.setState({
+            showAddFoodDialog: false,
+            showSettingsDialog: !this.state.showSettingsDialog
+        });
     }
 
     private onDateChanged = (newDate) => {
@@ -86,13 +101,15 @@ export default class CaloriesPage extends React.Component<Props,State> {
 
     private onToggleAddFood = () => {
         this.setState({
-            showAddFoodDialog: !this.state.showAddFoodDialog
+            showAddFoodDialog: !this.state.showAddFoodDialog,
+            showSettingsDialog: false
         });
     }
 
     private onCloseFoodDialog = () => {
         this.setState({
-            showAddFoodDialog: false
+            showAddFoodDialog: false,
+            showSettingsDialog: false
         });
     }
 

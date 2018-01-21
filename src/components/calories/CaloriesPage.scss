@@ -6,6 +6,29 @@
 	height: 807px;
 	overflow: hidden;
 
+	.calories-settings {
+		position: absolute;
+		bottom: 17px;
+		right: 33px;
+		padding: 0;
+		min-width: 16px;
+		min-height: 11px;
+		line-height: 11px;
+		&::before {
+			font-size: 11px;
+			padding: 0;
+		}
+
+		outline-width: 0 !important;
+
+		&:hover {
+			&::before {
+				color: white !important;
+				font-weight: bold;
+			}
+		}
+	}
+
 
 	.left-column {
 
@@ -24,7 +47,7 @@
 			position: absolute;
 			left: 25px;
 			bottom: 15px;
-			right: 25px;
+			right: 61px;
 			overflow: hidden;
 			height: 15px;
 			background: #444;
@@ -191,6 +214,55 @@
 	}
 
 
+}
+
+.settings-dialog {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 300px;
+	overflow: hidden;
+	transform: translateX(-300px);
+	background: #333;
+	transition: transform 0.3s ease-in-out;
+	box-shadow:rgba(0,0,0,0.3) 3px 0px 8px;
+
+	&.visible {
+		transform: translateX(0px);
+	}
+	z-index: 2;
+
+	padding-top: 45px;
+	padding-left: 25px;
+	text-align: left;
+	& > label {
+		display: inline-block;
+	}
+	& > input {
+		display: inline-block;
+		width: 110px;
+		margin-left: 20px;
+	}
+
+	& > .close-btn {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+
+	& > h3 {
+		position: absolute;
+		top: 10px;
+		left: 0;
+		right: 0;
+		text-align: center;
+		margin: 0;
+		padding: 0;
+		font-size:12px;
+		padding-bottom: 12px;
+		border-bottom: 1px solid #222;
+	}
 }
 
 
