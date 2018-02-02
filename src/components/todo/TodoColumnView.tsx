@@ -134,7 +134,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         index += 1;
                     }
                 }
-                console.log("Hover", index, draggable);
             }
         });
     }
@@ -204,6 +203,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private findNeighbor(draggable: Draggable){
         const $el = $(ReactDOM.findDOMNode(this));
         const todoViews = $el.find('.todo-view').toArray();
+        const narrowedDraggable = this.createNarrowedDraggable(draggable);
         if(_.isEmpty(todoViews)){
             return {
                 todoID: null,
@@ -226,10 +226,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                 bottom: rect.bottom
             };
 
-            if(intersects(draggable, lowerHalf)){
+            if(intersects(narrowedDraggable, lowerHalf)){
                 return {todoID: $(todoView).data('todo-id'), direction:'below'};
             }
-            if(intersects(draggable, upperHalf)){
+            if(intersects(narrowedDraggable, upperHalf)){
                 return {todoID: $(todoView).data('todo-id'), direction:'above'};
             }
         }
@@ -242,8 +242,13 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             });
         }
         if(lessThanAll()){
+            const topTodo = _.first(todoViews);
+            let todoID;
+            if(topTodo){
+                todoID = $(topTodo).data('todo-id');
+            }
             return {
-                todoID: _.first(todoViews),
+                todoID,
                 direction: 'above'
             };
         }
@@ -253,6 +258,18 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         };
     }
 
+    private createNarrowedDraggable(draggable: Draggable): Draggable {
+        if(draggable.height > 40){
+            const deltaHeight = draggable.height - 40;
+            return {
+                ...draggable,
+                x: draggable.x,
+                y: deltaHeight / 2 + draggable.y,
+                width: draggable.width,
+                height: 40
+            };
+        }
+    }
 
 
     private renderSettings = () => {
