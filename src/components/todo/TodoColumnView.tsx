@@ -134,6 +134,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         index += 1;
                     }
                 }
+                console.log("Hover", index, draggable);
             }
         });
     }
@@ -224,11 +225,12 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                 top: rect.height / 2 + rect.top,
                 bottom: rect.bottom
             };
-            if(intersects(draggable, upperHalf)){
-                return {todoID: $(todoView).data('todo-id'), direction:'above'};
-            }
+
             if(intersects(draggable, lowerHalf)){
                 return {todoID: $(todoView).data('todo-id'), direction:'below'};
+            }
+            if(intersects(draggable, upperHalf)){
+                return {todoID: $(todoView).data('todo-id'), direction:'above'};
             }
         }
         // above all
