@@ -52,6 +52,15 @@ export default class CaloriesPage extends React.Component<Props,State> {
         const caloriesState = this.props.caloriesState;
         let day = moment(this.state.selectedDay).format("MM/DD/YY");
         const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+        if(!dayObj){
+            this.props.caloriesState.days.push({
+                id: generatePushID(),
+                date: day,
+                weight: 0,
+                consumed: []
+            });
+            return <div />;
+        }
         return (
             <div className="calories-page pt-card pt-elevation-3">
                 <div className={classes}>
