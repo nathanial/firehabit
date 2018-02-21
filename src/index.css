@@ -121,6 +121,11 @@
   .todo-column-header .inline-text input {
     text-align: center;
     color: white; }
+  .todo-column-header .todo-count {
+    position: absolute;
+    left: 30px;
+    top: 7px;
+    font-weight: bold; }
 
 .todo-view.editing {
   outline: 2px solid #e7b81e; }

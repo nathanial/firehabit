@@ -98,6 +98,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                             className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
                             onClick={this.onAddTodo} />
                     {this.renderTrashBtn()}
+                    {this.renderTodoCount()}
                     <div className={toolbarBorderClass}></div>
                 </div>
                 {this.renderContent()}
@@ -142,6 +143,14 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         if(this.unregisterDropTarget){
             this.unregisterDropTarget();
             this.unregisterDropTarget = null;
+        }
+    }
+
+    private renderTodoCount(){
+        if(this.props.column.showTodoCount){
+            return (
+                <div className="todo-count">({this.props.column.todos.length})</div>
+            );
         }
     }
 

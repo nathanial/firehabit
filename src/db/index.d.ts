@@ -93,6 +93,7 @@ interface TodoColumn {
 	color: string;
 	enableTabs: boolean;
 	activeTab: string;
+	showTodoCount: boolean;
 	tabs: TodoTab[];
 	editingName: boolean;
 	confirmDeletion: boolean;

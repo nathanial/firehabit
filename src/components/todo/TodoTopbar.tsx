@@ -118,6 +118,7 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 			confirmDeletion: true,
 			showClearButton: false,
 			showSettings: false,
+			showTodoCount: false,
 			todos: [],
 			editingName: false,
 			index: 0,

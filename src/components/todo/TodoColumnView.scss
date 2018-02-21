@@ -170,6 +170,13 @@
             color: white;
         }
     }
+
+    .todo-count {
+        position: absolute;
+        left: 30px;
+        top: 7px;
+        font-weight: bold;
+    }
 }
 
 .todo-view {

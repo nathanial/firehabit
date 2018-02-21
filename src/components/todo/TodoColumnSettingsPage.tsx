@@ -33,6 +33,7 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 		let showClearBtn = column.showClearButton;
 		const color = column.color;
 		const enableTabs = column.enableTabs;
+		const showTodoCount = column.showTodoCount;
 		const style = _.extend({}, {
 		}, this.props.style);
 		return (
@@ -50,6 +51,9 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 				<Checkbox checked={enableTabs} onChange={this.onChangeEnableTabs}>
 					Enable Tabs
 				</Checkbox>
+				<Checkbox checked={showTodoCount} onChange={this.onChangeShowTodoCount}>
+					Show Todo Count
+				</Checkbox>
 				<Button className={`pt-intent-danger ${deleteColumnBtnClass}`} onClick={this.onDeleteColumn}>Delete Column</Button>
 				<div className="move-buttons">
 					<Button onClick={this.onMoveLeft}>Move Left</Button>
@@ -57,6 +61,10 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 				</div>
 			</div>
 		);
+	}
+
+	private onChangeShowTodoCount = (event) => {
+		this.props.column.set({showTodoCount: event.target.checked});
 	}
 
 	private onChangeEnableTabs = (event) => {
