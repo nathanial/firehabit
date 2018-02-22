@@ -52,6 +52,14 @@
 			height: 15px;
 			background: #444;
 			border: 1px solid #777;
+			.calories-cursor {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				background: white;
+				width: 1px;
+			}
+
 			.percentage-marker {
 				height: 100%;
 				&.danger {

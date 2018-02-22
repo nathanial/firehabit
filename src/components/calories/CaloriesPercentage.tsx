@@ -9,10 +9,12 @@ type Props = {
 }
 
 export class CaloriesPercentage extends React.PureComponent<Props,{}>{
+    private cursorTimer;
+
     render(){
         const caloriesState = this.props.caloriesState;
         const {caloricGoal, weightStasisGoal} = caloriesState['calorie-settings']
-        let day = moment(this.props.selectedDay).format("MM/DD/YY");
+        const day = this.getSelectedDate();
         const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
         const caloriesOfTheDay = _.sumBy(dayObj.consumed, c => parseInt(c.calories, 10));
         const percentage = Math.round(caloriesOfTheDay / weightStasisGoal * 100);
@@ -26,7 +28,30 @@ export class CaloriesPercentage extends React.PureComponent<Props,{}>{
             <div className="calories-percentage">
                 <div className={classes} style={{width: `${Math.min(percentage, 100)}%`}} />
                 <span>{caloriesOfTheDay}/{weightStasisGoal}</span>
+                {this.renderCursor()}
             </div>
         );
+    }
+
+    componentDidMount() {
+        this.cursorTimer = setInterval(() => {
+            this.forceUpdate();
+        }, 1000 * 10); // run once every 10 seconds
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.cursorTimer);
+    }
+
+    private renderCursor(){
+        if(moment().format('MM/DD/YY') === this.getSelectedDate()){
+            const percentage = (moment().hours() + moment().minutes() / 60) / 24;
+            return <div className="calories-cursor" style={{left: `${percentage * 100}%`}} />
+        }
+    }
+
+    private getSelectedDate(){
+        let day = moment(this.props.selectedDay).format("MM/DD/YY");
+        return day;
     }
 }

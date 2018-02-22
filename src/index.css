@@ -315,6 +315,12 @@
       height: 15px;
       background: #444;
       border: 1px solid #777; }
+      .calories-page .left-column .calories-percentage .calories-cursor {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        background: white;
+        width: 1px; }
       .calories-page .left-column .calories-percentage .percentage-marker {
         height: 100%;
         background: #22AA22; }
