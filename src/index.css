@@ -276,10 +276,13 @@
 
 .calories-page {
   background: #333 !important;
-  width: 1000px;
-  margin: 30px auto;
+  width: 100%;
+  max-width: 1000px;
+  margin: 10px auto;
   position: relative;
-  height: 807px;
+  max-height: 807px;
+  height: calc(100% - 20px);
+  min-height: 600px;
   overflow: hidden; }
   .calories-page .calories-settings {
     position: absolute;
