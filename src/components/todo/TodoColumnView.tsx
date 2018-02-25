@@ -16,7 +16,6 @@ import InlineText from '../InlineText';
 import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { DragDropContext, Droppable, Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
-
 const todoColumnClass = cxs({
     display: 'inline-block',
     margin: '10px',
@@ -73,12 +72,6 @@ interface Props {
     onDeleteColumn(column: TodoColumn);
 }
 
-function reorder<T>(list: T[], startIndex: number, endIndex: number) {
-    const trans = list['transact']();
-    const [removed] = trans.splice(startIndex, 1);
-    trans.splice(endIndex, 0, removed);
-    list['run']();
-};
 
 export default class TodoColumnView extends React.PureComponent<Props> {
     private animating: boolean;
@@ -89,42 +82,33 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const columnColor = this.props.column.color;
         const column = this.props.column;
         return(
-            <DragDropContext onDragEnd={this.onDragEnd}>
-                <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                        <div ref={provided.innerRef} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
-                            <div className="todo-column-header" style={{background: columnColor}}>
-                                <InlineText className={columnNameClass}
-                                            style={{color: 'white'}}
-                                            editing={this.props.column.editingName}
-                                            value={this.props.column.name}
-                                            onChange={this.onChangeColumnName}
-                                            onStartEditing={this.onStartEditing}
-                                            onStopEditing={this.onStopEditing}/>
-                                <Button iconName="settings"
-                                        className="settings-btn pt-minimal"
-                                        onClick={this.gotoColumnSettings} />
-                                <Button iconName="plus"
-                                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                                        onClick={this.onAddTodo} />
-                                {this.renderTrashBtn()}
-                                {this.renderTodoCount()}
-                                <div className={toolbarBorderClass}></div>
-                            </div>
-                            {this.renderContent()}
-                            {provided.placeholder}
+            <Droppable droppableId={column.id}>
+                {(provided, snapshot) => (
+                    <div ref={provided.innerRef} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                        <div className="todo-column-header" style={{background: columnColor}}>
+                            <InlineText className={columnNameClass}
+                                        style={{color: 'white'}}
+                                        editing={this.props.column.editingName}
+                                        value={this.props.column.name}
+                                        onChange={this.onChangeColumnName}
+                                        onStartEditing={this.onStartEditing}
+                                        onStopEditing={this.onStopEditing}/>
+                            <Button iconName="settings"
+                                    className="settings-btn pt-minimal"
+                                    onClick={this.gotoColumnSettings} />
+                            <Button iconName="plus"
+                                    className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                                    onClick={this.onAddTodo} />
+                            {this.renderTrashBtn()}
+                            {this.renderTodoCount()}
+                            <div className={toolbarBorderClass}></div>
                         </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+                        {this.renderContent()}
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
         );
-    }
-
-    private onDragEnd = (result) => {
-        if (!result.destination) {
-          return;
-        }
-        reorder(this.props.column.todos, result.source.index, result.destination.index);
     }
 
     private renderTodoCount(){
@@ -161,7 +145,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                         const style = {...provided.draggableProps.style};
                         return (
                             <div className="todo-draggable">
-                                <div ref={provided.innerRef} style={style} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                <div ref={provided.innerRef}
+                                     style={style}
+                                     {...provided.draggableProps as any}
+                                     {...provided.dragHandleProps}>
                                     <TodoView todo={todo}
                                         visible={visible}
                                         confirmDeletion={column.confirmDeletion}

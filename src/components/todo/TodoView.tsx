@@ -37,7 +37,6 @@ function getColorStyle(todo: Todo){
 export default class TodoView extends React.PureComponent<Props, {}> {
 
     render(){
-        console.log("RENDER ME", this.props.todo.name);
         let extraClasses = '';
         if(this.props.todo.dragged){
             extraClasses += ' dragged';
