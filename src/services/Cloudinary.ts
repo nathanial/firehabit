@@ -1,3 +1,8 @@
+import * as cloudinary from 'cloudinary-core';
+const cloudName = 'dsv1fug8x';
+const unsignedUploadPreset = 'fnddxf5w';
+const cl = new cloudinary.Cloudinary({cloud_name: cloudName, secure: true});
+
 export async function uploadFile(file: File): Promise<Attachment> => {
     return new Promise<Attachment>((resolve) => {
         var url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;

@@ -157,6 +157,30 @@
       text-align: center;
       cursor: pointer; }
 
+.todo-content-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 2 0 0; }
+  .todo-content-wrapper .pt-editable-text {
+    max-width: 180px; }
+
+.todo-view {
+  position: relative;
+  padding: 10px;
+  margin: 10px;
+  color: black;
+  text-align: left;
+  cursor: pointer;
+  width: 240px; }
+
+.todo-wrapper {
+  position: relative;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: row; }
+
 .inline-text {
   max-width: 200px;
   text-overflow: unset;

@@ -9,59 +9,7 @@ import InlineText from '../InlineText';
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
-import * as cloudinary from 'cloudinary-core';
 import TodoSettingsDialog from './TodoSettingsDialog';
-
-const cloudName = 'dsv1fug8x';
-const unsignedUploadPreset = 'fnddxf5w';
-const cl = new cloudinary.Cloudinary({cloud_name: cloudName, secure: true});
-
-
-
-const todoContentWrapperClass = cxs({
-    position: 'relative',
-    display: 'flex',
-    'flex-direction': 'column',
-    'justify-content': 'center',
-    '.pt-editable-text': {
-        'max-width': '180px'
-    },
-    flex: '2 0 0'
-});
-
-const todoItemClass = cxs({
-    position: 'relative',
-    padding: '10px',
-    margin: '10px',
-    color: 'black',
-    'text-align': 'left',
-    cursor: 'pointer',
-    width: '240px'
-});
-
-const todoWrapperClass = cxs({
-    position: 'relative',
-    padding: '10px 0',
-    display: 'flex',
-    'flex-direction': 'row'
-});
-
-const spinnerContainerClass = cxs({
-    background: 'rgba(0,0,0,0.6)',
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0
-});
-
-const spinnerClass = cxs({
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    marginTop: '-26px',
-    marginLeft: '-28px'
-});
 
 interface Props {
     todo: Todo;
@@ -91,14 +39,14 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
     render(){
         const colorStyle = getColorStyle(this.props.todo);
         return (
-            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass}`}
+            <div className={`todo-view pt-card pt-elevation-2`}
                  style={{padding:0, background: '#eee', margin: 0}}>
                 <div>
-                    <div className={'todo-wrapper ' + todoWrapperClass} style={colorStyle} >
+                    <div className='todo-wrapper' style={colorStyle} >
                         <div className="drag-handle">
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
-                        <div className={todoContentWrapperClass}>
+                        <div className="todo-content-wrapper">
                             <InlineText value={this.props.todo.name}
                                         editing={this.props.todo.editing}
                                         style={colorStyle}
@@ -106,11 +54,6 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
                                         onChange={() => {}}
                                         onStartEditing={()=>{}}
                                         onStopEditing={()=>{}}/>
-                        </div>
-                        <div className="todo-controls">
-                            <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" />
-                            <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" />
-                            <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" />
                         </div>
                     </div>
                     {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  /> }
@@ -120,7 +63,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
     }
 }
 
-class TodoView extends React.PureComponent<Props, {}> {
+export default class TodoView extends React.PureComponent<Props, {}> {
 
     render(){
         let extraClasses = '';
@@ -138,16 +81,16 @@ class TodoView extends React.PureComponent<Props, {}> {
             ...(this.props.style || {})
         };
         return (
-            <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses} ${editingClass}`}
+            <div className={`todo-view pt-card pt-elevation-2 ${extraClasses} ${editingClass}`}
                  data-todo-id={this.props.todo.id}
                  style={style}
                  onDragStart={this.onDragStart}>
                 <div>
-                    <div className={'todo-wrapper ' + todoWrapperClass} style={colorStyle} >
+                    <div className='todo-wrapper' style={colorStyle} >
                         <div className="drag-handle" draggable={true}>
                             <div className="inner-icon pt-icon-drag-handle-vertical"/>
                         </div>
-                        <div className={todoContentWrapperClass}>
+                        <div className='todo-content-wrapper'>
                             <InlineText value={this.props.todo.name}
                                         multiline={true}
                                         style={colorStyle}
@@ -247,9 +190,5 @@ class TodoView extends React.PureComponent<Props, {}> {
         }
     }
 
-    // *********** Upload file to Cloudinary ******************** //
-
-
 }
 
-export default TodoView;
