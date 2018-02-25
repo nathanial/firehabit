@@ -76,7 +76,13 @@
   version "4.14.85"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.85.tgz#a16fbf942422f6eca5622b6910492c496c35069b"
 
-"@types/react@^15.6.2":
+"@types/react-beautiful-dnd@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-beautiful-dnd/-/react-beautiful-dnd-4.0.0.tgz#8a86b5e644123de5518fe8abb86d35476e353d96"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@^15.6.2":
   version "15.6.7"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-15.6.7.tgz#e910b6aace59d8d0b48dd679c2c03cffedafeec6"
 
@@ -5250,11 +5256,11 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@>=3.0, "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.0.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.4, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@~4.17.4:
+lodash@>=3.0, "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.0.1, lodash@^4.15.0, lodash@^4.16.4, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
-lodash@^4.17.5, lodash@^4.2.1:
+lodash@^4.14.0, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0, lodash@~4.17.4:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 

@@ -1,5 +1,4 @@
 
-
 .todo-content-wrapper {
     position: relative;
     display: flex;
@@ -13,8 +12,6 @@
 
 .todo-view {
     position: relative;
-    padding: 10px;
-    margin: 10px;
     color: black;
     text-align: left;
     cursor: pointer;
@@ -26,4 +23,13 @@
     padding: 10px 0;
     display: flex;
     flex-direction: row;
+}
+
+
+.todo-view-wrapper {
+    padding:5px 0;
+}
+
+.todo-draggable:first-child {
+    margin-top: 5px;
 }

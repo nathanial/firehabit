@@ -27,10 +27,6 @@ body {
 }
 
 
-.todo-view:first-child {
-  margin-top: 15px !important;
-}
-
 .custom-scrollbar .custom-scrollbar-handle {
   transition: background-color 0.15s ease-in;
 }
@@ -38,32 +34,6 @@ body {
 .custom-scrollbar:hover .custom-scrollbar-handle, .custom-scrollbar:active .custom-scrollbar-handle {
   background-color: rgba(255,255,255,0.7);
 }
-
-
-.todo-view:first-child:not(:last-child):not(.dragged) {
-  &.todo-view-enter {
-    position: absolute;
-    max-height: 0 !important;
-    opacity: 0.01;
-  }
-
-  &.todo-view-enter.todo-view-enter-active {
-    opacity: 1;
-    top: -15px;
-    max-height: 500px !important;
-    transition: opacity 150ms 150ms ease-out !important;
-  }
-
-  &.todo-view-enter + .todo-view {
-    margin-top: 15px !important;
-  }
-
-  &.todo-view-enter ~ .todo-view {
-    transition: transform 150ms ease-out !important;
-    transform: translateY($downward-translate-y);
-  }
-}
-
 
 .todo-column-settings {
   top: 40px;
@@ -119,25 +89,8 @@ body {
 // .settings-enter.settings-enter-active {
 // }
 
-.todo-view-leave {
-  opacity: 1;
-  max-height: 500px !important;
-  overflow: hidden;
-}
-
 $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transform 150ms ease-out 150ms;
 
-.todo-view-leave.todo-view-leave-active {
-  transition: $out-transition !important;
-  max-height: 57px !important;
-  opacity: 0.01;
-}
-
-
-.todo-view-leave ~ .todo-view {
-  transition: $out-transition !important;
-  transform: translateY(-$downward-translate-y);
-}
 
 .pt-overlay-backdrop {
 }

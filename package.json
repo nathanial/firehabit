@@ -5,6 +5,7 @@
   "dependencies": {
     "@blueprintjs/core": "^1.27.0",
     "@blueprintjs/datetime": "^1.25.1",
+    "@types/react-beautiful-dnd": "^4.0.0",
     "blueimp-file-upload": "^9.19.1",
     "cloudinary-core": "^2.3.0",
     "cloudinary-jquery-file-upload": "^2.3.0",

@@ -14,7 +14,7 @@ import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import InlineText from '../InlineText';
 import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
 
 const todoColumnClass = cxs({
@@ -77,6 +77,7 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
     const trans = list['transact']();
     const [removed] = trans.splice(startIndex, 1);
     trans.splice(endIndex, 0, removed);
+    list['run']();
 };
 
 export default class TodoColumnView extends React.PureComponent<Props> {
@@ -158,9 +159,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                 <Draggable key={todo.id} draggableId={todo.id} index={index}>
                     {(provided, snapshot) => {
                         const style = {...provided.draggableProps.style};
-                        style.left = 0;
                         return (
-                            <div>
+                            <div className="todo-draggable">
                                 <div ref={provided.innerRef} style={style} {...provided.draggableProps} {...provided.dragHandleProps}>
                                     <TodoView todo={todo}
                                         visible={visible}

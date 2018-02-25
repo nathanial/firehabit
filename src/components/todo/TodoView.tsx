@@ -54,32 +54,34 @@ export default class TodoView extends React.PureComponent<Props, {}> {
         };
         const otherProps = _.omit(this.props, ['todo', 'visible', 'style', 'confirmDeletion', 'onDelete']);
         return (
-            <div className={`todo-view pt-card pt-elevation-2 ${extraClasses} ${editingClass}`}
-                 data-todo-id={this.props.todo.id}
-                 style={style}
-                 {...otherProps}>
-                <div>
-                    <div className='todo-wrapper' style={colorStyle} >
-                        <div className="drag-handle" draggable={true}>
-                            <div className="inner-icon pt-icon-drag-handle-vertical"/>
+            <div className="todo-view-wrapper">
+                <div className={`todo-view pt-card pt-elevation-2 ${extraClasses} ${editingClass}`}
+                    data-todo-id={this.props.todo.id}
+                    style={style}
+                    {...otherProps}>
+                    <div>
+                        <div className='todo-wrapper' style={colorStyle} >
+                            <div className="drag-handle" draggable={true}>
+                                <div className="inner-icon pt-icon-drag-handle-vertical"/>
+                            </div>
+                            <div className='todo-content-wrapper'>
+                                <InlineText value={this.props.todo.name}
+                                            multiline={true}
+                                            style={colorStyle}
+                                            placeholder="New Todo"
+                                            editing={this.props.todo.editing || false}
+                                            onChange={this.onNameChanged}
+                                            onStartEditing={this.onStartEditing}
+                                            onStopEditing={this.onStopEditing} />
+                            </div>
+                            <div className="todo-controls">
+                                <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+                                <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
+                                <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
+                            </div>
                         </div>
-                        <div className='todo-content-wrapper'>
-                            <InlineText value={this.props.todo.name}
-                                        multiline={true}
-                                        style={colorStyle}
-                                        placeholder="New Todo"
-                                        editing={this.props.todo.editing || false}
-                                        onChange={this.onNameChanged}
-                                        onStartEditing={this.onStartEditing}
-                                        onStopEditing={this.onStopEditing} />
-                        </div>
-                        <div className="todo-controls">
-                            <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-                            <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-                            <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
-                        </div>
+                        {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                     </div>
-                    {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                 </div>
             </div>
         );
