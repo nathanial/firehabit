@@ -139,6 +139,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const column = this.props.column;
         return column.todos.map((todo, index) => {
             const visible = _.isUndefined(column.activeTab) || (column.activeTab === '0' && _.isUndefined(todo.tab)) || todo.tab === column.activeTab;
+            if(!visible) {
+                return;
+            }
             return (
                 <Draggable key={todo.id} draggableId={todo.id} index={index}>
                     {(provided, snapshot) => {
