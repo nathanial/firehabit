@@ -31,14 +31,6 @@ const gravatarClass = cxs({
 	borderRadius: '50%'
 });
 
-const siteNavbarClass = cxs({
-	background: '#333',
-	display: 'block',
-	width: '100%',
-	height: '50px',
-	padding: '0 20px'
-});
-
 const navBtnClass = cxs({
 	borderRadius: 0,
 	cursor: 'pointer',
@@ -76,7 +68,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
 		const {path} = this.props;
 		return (
-			<nav className={`${siteNavbarClass}`} {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
+			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<div className="pt-navbar-group pt-align-left">
 					<div className="pt-navbar-heading" style={{height: '32px', display: 'flex', flexDirection:'row', alignItems:'center', justifyContent: 'center'}}>
 						<img style={{height:32, marginRight: 10}} src="icons/FireHabitLogo.png" />

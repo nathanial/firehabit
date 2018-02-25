@@ -1,0 +1,22 @@
+
+.site-navbar {
+    background: #333;
+	display: block;
+	width: 100%;
+	height: 50px;
+    padding: 0 20px;
+}
+
+
+@media (max-width: 400px) {
+    .site-navbar {
+        padding: 0;
+        overflow: hidden;
+        .pt-navbar-divider {
+            border-width: 0;
+        }
+        .pt-navbar-heading {
+            display: none !important;
+        }
+    }
+}
