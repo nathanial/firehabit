@@ -13,8 +13,8 @@ import DialogService from "../../services/DialogService";
 import * as ReactDOM from "react-dom";
 import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import InlineText from '../InlineText';
-import {dndService, Draggable, intersects} from "../dnd/DragAndDropLayer";
 import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 
 const todoColumnClass = cxs({
@@ -73,6 +73,12 @@ interface Props {
     onDeleteColumn(column: TodoColumn);
 }
 
+function reorder<T>(list: T[], startIndex: number, endIndex: number) {
+    const trans = list['transact']();
+    const [removed] = trans.splice(startIndex, 1);
+    trans.splice(endIndex, 0, removed);
+};
+
 export default class TodoColumnView extends React.PureComponent<Props> {
     private animating: boolean;
     private scrollbar: ScrollArea;
@@ -82,68 +88,42 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const columnColor = this.props.column.color;
         const column = this.props.column;
         return(
-            <div className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
-                <div className="todo-column-header" style={{background: columnColor}}>
-                    <InlineText className={columnNameClass}
-                                style={{color: 'white'}}
-                                editing={this.props.column.editingName}
-                                value={this.props.column.name}
-                                onChange={this.onChangeColumnName}
-                                onStartEditing={this.onStartEditing}
-                                onStopEditing={this.onStopEditing}/>
-                    <Button iconName="settings"
-                            className="settings-btn pt-minimal"
-                            onClick={this.gotoColumnSettings} />
-                    <Button iconName="plus"
-                            className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                            onClick={this.onAddTodo} />
-                    {this.renderTrashBtn()}
-                    {this.renderTodoCount()}
-                    <div className={toolbarBorderClass}></div>
-                </div>
-                {this.renderContent()}
-            </div>
+            <DragDropContext onDragEnd={this.onDragEnd}>
+                <Droppable droppableId="droppable">
+                    {(provided, snapshot) => (
+                        <div ref={provided.innerRef} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                            <div className="todo-column-header" style={{background: columnColor}}>
+                                <InlineText className={columnNameClass}
+                                            style={{color: 'white'}}
+                                            editing={this.props.column.editingName}
+                                            value={this.props.column.name}
+                                            onChange={this.onChangeColumnName}
+                                            onStartEditing={this.onStartEditing}
+                                            onStopEditing={this.onStopEditing}/>
+                                <Button iconName="settings"
+                                        className="settings-btn pt-minimal"
+                                        onClick={this.gotoColumnSettings} />
+                                <Button iconName="plus"
+                                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                                        onClick={this.onAddTodo} />
+                                {this.renderTrashBtn()}
+                                {this.renderTodoCount()}
+                                <div className={toolbarBorderClass}></div>
+                            </div>
+                            {this.renderContent()}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
         );
     }
 
-    componentDidMount(){
-        const element = ReactDOM.findDOMNode(this);
-        this.unregisterDropTarget = dndService.addDropTarget({
-            element,
-            canDrop: (draggable: Draggable) => {
-                return true;
-            },
-            onDrop: (draggable: Draggable) => {
-                const {todoID, direction} = this.findNeighbor(draggable);
-                let index = this.props.column.todos.length;
-                if(todoID){
-                    const todo = _.find(this.props.column.todos, (todo: Todo) => todo.id === todoID);
-                    index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
-                    if(direction !== 'above'){
-                        index += 1;
-                    }
-                }
-                this.dropTodo(draggable.data,index);
-            },
-            onHover: (draggable: Draggable) => {
-                const {todoID, direction} = this.findNeighbor(draggable);
-                let index = this.props.column.todos.length;
-                if(todoID){
-                    const todo = _.find(this.props.column.todos, (todo: Todo) => todo.id === todoID);
-                    index = _.findIndex(this.props.column.todos, (todo: Todo) => todo.id === todoID);
-                    if(direction !== 'above'){
-                        index += 1;
-                    }
-                }
-            }
-        });
-    }
-
-    componentWillUnmount(){
-        if(this.unregisterDropTarget){
-            this.unregisterDropTarget();
-            this.unregisterDropTarget = null;
+    private onDragEnd = (result) => {
+        if (!result.destination) {
+          return;
         }
+        reorder(this.props.column.todos, result.source.index, result.destination.index);
     }
 
     private renderTodoCount(){
@@ -164,9 +144,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                     <TodoColumnTabs column={column}
                                     onHandleTabChanged={this.onHandleTabChanged} />}
                 <ScrollArea ref={scrollbar => this.scrollbar = scrollbar} className="todo-list">
-                    <ReactCSSTransitionGroup transitionName="todo-view" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                        {this.renderTodos()}
-                    </ReactCSSTransitionGroup>
+                    {this.renderTodos()}
                 </ScrollArea>
             </div>
         )
@@ -174,14 +152,26 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 
     private renderTodos = () => {
         const column = this.props.column;
-        return column.todos.map((todo) => {
+        return column.todos.map((todo, index) => {
             const visible = _.isUndefined(column.activeTab) || (column.activeTab === '0' && _.isUndefined(todo.tab)) || todo.tab === column.activeTab;
             return (
-                <TodoView key={todo.id}
-                          todo={todo}
-                          visible={visible}
-                          confirmDeletion={column.confirmDeletion}
-                          onDelete={this.onDeleteTodo} />
+                <Draggable key={todo.id} draggableId={todo.id} index={index}>
+                    {(provided, snapshot) => {
+                        const style = {...provided.draggableProps.style};
+                        style.left = 0;
+                        return (
+                            <div>
+                                <div ref={provided.innerRef} style={style} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                    <TodoView todo={todo}
+                                        visible={visible}
+                                        confirmDeletion={column.confirmDeletion}
+                                        onDelete={this.onDeleteTodo} />
+                                </div>
+                                {provided.placeholder}
+                            </div>
+                        );
+                    }}
+                </Draggable>
             );
         });
     }
@@ -206,77 +196,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const index = _.findIndex(this.props.column.todos, t => t.id === todo.id);
         if(index >= 0){
             this.props.column.todos.splice(index, 1);
-        }
-    }
-
-    private findNeighbor(draggable: Draggable){
-        const $el = $(ReactDOM.findDOMNode(this));
-        const todoViews = $el.find('.todo-view').toArray();
-        const narrowedDraggable = this.createNarrowedDraggable(draggable);
-        if(_.isEmpty(todoViews)){
-            return {
-                todoID: null,
-                direction: 'none'
-            };
-        }
-
-        for(let todoView of todoViews){
-            const rect = todoView.getBoundingClientRect();
-            const upperHalf = {
-                left: rect.left,
-                right: rect.right,
-                top: rect.top,
-                bottom: rect.height / 2 + rect.top
-            };
-            const lowerHalf = {
-                left: rect.left,
-                right: rect.right,
-                top: rect.height / 2 + rect.top,
-                bottom: rect.bottom
-            };
-
-            if(intersects(narrowedDraggable, lowerHalf)){
-                return {todoID: $(todoView).data('todo-id'), direction:'below'};
-            }
-            if(intersects(narrowedDraggable, upperHalf)){
-                return {todoID: $(todoView).data('todo-id'), direction:'above'};
-            }
-        }
-        // above all
-        function lessThanAll(){
-            return !_.some(todoViews, (todoView) => {
-                const rect = todoView.getBoundingClientRect();
-                const draggableBottom = draggable.y + draggable.height;
-                return draggableBottom > rect.top;
-            });
-        }
-        if(lessThanAll()){
-            const topTodo = _.first(todoViews);
-            let todoID;
-            if(topTodo){
-                todoID = $(topTodo).data('todo-id');
-            }
-            return {
-                todoID,
-                direction: 'above'
-            };
-        }
-        return {
-            todoID: null,
-            direction: 'none'
-        };
-    }
-
-    private createNarrowedDraggable(draggable: Draggable): Draggable {
-        if(draggable.height > 40){
-            const deltaHeight = draggable.height - 40;
-            return {
-                ...draggable,
-                x: draggable.x,
-                y: deltaHeight / 2 + draggable.y,
-                width: draggable.width,
-                height: 40
-            };
         }
     }
 

@@ -6,7 +6,6 @@ import {Spinner, Button} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
 import InlineText from '../InlineText';
-import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
 import TodoSettingsDialog from './TodoSettingsDialog';
@@ -35,37 +34,10 @@ function getColorStyle(todo: Todo){
     return colorStyle;
 }
 
-class TodoDragPreview extends React.PureComponent<PreviewProps> {
-    render(){
-        const colorStyle = getColorStyle(this.props.todo);
-        return (
-            <div className={`todo-view pt-card pt-elevation-2`}
-                 style={{padding:0, background: '#eee', margin: 0}}>
-                <div>
-                    <div className='todo-wrapper' style={colorStyle} >
-                        <div className="drag-handle">
-                            <div className="inner-icon pt-icon-drag-handle-vertical"/>
-                        </div>
-                        <div className="todo-content-wrapper">
-                            <InlineText value={this.props.todo.name}
-                                        editing={this.props.todo.editing}
-                                        style={colorStyle}
-                                        multiline={true}
-                                        onChange={() => {}}
-                                        onStartEditing={()=>{}}
-                                        onStopEditing={()=>{}}/>
-                        </div>
-                    </div>
-                    {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={_.noop} onDelete={_.noop}  /> }
-                </div>
-            </div>
-        );
-    }
-}
-
 export default class TodoView extends React.PureComponent<Props, {}> {
 
     render(){
+        console.log("RENDER ME", this.props.todo.name);
         let extraClasses = '';
         if(this.props.todo.dragged){
             extraClasses += ' dragged';
@@ -80,11 +52,12 @@ export default class TodoView extends React.PureComponent<Props, {}> {
             transition: 'none',
             ...(this.props.style || {})
         };
+        const otherProps = _.omit(this.props, ['todo', 'visible', 'style', 'confirmDeletion', 'onDelete']);
         return (
             <div className={`todo-view pt-card pt-elevation-2 ${extraClasses} ${editingClass}`}
                  data-todo-id={this.props.todo.id}
                  style={style}
-                 onDragStart={this.onDragStart}>
+                 {...otherProps}>
                 <div>
                     <div className='todo-wrapper' style={colorStyle} >
                         <div className="drag-handle" draggable={true}>
@@ -127,25 +100,6 @@ export default class TodoView extends React.PureComponent<Props, {}> {
     private onDeleteSubtask(index: number) {
         this.props.todo.subtasks.splice(index, 1);
     }
-
-    private onDragStart = async (event) => {
-        event.preventDefault();
-        const el = ReactDOM.findDOMNode(this);
-        const $el = $(el);
-        const offset = $el.offset();
-        const x = offset.left;
-        const y = offset.top;
-        this.props.todo.set({isDragging: true});
-        const acceptDrop = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
-            <TodoDragPreview todo={this.props.todo} />
-        );
-        if(acceptDrop){
-            acceptDrop()
-            this.props.onDelete(this.props.todo);
-        } else {
-            this.props.todo.set({isDragging: false});
-        }
-    };
 
     private onNameChanged = (newName) => {
         this.props.todo.set({name: newName});

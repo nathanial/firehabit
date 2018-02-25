@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import TodoColumnView from "./TodoColumnView";
 import cxs from 'cxs';
-import {DragAndDropLayer} from "../dnd/DragAndDropLayer";
 
 const todoColumnPageClass = cxs({
     display: 'block',
@@ -45,7 +44,6 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
                         );
                     })}
                 </div>
-                <DragAndDropLayer />
             </div>
         );
     }

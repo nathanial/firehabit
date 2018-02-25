@@ -23,6 +23,7 @@
     "plotly.js": "^1.32.0",
     "react": "15.6.2",
     "react-addons-css-transition-group": "^15.6.2",
+    "react-beautiful-dnd": "^5.0.0",
     "react-color": "^2.11.7",
     "react-day-picker": "^7.0.7",
     "react-dom": "15.6.2",

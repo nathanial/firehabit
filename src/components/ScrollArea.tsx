@@ -32,6 +32,7 @@ const bottomMargin = 20;
 
 type Props = {
     className?: string;
+    useTranslate?: boolean;
 }
 
 type State = {
@@ -74,9 +75,15 @@ export default class ScrollArea extends React.Component<Props,State> {
         }
         this.previousScrollY = scrollY;
 
+        let style;
+        if(this.props.useTranslate){
+            style = {transform: `translateY(${-scrollY}px)`};
+        } else {
+            style = {marginTop: `${-scrollY}px`};
+        }
         return (
             <div ref={root => this.root = root} className={className} onWheel={this.onWheel}>
-                <div ref={content => this.content = content} className={scrollAreaContent} style={{transform: `translateY(${-scrollY}px)`}}>
+                <div ref={content => this.content = content} className={scrollAreaContent} style={style}>
                     {this.props.children}
                 </div>
                 {this.renderScrollbar()}
