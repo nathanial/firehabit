@@ -12,7 +12,7 @@ interface Props {
 	onConfirm?: () => void;
 }
 
-class BasicDialog extends React.Component<Props,{}> {
+class BasicDialog extends React.PureComponent<Props,{}> {
 	render(){
 		return (
 			<Dialog iconName="inbox"

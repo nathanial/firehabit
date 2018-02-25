@@ -83,30 +83,32 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const column = this.props.column;
         return(
             <Droppable droppableId={column.id}>
-                {(provided, snapshot) => (
-                    <div ref={provided.innerRef} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
-                        <div className="todo-column-header" style={{background: columnColor}}>
-                            <InlineText className={columnNameClass}
-                                        style={{color: 'white'}}
-                                        editing={this.props.column.editingName}
-                                        value={this.props.column.name}
-                                        onChange={this.onChangeColumnName}
-                                        onStartEditing={this.onStartEditing}
-                                        onStopEditing={this.onStopEditing}/>
-                            <Button iconName="settings"
-                                    className="settings-btn pt-minimal"
-                                    onClick={this.gotoColumnSettings} />
-                            <Button iconName="plus"
-                                    className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                                    onClick={this.onAddTodo} />
-                            {this.renderTrashBtn()}
-                            {this.renderTodoCount()}
-                            <div className={toolbarBorderClass}></div>
+                {(provided: any, snapshot) => {
+                    return (
+                        <div ref={provided.innerRef} {...provided.droppableProps} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                            <div className="todo-column-header" style={{background: columnColor}}>
+                                <InlineText className={columnNameClass}
+                                            style={{color: 'white'}}
+                                            editing={this.props.column.editingName}
+                                            value={this.props.column.name}
+                                            onChange={this.onChangeColumnName}
+                                            onStartEditing={this.onStartEditing}
+                                            onStopEditing={this.onStopEditing}/>
+                                <Button iconName="settings"
+                                        className="settings-btn pt-minimal"
+                                        onClick={this.gotoColumnSettings} />
+                                <Button iconName="plus"
+                                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                                        onClick={this.onAddTodo} />
+                                {this.renderTrashBtn()}
+                                {this.renderTodoCount()}
+                                <div className={toolbarBorderClass}></div>
+                            </div>
+                            {this.renderContent()}
+                            {provided.placeholder}
                         </div>
-                        {this.renderContent()}
-                        {provided.placeholder}
-                    </div>
-                )}
+                    );
+                }}
             </Droppable>
         );
     }
@@ -145,11 +147,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             return (
                 <Draggable key={todo.id} draggableId={todo.id} index={index}>
                     {(provided, snapshot) => {
-                        const style = {...provided.draggableProps.style};
                         return (
                             <div className="todo-draggable">
                                 <div ref={provided.innerRef}
-                                     style={style}
                                      {...provided.draggableProps as any}
                                      {...provided.dragHandleProps}>
                                     <TodoView todo={todo}

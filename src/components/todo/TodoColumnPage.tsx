@@ -41,7 +41,7 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
         let {todoColumns, showDevTools} = this.props;
         todoColumns = _.sortBy(todoColumns, column => column.index);
         return (
-            <DragDropContext  onDragEnd={this.onDragEnd}>
+            <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className={todoColumnPageClass}>
                     <div className={columnsContainerClass}>
                         {_.map(todoColumns, (column) => {

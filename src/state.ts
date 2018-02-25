@@ -18,7 +18,6 @@ export interface CaloriesState {
 	set?(newState: Partial<CaloriesState>);
 }
 
-
 export interface AppState {
 	loadingData?: boolean;
 	showDevTools: boolean;

@@ -18,7 +18,7 @@ import {WeightForm} from './WeightForm';
 import {CaloriesPercentage} from './CaloriesPercentage';
 import {WeightPlot} from './WeightPlot';
 import {CaloriesPlot} from './CaloriesPlot';
-import { NewFoodDialog } from './NewFoodDialog';
+import { AddFoodDialog } from './AddFoodDialog';
 import {SettingsDialog} from './SettingsDialog';
 
 type Props = {
@@ -67,15 +67,14 @@ export default class CaloriesPage extends React.Component<Props,State> {
                     <Calendar selectedDay={this.state.selectedDay} caloriesState={caloriesState} onChange={this.onDateChanged} />
                     <WeightForm caloriesState={caloriesState} selectedDay={this.state.selectedDay} />
                     <ConsumedFoodsList day={dayObj} onToggleAddFood={this.onToggleAddFood}/>
-                    <CaloriesPercentage caloriesState={caloriesState} selectedDay={this.state.selectedDay} />
-                    <Button className="calories-settings pt-minimal" iconName="settings" onClick={this.onOpenSettings} />
+                    <CaloriesPercentage caloriesState={caloriesState} selectedDay={this.state.selectedDay} onOpenSettings={this.onOpenSettings} />
                 </div>
                 <div className="right-column">
                     <div className="graphs">
                         <WeightPlot caloriesState={this.props.caloriesState} />
                         <CaloriesPlot caloriesState={this.props.caloriesState} />
                     </div>
-                    <NewFoodDialog caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} visible={this.state.showAddFoodDialog} onClose={this.onCloseFoodDialog} />
+                    <AddFoodDialog caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} visible={this.state.showAddFoodDialog} onClose={this.onCloseFoodDialog} />
                     <SettingsDialog
                          caloriesState={this.props.caloriesState}
                          visible={this.state.showSettingsDialog}
