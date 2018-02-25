@@ -170,5 +170,6 @@ export class NewFoodDialog extends React.PureComponent<Props,State> {
                 dayObj.consumed.push({name: match.name, calories: match.calories});
             }
         }
+        this.props.onClose();
     };
 }

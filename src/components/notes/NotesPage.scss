@@ -1,4 +1,19 @@
 
+@media (max-width: 500px) {
+    .notes-page {
+        .note-list {
+            font-size: 8px;
+            width: 100px !important;
+        }
+
+        .editor-panel {
+            left: 100px !important;
+        }
+
+    }
+}
+
+
 .notes-page {
     color: black;
     position: absolute;
