@@ -61,7 +61,6 @@ interface Attachment {
 	url: string;
 	version: number;
 	set?(updates: Partial<Attachment>);
-
 }
 
 interface TodoSettings {
@@ -76,6 +75,7 @@ interface Todo {
 	attachments: Attachment[];
 	settings?: TodoSettings;
 	dragged?: boolean;
+	isDragging?: boolean;
 	editing?: boolean;
 	tab?: string;
 	set?(updates: Partial<Todo>);

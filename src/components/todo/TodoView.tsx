@@ -6,7 +6,6 @@ import {Spinner, Button} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
 import InlineText from '../InlineText';
-import {AttachmentList} from './AttachmentList';
 import {dndService} from "../dnd/DragAndDropLayer";
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
@@ -66,16 +65,10 @@ const spinnerClass = cxs({
 
 interface Props {
     todo: Todo;
+    visible?: boolean;
     style?: Object;
     confirmDeletion: boolean;
-    isDragging?: boolean;
     onDelete(todo: Todo);
-}
-
-interface State {
-    dragging: boolean;
-    progress: number;
-    uploading: boolean;
 }
 
 type PreviewProps = {
@@ -127,15 +120,7 @@ class TodoDragPreview extends React.PureComponent<PreviewProps> {
     }
 }
 
-class TodoView extends React.Component<Props, State> {
-
-    state = {
-        dragging: false,
-        progress: 0,
-        uploading: false
-    };
-
-    private fileInput: HTMLInputElement;
+class TodoView extends React.PureComponent<Props, {}> {
 
     render(){
         let extraClasses = '';
@@ -144,16 +129,18 @@ class TodoView extends React.Component<Props, State> {
         }
         const colorStyle = getColorStyle(this.props.todo);
         const editingClass = this.props.todo.editing ? 'editing' : '';
+        const style = {
+            display: this.props.visible ? 'block' : 'none',
+            padding:0,
+            background: '#eee',
+            opacity: this.props.todo.isDragging ? 0 : undefined,
+            transition: 'none',
+            ...(this.props.style || {})
+        };
         return (
             <div className={`todo-view pt-card pt-elevation-2 ${todoItemClass} ${extraClasses} ${editingClass}`}
                  data-todo-id={this.props.todo.id}
-                 style={{
-                    padding:0,
-                    background: '#eee',
-                    opacity: this.state.dragging ? 0 : undefined,
-                    transition: 'none',
-                    ...(this.props.style || {})
-                }}
+                 style={style}
                  onDragStart={this.onDragStart}>
                 <div>
                     <div className={'todo-wrapper ' + todoWrapperClass} style={colorStyle} >
@@ -173,19 +160,11 @@ class TodoView extends React.Component<Props, State> {
                         <div className="todo-controls">
                             <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
                             <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-                            <Button className="file-upload-btn pt-intent-success pt-minimal" iconName="document" onClick={this.onAddAttachment} />
                             <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
                         </div>
-                        <input type="file"
-                               ref={fileInput => this.fileInput = fileInput }
-                               onChange={this.onFileChanged} />
                     </div>
                     {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
-                    <AttachmentList attachments={this.props.todo.attachments}
-                                    onOpenAttachment={(attachment) => this.onOpenAttachment(attachment)}
-                                    onDelete={(i, attachment) => this.onDeleteAttachment(i, attachment)} />
                 </div>
-                {this.renderSpinner()}
             </div>
         );
     }
@@ -196,17 +175,6 @@ class TodoView extends React.Component<Props, State> {
 
     private onStopEditing = () => {
         this.props.todo.set({editing: false});
-    }
-
-    private renderSpinner = () => {
-        if(!this.state.uploading){
-            return;
-        }
-        return (
-            <div className={spinnerContainerClass}>
-                <Spinner className={spinnerClass} />
-            </div>
-        );
     }
 
     private onSubtaskChanged(index: number, changes: Partial<Subtask>){
@@ -224,9 +192,7 @@ class TodoView extends React.Component<Props, State> {
         const offset = $el.offset();
         const x = offset.left;
         const y = offset.top;
-        this.setState({
-            dragging: true
-        });
+        this.props.todo.set({isDragging: true});
         const acceptDrop = await dndService.startDrag({x, y, width: $el.width(), height: $el.height()}, this.props.todo,
             <TodoDragPreview todo={this.props.todo} />
         );
@@ -234,9 +200,7 @@ class TodoView extends React.Component<Props, State> {
             acceptDrop()
             this.props.onDelete(this.props.todo);
         } else {
-            this.setState({
-                dragging: false
-            });
+            this.props.todo.set({isDragging: false});
         }
     };
 
@@ -265,31 +229,6 @@ class TodoView extends React.Component<Props, State> {
         }
     };
 
-    private onFileChanged = async (event: any) => {
-        const file = event.target.files[0];
-        const attachment = await this.uploadFile(file);
-        if(!this.props.todo.attachments){
-            this.props.todo.set({
-                attachments: [attachment]
-            });
-        } else {
-            this.props.todo.attachments.push(attachment);
-        }
-    }
-
-    private onAddAttachment = () => {
-        $(this.fileInput).trigger('click');
-
-    }
-
-    private onOpenAttachment(attachment: Attachment){
-        window.open(attachment.url);
-    }
-
-    private onDeleteAttachment = async (index: number, attachment: Attachment) => {
-        this.props.todo.attachments.splice(index, 1);
-    }
-
     private onOpenTodoSettings = async () => {
         let settings: TodoSettings = this.props.todo.settings || {
             recurring: false,
@@ -309,45 +248,7 @@ class TodoView extends React.Component<Props, State> {
     }
 
     // *********** Upload file to Cloudinary ******************** //
-    uploadFile = async (file: File): Promise<Attachment> => {
-        return new Promise<Attachment>((resolve) => {
-            var url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
-            var xhr = new XMLHttpRequest();
-            var fd = new FormData();
-            xhr.open('POST', url, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-            // Update progress (can be used to show progress indicator)
-            xhr.upload.addEventListener("progress", (e) => {
-                var progress = Math.round((e.loaded * 100.0) / e.total);
-                this.setState({
-                    uploading: true,
-                    progress: progress
-                });
-                // console.log(`fileuploadprogress data.loaded: ${e.loaded}, data.total: ${e.total}`);
-            });
-
-            xhr.onreadystatechange = (e) => {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // File uploaded successfully
-                    var response = JSON.parse(xhr.responseText);
-                    // https://res.cloudinary.com/cloudName/image/upload/v1483481128/public_id.jpg
-                    const attachment = _.cloneDeep(response);
-                    attachment.name = response.original_filename;
-                    console.log("Attachment", attachment);
-                    this.setState({
-                        uploading: false
-                    });
-                    resolve(attachment);
-                }
-            };
-
-            fd.append('upload_preset', unsignedUploadPreset);
-            fd.append('tags', 'browser_upload'); // Optional - add tag for image admin in Cloudinary
-            fd.append('file', file);
-            xhr.send(fd);
-        });
-    }
 
 }
 

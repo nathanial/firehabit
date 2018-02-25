@@ -110,7 +110,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
         const element = ReactDOM.findDOMNode(this);
         this.unregisterDropTarget = dndService.addDropTarget({
             element,
-            canDrop: (draggable: Draggable,) => {
+            canDrop: (draggable: Draggable) => {
                 return true;
             },
             onDrop: (draggable: Draggable) => {
@@ -179,7 +179,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             return (
                 <TodoView key={todo.id}
                           todo={todo}
-                          style={{display: visible ? 'block' : 'none'}}
+                          visible={visible}
                           confirmDeletion={column.confirmDeletion}
                           onDelete={this.onDeleteTodo} />
             );
@@ -279,7 +279,6 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             };
         }
     }
-
 
     private renderSettings = () => {
         return (
