@@ -1,8 +1,10 @@
 import {CaloriesState} from "../../state";
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as Plot from 'react-plotly.js'
+import * as $ from 'jquery';
 
 type Props = {
     caloriesState: CaloriesState;
@@ -18,7 +20,17 @@ function lpf(values: number[], smoothing: number){
     }
 }
 
-export class CaloriesPlot extends React.PureComponent<Props, {}> {
+type State = {
+    width: number;
+    height: number;
+}
+
+export class CaloriesPlot extends React.Component<Props, State> {
+    state = {
+        width: undefined,
+        height: undefined
+    }
+
     render(){
         const days = this.props.caloriesState.days;
         const values = _.filter(_.map(days, d => ({date: d.date, calories: _.sumBy(d.consumed, c => parseInt(c.calories, 10))})), x => x.calories !== 0)
@@ -31,10 +43,10 @@ export class CaloriesPlot extends React.PureComponent<Props, {}> {
            y: calories
         }];
         const layout = {
-            width: 728,
-            height: 300,
             showlegend: false,
             title: 'Calories Per Day',
+            width: this.state.width,
+            height: this.state.height,
             margin: {
                 l: 50,
                 r: 20,
@@ -54,5 +66,41 @@ export class CaloriesPlot extends React.PureComponent<Props, {}> {
         return (
             <Plot data={data} layout={layout} config={{displayModeBar:false, editable: false, scrollZoom: false}}/>
         );
+    }
+
+    componentDidMount(){
+        this.fitWidth();
+        window.addEventListener('resize', this.fitWidth);
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener('resize', this.fitWidth);
+    }
+
+    componentDidUpdate(){
+        this.fitWidth();
+    }
+
+
+    shouldComponentUpdate(nextProps: Props, nextState){
+        if(nextProps.caloriesState !== this.props.caloriesState){
+            return true;
+        }
+        if(this.state !== nextState){
+            return true;
+        }
+        return false;
+    }
+
+    fitWidth = () => {
+        const parent = $(ReactDOM.findDOMNode(this));
+        const width = parent.width();
+        const height = parent.height();
+        if(width !== this.state.width || height !== this.state.height){
+            this.setState({
+                width,
+                height
+            });
+        }
     }
 }

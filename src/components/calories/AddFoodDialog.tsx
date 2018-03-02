@@ -20,7 +20,7 @@ type State = {
     active: string;
 }
 
-export class NewFoodDialog extends React.PureComponent<Props,State> {
+export class AddFoodDialog extends React.PureComponent<Props,State> {
     private scrollbar: any;
 
     state = {
@@ -29,7 +29,7 @@ export class NewFoodDialog extends React.PureComponent<Props,State> {
     }
 
     render(){
-        let classes = "new-food-dialog";
+        let classes = "add-food-dialog";
         if(this.props.visible){
             classes += " visible";
         }
@@ -40,6 +40,7 @@ export class NewFoodDialog extends React.PureComponent<Props,State> {
                     <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
                         onChange={this.onSearchChanged}
                         onKeyDown={this.onKeyDown}/>
+                    <Button className="pt-minimal close-btn" iconName="cross" onClick={this.props.onClose} />
                 </div>
                 {this.renderSearchResults()}
             </div>
@@ -170,6 +171,5 @@ export class NewFoodDialog extends React.PureComponent<Props,State> {
                 dayObj.consumed.push({name: match.name, calories: match.calories});
             }
         }
-        this.props.onClose();
     };
 }

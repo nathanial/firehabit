@@ -309,108 +309,126 @@
       .notes-page .note-list .note-list-item.editing:hover .delete-btn {
         display: block; }
 
-@media (max-width: 500px) {
-  .calories-page {
-    min-width: 268px !important;
-    max-width: 268px !important;
-    width: 268px !important; }
-  .new-food-dialog {
-    position: fixed !important;
-    top: 60px !important;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    bottom: 10px !important;
-    height: auto !important; }
-    .new-food-dialog:not(.visible) {
-      display: none; } }
+/* Portrait and Landscape */
+@media only screen and (device-width: 320px) and (device-height: 480px) {
+  body {
+    display: none; } }
 
 .calories-page {
-  background: #333 !important;
+  background: #000 !important;
   width: 100%;
-  max-width: 1000px;
-  margin: 10px auto;
+  max-width: 1200px;
+  margin: 0 auto;
   position: relative;
-  max-height: 807px;
   height: calc(100% - 20px);
-  min-height: 600px;
-  overflow: hidden; }
-  .calories-page .calories-settings {
-    position: absolute;
-    bottom: 17px;
-    right: 33px;
-    padding: 0;
-    min-width: 16px;
-    min-height: 11px;
-    line-height: 11px;
-    outline-width: 0 !important; }
-    .calories-page .calories-settings::before {
-      font-size: 11px;
-      padding: 0; }
-    .calories-page .calories-settings:hover::before {
-      color: white !important;
-      font-weight: bold; }
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  grid-template-rows: 1fr; }
   .calories-page .left-column {
+    height: 100%;
+    position: relative;
     box-shadow: rgba(0, 0, 0, 0.1) 6px 0px 5px;
     background: #222;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 270px;
-    bottom: 0;
     border-right: 1px solid black;
     z-index: 1; }
-    .calories-page .left-column .calories-percentage {
-      position: absolute;
-      left: 25px;
-      bottom: 15px;
-      right: 61px;
-      overflow: hidden;
-      height: 15px;
-      background: #444;
-      border: 1px solid #777; }
-      .calories-page .left-column .calories-percentage .calories-cursor {
+    .calories-page .left-column .calories-percentage-wrapper {
+      position: relative; }
+      .calories-page .left-column .calories-percentage-wrapper .calories-settings-btn {
         position: absolute;
+        right: 5px;
         top: 0;
-        bottom: 0;
-        background: white;
-        width: 1px; }
-      .calories-page .left-column .calories-percentage .percentage-marker {
-        height: 100%;
-        background: #22AA22; }
-        .calories-page .left-column .calories-percentage .percentage-marker.danger {
-          background: #AA2222; }
-        .calories-page .left-column .calories-percentage .percentage-marker.warning {
-          background: #555522; }
-      .calories-page .left-column .calories-percentage > span {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        font-size: 11px;
-        color: white;
-        font-weight: bold;
-        text-align: center;
-        display: inline-block; }
+        min-width: 16px;
+        min-height: 11px;
+        line-height: 11px;
+        outline-width: 0 !important; }
+        .calories-page .left-column .calories-percentage-wrapper .calories-settings-btn::before {
+          font-size: 11px;
+          padding: 0; }
+        .calories-page .left-column .calories-percentage-wrapper .calories-settings-btn:hover::before {
+          color: white !important;
+          font-weight: bold; }
+      .calories-page .left-column .calories-percentage-wrapper .calories-percentage {
+        margin-left: 29px;
+        margin-right: 29px;
+        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
+        height: 15px;
+        background: #444;
+        border: 1px solid #777; }
+        .calories-page .left-column .calories-percentage-wrapper .calories-percentage .calories-cursor {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          background: white;
+          width: 1px; }
+        .calories-page .left-column .calories-percentage-wrapper .calories-percentage .percentage-marker {
+          height: 100%;
+          background: #22AA22; }
+          .calories-page .left-column .calories-percentage-wrapper .calories-percentage .percentage-marker.danger {
+            background: #AA2222; }
+          .calories-page .left-column .calories-percentage-wrapper .calories-percentage .percentage-marker.warning {
+            background: #555522; }
+        .calories-page .left-column .calories-percentage-wrapper .calories-percentage > span {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          font-size: 11px;
+          color: white;
+          font-weight: bold;
+          text-align: center;
+          display: inline-block; }
     .calories-page .left-column .food-eaten {
-      position: absolute;
-      top: 350px;
       border-top: 1px solid #191919;
-      left: 25px;
-      right: 25px;
-      text-align: left; }
+      text-align: left;
+      position: relative; }
       .calories-page .left-column .food-eaten > h3 {
         font-size: 22px;
         margin-top: 30px;
-        margin-bottom: 20px; }
+        margin-bottom: 20px;
+        margin-left: 28px; }
       .calories-page .left-column .food-eaten .add-food-btn {
         position: absolute;
-        right: 0;
+        right: 19px;
         top: 24px; }
+      .calories-page .left-column .food-eaten .consumed-foods-list {
+        margin: 0;
+        margin-left: 30px;
+        padding: 0;
+        list-style-type: none; }
+        .calories-page .left-column .food-eaten .consumed-foods-list > li {
+          padding: 0;
+          margin: 5px 0;
+          text-align: left; }
+          .calories-page .left-column .food-eaten .consumed-foods-list > li .food-name {
+            position: relative;
+            top: 4px;
+            width: 140px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: left;
+            display: inline-block;
+            text-overflow: ellipsis;
+            text-decoration: underline; }
+          .calories-page .left-column .food-eaten .consumed-foods-list > li .calories {
+            display: inline-block;
+            width: 40px;
+            text-align: center; }
+          .calories-page .left-column .food-eaten .consumed-foods-list > li .pt-icon-standard {
+            font-size: 11px;
+            display: inline-block;
+            line-height: 15px;
+            vertical-align: middle;
+            position: relative;
+            top: -2px;
+            margin-left: 4px;
+            color: #666;
+            cursor: pointer; }
+            .calories-page .left-column .food-eaten .consumed-foods-list > li .pt-icon-standard:hover {
+              font-weight: bold;
+              color: white; }
     .calories-page .left-column .DayPicker {
-      position: absolute;
-      left: 0;
-      top: 0;
       outline-width: 0 !important;
       font-family: 'Open Sans', sans-serif; }
       .calories-page .left-column .DayPicker .DayPicker-wrapper {
@@ -425,11 +443,9 @@
         color: white; }
     .calories-page .left-column .weight-form {
       border-top: 1px solid #191919;
-      position: absolute;
-      top: 280px;
-      left: 25px;
       font-size: 22px;
-      right: 25px; }
+      margin-left: 20px;
+      padding-bottom: 10px; }
       .calories-page .left-column .weight-form > h1 {
         font-weight: normal;
         font-size: 16px;
@@ -454,51 +470,18 @@
           font-weight: lighter;
           font-size: 11px; }
   .calories-page .right-column {
-    overflow: hidden !important;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 270px;
-    overflow: auto; }
+    position: relative;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden; }
     .calories-page .right-column .graphs {
-      overflow: hidden; }
-
-.consumed-foods-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none; }
-  .consumed-foods-list > li {
-    padding: 0;
-    margin: 5px 0;
-    text-align: left; }
-    .consumed-foods-list > li .food-name {
-      position: relative;
-      top: 4px;
-      width: 140px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-align: left;
-      display: inline-block;
-      text-overflow: ellipsis;
-      text-decoration: underline; }
-    .consumed-foods-list > li .calories {
-      display: inline-block;
-      width: 40px;
-      text-align: center; }
-    .consumed-foods-list > li .pt-icon-standard {
-      font-size: 11px;
-      display: inline-block;
-      line-height: 15px;
-      vertical-align: middle;
-      position: relative;
-      top: -2px;
-      margin-left: 4px;
-      color: #666;
-      cursor: pointer; }
-      .consumed-foods-list > li .pt-icon-standard:hover {
-        font-weight: bold;
-        color: white; }
+      display: grid;
+      grid-template-rows: minmax(200px, 2fr) minmax(200px, 1fr);
+      grid-gap: 10px;
+      max-height: 100%;
+      height: 100%; }
+      .calories-page .right-column .graphs .plot-container {
+        position: absolute; }
 
 .settings-dialog {
   position: absolute;
@@ -539,7 +522,7 @@
     padding-bottom: 12px;
     border-bottom: 1px solid #222; }
 
-.new-food-dialog {
+.add-food-dialog {
   position: absolute;
   left: 0;
   top: 0;
@@ -551,21 +534,21 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: rgba(0, 0, 0, 0.3) 3px 0px 8px;
   z-index: 2; }
-  .new-food-dialog.visible {
+  .add-food-dialog.visible {
     transform: translateX(0px); }
-  .new-food-dialog .search-input-container {
+  .add-food-dialog .search-input-container {
     padding-bottom: 10px;
     border-bottom: 1px solid #222;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 3px 10px; }
-    .new-food-dialog .search-input-container .search-icon {
+    .add-food-dialog .search-input-container .search-icon {
       position: absolute;
       left: 7px;
       top: 14px;
       color: #888; }
-    .new-food-dialog .search-input-container .food-search-input {
+    .add-food-dialog .search-input-container .food-search-input {
       display: block;
       margin-left: 28px;
-      width: calc(100% - 40px);
+      width: calc(100% - 60px);
       margin-top: 10px;
       background: #222;
       box-shadow: none;
@@ -575,7 +558,11 @@
       border-width: 0;
       height: 25px;
       border-radius: 3px; }
-  .new-food-dialog .search-results {
+    .add-food-dialog .search-input-container .close-btn {
+      position: absolute;
+      right: 0;
+      top: 7px; }
+  .add-food-dialog .search-results {
     position: absolute;
     top: 46px;
     bottom: 0px;
@@ -585,14 +572,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden; }
-    .new-food-dialog .search-results .add-new-food-btn {
+    .add-food-dialog .search-results .add-new-food-btn {
       position: relative;
       left: 50%;
       width: 150px;
       margin-top: 40px;
       margin-left: -75px;
       background-color: #333; }
-    .new-food-dialog .search-results .search-result {
+    .add-food-dialog .search-results .search-result {
       padding-top: 5px;
       padding-left: 5px;
       padding-bottom: 5px;
@@ -600,12 +587,12 @@
       line-height: 30px;
       cursor: pointer;
       user-select: none; }
-    .new-food-dialog .search-results .search-results-content {
+    .add-food-dialog .search-results .search-results-content {
       height: 100%; }
-    .new-food-dialog .search-results .edit-btn {
+    .add-food-dialog .search-results .edit-btn {
       opacity: 0;
       margin-right: 5px; }
-    .new-food-dialog .search-results .food-name {
+    .add-food-dialog .search-results .food-name {
       display: inline-block;
       width: 200px;
       overflow: hidden;
@@ -613,23 +600,23 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: middle; }
-      .new-food-dialog .search-results .food-name.inline-text {
+      .add-food-dialog .search-results .food-name.inline-text {
         padding-left: 15px; }
-        .new-food-dialog .search-results .food-name.inline-text > input {
+        .add-food-dialog .search-results .food-name.inline-text > input {
           display: inline-block;
           width: 200px !important;
           color: white; }
-    .new-food-dialog .search-results .food-calories {
+    .add-food-dialog .search-results .food-calories {
       display: inline-block;
       text-align: right;
       width: 55px;
       vertical-align: middle;
       position: relative;
       right: 10px; }
-      .new-food-dialog .search-results .food-calories.inline-text {
+      .add-food-dialog .search-results .food-calories.inline-text {
         position: absolute;
         right: 15px; }
-        .new-food-dialog .search-results .food-calories.inline-text > input {
+        .add-food-dialog .search-results .food-calories.inline-text > input {
           display: inline-block;
           color: white;
           text-align: right; }
