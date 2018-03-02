@@ -309,21 +309,39 @@
       .notes-page .note-list .note-list-item.editing:hover .delete-btn {
         display: block; }
 
-/* Portrait and Landscape */
-@media only screen and (device-width: 320px) and (device-height: 480px) {
-  body {
-    display: none; } }
+@media (max-width: 600px) {
+  .calories-page {
+    display: block !important;
+    height: 100% !important; }
+    .calories-page .left-column {
+      width: 270px !important;
+      margin: 0 auto; }
+    .calories-page .right-column {
+      position: absolute !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      margin-left: -150px;
+      width: 300px;
+      box-shadow: none !important; }
+      .calories-page .right-column .graphs {
+        display: none !important; }
+      .calories-page .right-column .add-food-dialog {
+        display: none;
+        transition: none !important;
+        box-shadow: none !important; }
+    .calories-page .settings-dialog {
+      display: none; } }
 
 .calories-page {
-  background: #000 !important;
+  background: transparent !important;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
   height: calc(100% - 20px);
   display: grid;
-  grid-template-columns: 270px 1fr;
-  grid-template-rows: 1fr; }
+  grid-template-columns: 270px 1fr; }
   .calories-page .left-column {
     height: 100%;
     position: relative;
@@ -332,7 +350,9 @@
     border-right: 1px solid black;
     z-index: 1; }
     .calories-page .left-column .calories-percentage-wrapper {
-      position: relative; }
+      position: absolute;
+      bottom: 10px;
+      width: 100%; }
       .calories-page .left-column .calories-percentage-wrapper .calories-settings-btn {
         position: absolute;
         right: 5px;
@@ -350,7 +370,6 @@
       .calories-page .left-column .calories-percentage-wrapper .calories-percentage {
         margin-left: 29px;
         margin-right: 29px;
-        margin-top: 20px;
         position: relative;
         overflow: hidden;
         height: 15px;
@@ -499,6 +518,7 @@
   padding-left: 25px;
   text-align: left; }
   .settings-dialog.visible {
+    display: block !important;
     transform: translateX(0px); }
   .settings-dialog > label {
     display: inline-block; }
@@ -535,6 +555,7 @@
   box-shadow: rgba(0, 0, 0, 0.3) 3px 0px 8px;
   z-index: 2; }
   .add-food-dialog.visible {
+    display: block !important;
     transform: translateX(0px); }
   .add-food-dialog .search-input-container {
     padding-bottom: 10px;

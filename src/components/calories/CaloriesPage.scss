@@ -1,12 +1,38 @@
-@import "../../media-queries.scss";
-/* Portrait and Landscape */
-@include respond-to(iphone){
-	body {
-		display: none;
+@media (max-width: 600px){
+	.calories-page {
+		display: block !important;
+		height: 100% !important;
+		.left-column {
+			width: 270px !important;
+			margin: 0 auto;
+		}
+		.right-column {
+			position: absolute !important;
+			top: 0 !important;
+			bottom: 0 !important;
+			left: 50% !important;
+			margin-left: -150px;
+			width: 300px;
+			box-shadow: none !important;
+			.graphs {
+				display: none !important;
+			}
+
+			.add-food-dialog {
+				display: none;
+				transition: none !important;
+				box-shadow: none !important;
+			}
+		}
+
+		.settings-dialog {
+			display: none;
+		}
 	}
 }
+
 .calories-page {
-	background: #000 !important;
+	background: transparent !important;
 	width: 100%;
 	max-width: 1200px;
 	margin: 0 auto;
@@ -15,8 +41,6 @@
 
 	display: grid;
 	grid-template-columns: 270px 1fr;
-	grid-template-rows: 1fr;
-
 
 	.left-column {
 		height: 100%;
@@ -27,7 +51,9 @@
 		z-index: 1;
 
 		.calories-percentage-wrapper {
-			position: relative;
+			position: absolute;
+			bottom: 10px;
+			width: 100%;
 
 			.calories-settings-btn {
 				position: absolute;
@@ -54,7 +80,6 @@
 			.calories-percentage {
 				margin-left: 29px;
 				margin-right: 29px;
-				margin-top: 20px;
 				position: relative;
 				overflow: hidden;
 				height: 15px;
@@ -251,6 +276,7 @@
 	box-shadow:rgba(0,0,0,0.3) 3px 0px 8px;
 
 	&.visible {
+		display: block !important;
 		transform: translateX(0px);
 	}
 	z-index: 2;
@@ -301,6 +327,7 @@
 	box-shadow:rgba(0,0,0,0.3) 3px 0px 8px;
 
 	&.visible {
+		display: block !important;
 		transform: translateX(0px);
 	}
 	z-index: 2;
