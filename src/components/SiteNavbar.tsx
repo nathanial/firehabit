@@ -31,22 +31,6 @@ const gravatarClass = cxs({
 	borderRadius: '50%'
 });
 
-const navBtnClass = cxs({
-	borderRadius: 0,
-	cursor: 'pointer',
-	background: '#222',
-	width: '100px',
-	padding: '7px 20px',
-	display: 'inline-block',
-	fontSize: '12px',
-	border: '1px solid transparent'
-});
-
-const navBtnActiveClass = cxs({
-	background: '#245785',
-	border: '1px solid #1A91EB'
-});
-
 const navItemsClass = cxs({
 	border: '1px solid #313D4F'
 })
@@ -54,12 +38,42 @@ const navItemsClass = cxs({
 class NavBtn extends React.PureComponent<NavProps, {}> {
 	render(){
 		const props = this.props;
+		const classes = ["nav-btn"];
+		if(props.active){
+			classes.push('active');
+		}
 		return (
 			<div onClick={() => props.onNavigate(props.goto)}
-					className={(props.active ? navBtnActiveClass : '') + " " + navBtnClass}>
+					className={classes.join(' ')}>
 				<span style={{marginRight: '10px'}} className={`pt-icon-small ${this.props.icon}`}></span>
 				{props.children}
 			</div>
+		);
+	}
+}
+
+type UserProps = {
+	user: any;
+}
+
+class UserDropdown extends React.PureComponent<UserProps,{}>{
+	render(){
+		const logout = async () => {
+			await firebase.auth().signOut();
+			window.location.reload();
+		};
+
+		const compassMenu = (
+			<Menu>
+				<MenuItem iconName="log-out" text="Logout" onClick={logout} />
+			</Menu>
+		);
+		return (
+			<Popover content={compassMenu} position={Position.BOTTOM}>
+				<button className="pt-button pt-minimal" type="button">
+					<Gravatar email={this.props.user.email} className={gravatarClass} />
+				</button>
+			</Popover>
 		);
 	}
 }
@@ -79,6 +93,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 						<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
 						<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
 						<NavBtn goto="notes" icon="pt-icon-highlight" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
+						<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
 					</div>
 				</div>
 				<div className="pt-navbar-group pt-align-left">
@@ -86,29 +101,10 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 					{this.props.children}
 				</div>
 				<div className="pt-navbar-group pt-align-right">
-					{this.renderUserDropdown()}
+					<UserDropdown user={this.props.user} />
 				</div>
 			</nav>
 		);
 	}
 
-	private renderUserDropdown(){
-		const logout = async () => {
-			await firebase.auth().signOut();
-			window.location.reload();
-		};
-
-		const compassMenu = (
-			<Menu>
-				<MenuItem iconName="log-out" text="Logout" onClick={logout} />
-			</Menu>
-		);
-		return (
-			<Popover content={compassMenu} position={Position.BOTTOM}>
-				<button className="pt-button pt-minimal" type="button">
-					<Gravatar email={this.props.user.email} className={gravatarClass} />
-				</button>
-			</Popover>
-		);
-	}
 }

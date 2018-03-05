@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as TextArea from 'react-textarea-autosize';
 
 type Props = {
     className?: string;
@@ -22,16 +21,20 @@ export default class InlineText extends React.PureComponent<Props> {
         const className = this.getClassName();
         const style = {} as any;
         _.extend(style, this.props.style || {});
+        let outerStyle = {};
+        if(this.props.multiline){
+            outerStyle = {display: 'flex', flexDirection: 'column', justifyContent: 'center'};
+        }
         return (
-            <div style={style} ref={root => this.root = root} className={className + " inline-text"} onClick={this.onStartEditing}>
+            <div style={{...style, ...outerStyle}} ref={root => this.root = root} className={className + " inline-text"} onClick={this.onStartEditing}>
                 {this.props.multiline &&
-                    <TextArea key="input"
-                        type="text"
+                    <textarea key="input"
                         disabled={this.props.disabled}
                         style={style}
                         value={this.props.value}
                         onKeyDown={this.onKeyDown}
-                        onChange={this.onChange} />}
+                        onChange={this.onChange}
+                        rows={this.getRowCount()} />}
                 {!this.props.multiline &&
                     <input key="input"
                         type="text"
@@ -57,6 +60,13 @@ export default class InlineText extends React.PureComponent<Props> {
         //     this.input.focus();
         //     this.input.setSelectionRange(0, this.props.value.length);
         // }
+    }
+
+    private getRowCount(){
+        let {value} = this.props;
+        value = value || "";
+        const length = value.length;
+        return Math.max(Math.ceil(length / 30), 1);
     }
 
     private onKeyDown = (event: any) => {

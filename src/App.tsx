@@ -11,6 +11,7 @@ import {history,db} from './util';
 import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
 import {Spinner} from '@blueprintjs/core';
+import {SchedulePage} from './components/schedule/SchedulePage';
 import cxs from 'cxs';
 
 interface Props {
@@ -66,6 +67,10 @@ export default class App extends React.PureComponent<Props> {
         } else if(history.location.pathname === '/notes') {
             return (
                 <NotesPage notes={appState.notes} />
+            );
+        } else if(history.location.pathname === '/schedule'){
+            return (
+                <SchedulePage />
             );
         } else {
             return (

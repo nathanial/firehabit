@@ -5,6 +5,21 @@
 	width: 100%;
 	height: 50px;
     padding: 0 20px;
+
+    .nav-btn {
+        border-radius: 0;
+        cursor: pointer;
+        background: #222;
+        padding: 7px 20px;
+        display: inline-block;
+        font-size: 12px;
+        border: 1px solid transparent;
+
+        &.active {
+            background: #245785;
+            border: 1px solid #1A91EB;
+        }
+    }
 }
 
 
@@ -20,3 +35,4 @@
         }
     }
 }
+
