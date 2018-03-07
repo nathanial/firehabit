@@ -66,7 +66,7 @@ export default class InlineText extends React.PureComponent<Props> {
         let {value} = this.props;
         value = value || "";
         const length = value.length;
-        return Math.max(Math.ceil(length / 30), 1);
+        return Math.max(Math.ceil(length / 32), 1);
     }
 
     private onKeyDown = (event: any) => {

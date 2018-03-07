@@ -669,6 +669,57 @@
     .site-navbar .pt-navbar-heading {
       display: none !important; } }
 
+.schedule-page {
+  margin: 20px auto;
+  width: 800px; }
+  .schedule-page > h1 {
+    margin-bottom: 30px; }
+  .schedule-page .custom-event {
+    background: #2e5ec5;
+    border: 1px solid black; }
+    .schedule-page .custom-event .pt-icon {
+      font-style: normal !important; }
+    .schedule-page .custom-event .dragger {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      font-size: 9px;
+      padding: 2px 0;
+      transition: opacity 0.1s ease-in;
+      opacity: 0;
+      cursor: ns-resize; }
+      .schedule-page .custom-event .dragger:hover {
+        opacity: 1; }
+    .schedule-page .custom-event .top-dragger {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0; }
+    .schedule-page .custom-event .bottom-dragger {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0; }
+  .schedule-page .rbc-calendar {
+    background: #333;
+    height: 700px;
+    border: 1px solid white;
+    box-shadow: rgba(0, 0, 0, 0.3) 3px 0px 8px; }
+    .schedule-page .rbc-calendar button {
+      color: white; }
+      .schedule-page .rbc-calendar button.rbc-active {
+        background: #222;
+        border-color: #111;
+        color: white;
+        font-weight: bold; }
+      .schedule-page .rbc-calendar button:hover {
+        background: #252525;
+        border-color: #111;
+        color: white; }
+    .schedule-page .rbc-calendar .rbc-today {
+      background: #055105; }
+    .schedule-page .rbc-calendar * {
+      border-color: black; }
+
 body {
   background: #111; }
 

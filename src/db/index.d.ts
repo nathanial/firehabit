@@ -119,3 +119,13 @@ interface DailyEntry {
 interface Array<T> {
 	reset(data: T[]): void;
 }
+
+interface BigCalendarEvent {
+	id: string;
+    title: string;
+    desc?: string;
+    start: Date;
+    end: Date;
+    set?(update: Partial<BigCalendarEvent>);
+}
+

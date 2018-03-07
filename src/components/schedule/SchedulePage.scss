@@ -1,0 +1,74 @@
+.schedule-page {
+    & > h1 {
+        margin-bottom: 30px;
+    }
+    margin: 20px auto;
+    width: 800px;
+
+    .custom-event {
+        background: rgb(46, 94, 197);
+        border: 1px solid black;
+
+        .pt-icon {
+            font-style: normal !important;
+        }
+
+        .dragger {
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            font-size: 9px;
+            padding: 2px 0;
+            transition: opacity 0.1s ease-in;
+            opacity: 0;
+            cursor: ns-resize;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .top-dragger {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .bottom-dragger {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    .rbc-calendar {
+        button {
+            color: white;
+
+            &.rbc-active {
+                background: #222;
+                border-color: #111;
+                color: white;
+                font-weight: bold;
+            }
+
+            &:hover {
+                background: #252525;
+                border-color: #111;
+                color: white;
+            }
+        }
+
+        .rbc-today {
+            background: #055105;
+        }
+        background: #333;
+        height: 700px;
+        * {
+            border-color: black;
+        }
+        border: 1px solid white;
+        box-shadow:rgba(0,0,0,0.3) 3px 0px 8px;
+    }
+}

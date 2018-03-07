@@ -6,6 +6,7 @@ import Reference = firebase.database.Reference;
 import {downloadCollection} from "./util";
 import {state} from '../state';
 import * as moment from 'moment';
+import * as config from './config';
 
 function encode(columns: TodoColumn[]) {
 	const copy = _.cloneDeep(columns);
@@ -45,9 +46,14 @@ export class DB {
 	private loaded: boolean = false;
 	private serverVersion: number = 0;
 	private localVersion: number = 0;
+
 	private notesRef: Reference;
 	private dirtyNotes: string[] = [];
 	private deletedNotes: string[] = [];
+
+	private calendarEventsRef: Reference;
+	private dirtyCalendarEvents: string[] = [];
+	private deletedCalendarEvents: string[] = [];
 
 	private async loadData(){
 		const user = firebase.auth().currentUser;
@@ -58,6 +64,7 @@ export class DB {
 		const days = await this.loadDays(userId);
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
+		const calendarEvents = await this.loadCalendarEvents(userId);
 		state.set({
 			todoColumns,
 			calories: {
@@ -69,7 +76,8 @@ export class DB {
 					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
 				}
 			},
-			notes
+			notes,
+			calendarEvents: []
 		});
 
 		if(!this.loaded){
@@ -85,6 +93,7 @@ export class DB {
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
+		this.calendarEventsRef = this.db.ref(`/users/${userId}/calendar-events`);
 		const selectedDate = moment().format('MM/DD/YY');
 
 		const notes = JSON.parse(localStorage.getItem('notes'));
@@ -92,6 +101,7 @@ export class DB {
 		const foodDefinitions = JSON.parse(localStorage.getItem('food-definitions'));
 		const days = JSON.parse(localStorage.getItem('days'));
 		const calorieSettings = JSON.parse(localStorage.getItem('calorie-settings'));
+		const calendarEvents = JSON.parse(localStorage.getItem('calendar-events'));
 		state.set({
 			todoColumns,
 			calories: {
@@ -103,7 +113,8 @@ export class DB {
 					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
 				}
 			},
-			notes
+			notes,
+			calendarEvents
 		});
 
 		if(!this.loaded){
@@ -136,7 +147,8 @@ export class DB {
 
 		const serverVersion = await this.getServerVersion(userId) || 0;
 
-		if(parseInt(localStorage.getItem('version'), 10) !== serverVersion){
+		if(parseInt(localStorage.getItem('version'), 10) !== serverVersion || localStorage.getItem('app-version') !== config.appVersion){
+			localStorage.setItem('app-version', config.appVersion);
 			await this.loadData();
 			localStorage.setItem('version', serverVersion.toString());
 		} else {
@@ -168,6 +180,13 @@ export class DB {
 						this.dirtyColumns = [];
 						this.dirtyDays = [];
 						this.dirtyFoodDefinitions = [];
+						this.dirtyCalendarEvents = [];
+
+						this.deletedCalendarEvents = [];
+						this.deletedColumns = [];
+						this.deletedFoodDefinitions = [];
+						this.deletedNotes = [];
+
 						this.load({noChanges: true});
 					} else {
 						this.localVersion = this.serverVersion;
@@ -190,6 +209,12 @@ export class DB {
 		this.notesRef = this.db.ref(`/users/${userId}/notes`);
 		let notes = await downloadCollection<Note>(this.notesRef);
 		return notes;
+	}
+
+	async loadCalendarEvents(userId: string): Promise<BigCalendarEvent[]> {
+		this.calendarEventsRef = this.db.ref(`/users/${userId}/calendar-events`);
+		let calendarEvents = await downloadCollection<BigCalendarEvent>(this.calendarEventsRef);
+		return calendarEvents;
 	}
 
 	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
@@ -243,6 +268,16 @@ export class DB {
 						this.dirtyNotes.push(currentNote.id);
 					}
 				}
+				for(let prevCalendarEvent of prevState.calendarEvents){
+					if(!_.some(currentState.calendarEvents, n => n.id === prevCalendarEvent.id)){
+						this.deletedCalendarEvents.push(prevCalendarEvent.id);
+					}
+				}
+				for(let currentCalendarEvent of currentState.calendarEvents){
+					if(!_.some(prevState.calendarEvents, prevEvent => prevEvent === currentCalendarEvent)){
+						this.dirtyCalendarEvents.push(currentCalendarEvent.id);
+					}
+				}
 				for(let prevColumn of prevState.todoColumns){
 					if(!_.some(currentState.todoColumns, c => c.id === prevColumn.id)){
 						this.deletedColumns.push(prevColumn.id);
@@ -290,6 +325,7 @@ export class DB {
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
 		this.syncDays(userId);
+		this.syncCalendarEvents();
 		if(this.localVersion !== this.serverVersion){
 			this.serverVersion = this.localVersion;
 			localStorage.setItem('version', this.localVersion.toString());
@@ -312,6 +348,23 @@ export class DB {
 		}
 		this.dirtyNotes = [];
 		this.deletedNotes = [];
+	}
+
+	async syncCalendarEvents(){
+		const calendarEvents = state.get().calendarEvents;
+		localStorage.setItem('calendar-events', JSON.stringify(calendarEvents));
+		for(let eventID of _.uniq(this.dirtyCalendarEvents)){
+			const event = _.find(calendarEvents, e => e.id === eventID);
+			this.calendarEventsRef.child(eventID).set(_.omit(event, 'id'));
+		}
+		for(let eventID of _.uniq(this.deletedCalendarEvents)){
+			this.calendarEventsRef.child(eventID).remove();
+		}
+		if(this.dirtyCalendarEvents.length > 0 || this.deletedCalendarEvents.length > 0){
+			this.localVersion += 1;
+		}
+		this.dirtyCalendarEvents = [];
+		this.deletedCalendarEvents = [];
 	}
 
 	async syncTodoColumns(){
@@ -370,5 +423,6 @@ export class DB {
 
 		this.dirtyCalorieSettings = false;
 	}
+
 
 }

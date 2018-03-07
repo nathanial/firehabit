@@ -70,7 +70,7 @@ export default class App extends React.PureComponent<Props> {
             );
         } else if(history.location.pathname === '/schedule'){
             return (
-                <SchedulePage />
+                <SchedulePage calendarEvents={appState.calendarEvents} />
             );
         } else {
             return (

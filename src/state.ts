@@ -19,6 +19,7 @@ export interface CaloriesState {
 }
 
 export interface AppState {
+	calendarEvents: BigCalendarEvent[];
 	loadingData?: boolean;
 	showDevTools: boolean;
 	calories: CaloriesState;
@@ -36,6 +37,7 @@ interface FreezerData<T> {
 
 const initialAppState: AppState = {
 	showDevTools: false,
+	calendarEvents: [],
 	calories: {
 		selectedDate: moment().format('MM/DD/YY'),
 		foodDefinitions: [],
