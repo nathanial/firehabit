@@ -3,8 +3,8 @@ import * as $ from 'jquery';
 import * as ReactDOM from 'react-dom';
 import * as HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
+import {generatePushID} from '../../db/util';
 import * as BigCalendar from 'react-big-calendar'
-import * as uuidv4 from 'uuid/v4';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
@@ -186,7 +186,7 @@ type Props = {
 export default class ScheduleCalendar extends React.PureComponent<Props,{}> {
     onSelectSlot = (slot: Slot) => {
         this.props.calendarEvents.push({
-            id: uuidv4(),
+            id: generatePushID(),
             title: 'New Event',
             start: slot.start,
             end: slot.end
