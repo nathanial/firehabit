@@ -77,7 +77,7 @@ export class DB {
 				}
 			},
 			notes,
-			calendarEvents: []
+			calendarEvents
 		});
 
 		if(!this.loaded){
@@ -102,7 +102,6 @@ export class DB {
 		const days = JSON.parse(localStorage.getItem('days'));
 		const calorieSettings = JSON.parse(localStorage.getItem('calorie-settings'));
 		const calendarEvents = _.map(JSON.parse(localStorage.getItem('calendar-events')), event => this.deserializeEvent(event as any));
-		console.log("Calendar Events", calendarEvents);
 		state.set({
 			todoColumns,
 			calories: {
@@ -215,9 +214,7 @@ export class DB {
 	async loadCalendarEvents(userId: string): Promise<BigCalendarEvent[]> {
 		this.calendarEventsRef = this.db.ref(`/users/${userId}/calendar-events`);
 		let calendarEvents = await downloadCollection<BigCalendarEvent>(this.calendarEventsRef);
-		console.log("DOWNLOAD IT", calendarEvents);
 		calendarEvents = _.map(calendarEvents, e => this.deserializeEvent(e));
-		console.log("Load Calendar Events", calendarEvents);
 		return calendarEvents;
 	}
 
@@ -359,7 +356,6 @@ export class DB {
 		localStorage.setItem('calendar-events', JSON.stringify(_.map(calendarEvents, e => this.serializeEvent(e))));
 		for(let eventID of _.uniq(this.dirtyCalendarEvents)){
 			const event = _.find(calendarEvents, e => e.id === eventID);
-			console.log("Event ID", eventID);
 			this.calendarEventsRef.child(eventID).set(this.serializeEvent(event));
 		}
 		for(let eventID of _.uniq(this.deletedCalendarEvents)){
@@ -432,13 +428,13 @@ export class DB {
 	private eventDateFormat = 'MM/DD/YY HH:mm:ss';
 	private serializeEvent(event: BigCalendarEvent){
 		return {
+			id: event.id,
 			start: moment(event.start).format(this.eventDateFormat),
 			end: moment(event.end).format(this.eventDateFormat)
 		};
 	}
 
 	private deserializeEvent(event: BigCalendarEvent): BigCalendarEvent {
-		console.log("Start", event);
 		return {
 			...event,
 			start: moment(event.start, this.eventDateFormat).toDate(),

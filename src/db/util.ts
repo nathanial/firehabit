@@ -33,7 +33,6 @@ function pushAll(dst, src){
 
 export async function downloadCollection<T>(ref): Promise<T[]>{
 	const data = await ref.once('value');
-	console.log("RAW VALUE", data.val());
 	const result = [];
 	if(data.val()){
 		for(let element of flattenKeys(data.val())){
