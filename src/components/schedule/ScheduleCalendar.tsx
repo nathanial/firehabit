@@ -5,6 +5,8 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 import { generatePushID } from '../../db/util';
 import InlineText from '../InlineText';
+import {Button} from "@blueprintjs/core";
+import DialogService from "../../services/DialogService";
 
 const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -98,6 +100,7 @@ type EventColumnsProps = {
 
 type CalendarEventProps = {
     calendarEvent: BigCalendarEvent;
+    onDelete(id: string);
 }
 
 class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
@@ -120,8 +123,20 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
                             onStopEditing={this.onStopEditing}
                             rowCount={this.getRowCount()} />
                 </div>
+                <div className="calendar-event-controls">
+                    <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDelete} />
+                    <Button className="settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenSettings} />
+                </div>
             </div>
         );
+    }
+
+    private onDelete = () => {
+        this.props.onDelete(this.props.calendarEvent.id);
+    }
+
+    private onOpenSettings = () => {
+        console.log("Open Settings");
     }
 
     private onTitleChanged = (newValue: string) => {
@@ -158,9 +173,8 @@ class EventColumns extends React.PureComponent<EventColumnsProps, {}> {
                     <div key={day} className="day-column">
                         <div className="day-name" style={{opacity: 0}}><div></div></div>
                         {_.map(this.getEventsForDay(dayIndex), (calendarEvent) => {
-                   
                             return (
-                                <CalendarEvent key={calendarEvent.id} calendarEvent={calendarEvent} />
+                                <CalendarEvent key={calendarEvent.id} calendarEvent={calendarEvent} onDelete={this.onDeleteCalendarEvent} />
                             );
                         })}
                     </div>
@@ -176,6 +190,16 @@ class EventColumns extends React.PureComponent<EventColumnsProps, {}> {
             return targetDay === eventStartDay;
         });
         return events;
+    }
+
+    private onDeleteCalendarEvent = async (id: string) => {
+        const result = await DialogService.showDangerDialog("Are you sure you want to delete this Event?", "Delete", "Cancel");
+        if(result){
+            const index = _.findIndex(this.props.calendarEvents, {id});
+            if(index !== -1){
+                this.props.calendarEvents.splice(index, 1);
+            }
+        }
     }
 }
 

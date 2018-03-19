@@ -107,12 +107,41 @@
         width: 100%;
         max-height: 100%;
         overflow: hidden;
+        position: relative;
 
         .event-title {
             overflow: hidden;
             padding-left: 4px;
             padding-right: 4px;
             padding-top: 3px;
+        }
+
+        .calendar-event-controls {
+            position: absolute;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            &:hover {
+                opacity: 1;
+            }
+            .delete-btn,.settings-btn {
+                padding: 0;
+                margin: 0;
+                line-height: 14px;
+                min-width: auto;
+                min-height: auto;
+                &:before {
+                    font-size: 11px;
+                    line-height: 14px;
+                    vertical-align: middle;
+                }
+            }
+            .delete-btn {
+                margin-right: 3px;                
+            }
+            .settings-btn{
+                margin-right: 3px;
+            }
         }
     }
 
