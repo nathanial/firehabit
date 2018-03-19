@@ -10,7 +10,7 @@ export class SchedulePage extends React.PureComponent<ScheduleProps,{}> {
     render(){
         return (
             <div className="schedule-page">
-                <ScheduleCalendar />
+                <ScheduleCalendar calendarEvents={this.props.calendarEvents} />
             </div>
         );
     }
