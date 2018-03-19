@@ -67,7 +67,8 @@ export default class InlineText extends React.PureComponent<Props> {
         let {value} = this.props;
         value = value || "";
         const length = value.length;
-        return Math.max(Math.ceil(length / 32), 1);
+        const newlineRows = _.filter(value, v => v === '\n').length;
+        return Math.max(Math.ceil(length / 32) + newlineRows, 1);
     }
 
     private onKeyDown = (event: any) => {

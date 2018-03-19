@@ -734,10 +734,18 @@
         display: grid;
         grid-template-rows: repeat(25, 25px);
         grid-row-gap: 1px; }
+        .schedule-page .schedule-calendar .calendar-body .day-column.current-day .day-name {
+          text-decoration: underline; }
         .schedule-page .schedule-calendar .calendar-body .day-column .hour-row {
+          position: relative;
           background: #888; }
-          .schedule-page .schedule-calendar .calendar-body .day-column .hour-row.current-hour {
-            background: #AAA; }
+          .schedule-page .schedule-calendar .calendar-body .day-column .hour-row.current-hour .now-marker {
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: green;
+            opacity: 0.7;
+            z-index: 999999; }
   .schedule-page .calendar-event {
     pointer-events: all;
     background: #ccc;
