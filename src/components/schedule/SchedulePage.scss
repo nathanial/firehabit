@@ -3,7 +3,7 @@
         margin-bottom: 30px;
     }
     margin: 20px auto;
-    width: 800px;
+    width: 80%;
     height: calc(100% - 40px);
     .schedule-calendar {
         display: grid;
@@ -18,15 +18,14 @@
             background: #333;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            grid-column-gap: 2px;
+            grid-column-gap: 1px;
             .time-column {
-                background: #555;
+                background: #333;
                 width: 100%;
                 display: grid;
                 height: 100%;
                 grid-template-rows: repeat(25, 1fr);
                 grid-row-gap: 1px;
-                padding-top: 10px;
                 .hour-row {
                     position: relative;
                     .hour-value {
@@ -35,13 +34,23 @@
                         left: 50%;
                         transform: translate(-50%, -50%);
                     }
+                    background: #555;
                 }
+            }
+            .day-name {
+                border-bottom: 1px solid #333;
+                margin-bottom:-1px;
+                background: #555;
+
+                display: flex;      
+                flex-direction: column; 
+                justify-content: center;
+                align-items: center;
             }
             .day-column {
                 background: #555;
                 width: 100%;
                 height: 100%;
-                padding-top: 10px;
                 display: grid;
 
                 grid-template-rows: repeat(25,1fr);
@@ -49,6 +58,9 @@
 
                 .hour-row {
                     background: #888;
+                    &.current-hour {
+                        background: #AAA;
+                    }
                 }
             }
         }

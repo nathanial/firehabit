@@ -9,33 +9,45 @@ export class ScheduleCalendar extends React.PureComponent<{},{}>{
         const month = this.getMonth();
         const startOfWeek = this.getStartOfWeek();
         const endOfWeek = this.getEndOfWeek();
+        const currentHour = this.getCurrentHour();
         return (
             <div className="schedule-calendar">
                 <div className="current-month">{month} {startOfWeek} - {endOfWeek}</div>
                 <div className="calendar-body">
                     <div className="time-column">
-                        <div className="day-name">Times</div>
+                        <div className="day-name"><div>Times</div></div>
                         {_.times(24, hour => {
                             const suffix = hour > 12 ? "PM" : "AM";
+                            const active = hour === currentHour;
+                            const key = hour;
                             if(hour === 0){
                                 hour = 12;
                             }
                             if(hour > 12){
                                 hour -= 12;
                             }
+                            const classes = ["hour-row"];
+                            if(active){
+                                classes.push("current-hour");
+                            }
                             return (
-                                <div className="hour-row">
+                                <div key={key} className={classes.join(' ')}>
                                     <div className="hour-value">{hour} {suffix}</div>
                                 </div>
                             );
                         })}
                     </div>
                     {_.map(daysOfTheWeek, (day) =>
-                        <div className="day-column">
-                            <div className="day-name">{day}</div>
+                        <div key={day} className="day-column">
+                            <div className="day-name"><div>{day}</div></div>
                             {_.times(24, hour => {
+                                const classes = ["hour-row"];
+                                const active = hour === currentHour;
+                                if(active){
+                                    classes.push("current-hour");
+                                }
                                 return (
-                                    <div className="hour-row">
+                                    <div key={hour} className={classes.join(' ')}>
                                     </div>
                                 );
                             })}
@@ -44,6 +56,11 @@ export class ScheduleCalendar extends React.PureComponent<{},{}>{
                 </div>
             </div>
         );
+    }
+
+    private getCurrentHour(){
+        const now = moment();
+        return now.hours();
     }
 
     private getMonth(){

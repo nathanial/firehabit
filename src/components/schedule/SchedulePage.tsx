@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as BigCalendar from 'react-big-calendar'
 import * as moment from 'moment'
 import {ScheduleCalendar} from './ScheduleCalendar';
 
