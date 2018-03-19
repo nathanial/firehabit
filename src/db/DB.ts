@@ -428,7 +428,7 @@ export class DB {
 	private eventDateFormat = 'MM/DD/YY HH:mm:ss';
 	private serializeEvent(event: BigCalendarEvent){
 		return {
-			id: event.id,
+			...event,
 			start: moment(event.start).format(this.eventDateFormat),
 			end: moment(event.end).format(this.eventDateFormat)
 		};

@@ -683,9 +683,23 @@
     grid-template-rows: 30px 1fr; }
     .schedule-page .schedule-calendar .calendar-body {
       background: #333;
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      grid-column-gap: 1px; }
+      position: relative; }
+      .schedule-page .schedule-calendar .calendar-body .background-grid, .schedule-page .schedule-calendar .calendar-body .event-grid {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-column-gap: 1px; }
+      .schedule-page .schedule-calendar .calendar-body .event-grid {
+        background: transparent;
+        pointer-events: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0; }
+        .schedule-page .schedule-calendar .calendar-body .event-grid .day-column {
+          background: transparent; }
       .schedule-page .schedule-calendar .calendar-body .time-column {
         background: #333;
         width: 100%;
@@ -720,6 +734,11 @@
           background: #888; }
           .schedule-page .schedule-calendar .calendar-body .day-column .hour-row.current-hour {
             background: #AAA; }
+  .schedule-page .calendar-event {
+    pointer-events: all;
+    background: red;
+    height: 100%;
+    width: 100%; }
 
 body {
   background: #111; }

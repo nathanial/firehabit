@@ -49,6 +49,83 @@ class TimeColumn extends React.PureComponent<TimeColumnProps,{}>{
     }
 }
 
+type DaysOfTheWeekProps = {
+    currentHour: number;
+    onMouseDown(event);
+}
+
+class DaysOfTheWeek extends React.PureComponent<DaysOfTheWeekProps,{}>{
+    render(): any {
+        return (
+            _.map(daysOfTheWeek, (day, dayIndex) =>
+                <div key={day} className="day-column">
+                    <div className="day-name"><div>{day}</div></div>
+                    {_.times(24, hour => {
+                        const classes = ["hour-row"];
+                        const active = hour === this.props.currentHour;
+                        if(active){
+                            classes.push("current-hour");
+                        }
+                        return (
+                            <div key={hour} className={classes.join(' ')} 
+                                 data-hour={hour} data-day={dayIndex} 
+                                 onMouseDown={this.props.onMouseDown}>
+                            </div>
+                        );
+                    })}
+                </div>
+            )
+        );
+    }
+}
+
+
+type EventColumnsProps = {
+    calendarEvents: BigCalendarEvent[];
+}
+
+class EventColumns extends React.PureComponent<EventColumnsProps, {}> {
+    render(): any {
+        console.log("Days of the week", daysOfTheWeek)
+        return (
+            _.map(daysOfTheWeek, (day, dayIndex) => {
+                return (
+                    <div key={day} className="day-column">
+                        <div className="day-name" style={{opacity: 0}}><div></div></div>
+                        {_.map(this.getEventsForDay(dayIndex), (calendarEvent) => {
+                            const start = moment(calendarEvent.start).startOf('hour');
+                            const end = moment(calendarEvent.end).startOf('hour');
+                            const delta = end.diff(start);
+                            const hourStart = start.hours();
+                            const hourEnd = hourStart + (delta / 1000 / 60 / 60);
+                            console.log("Event", calendarEvent);
+                            return (
+                                <div key={calendarEvent.id} className="calendar-event" style={{gridRowStart: hourStart+2, gridRowEnd: hourEnd + 2}} onMouseDown={this.onMouseDown}>
+                                    <div className="event-title">{calendarEvent.title}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            })
+        )
+    }
+
+    private onMouseDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    private getEventsForDay(day: number): BigCalendarEvent[] {
+        const targetDay = moment().startOf('week').add(day, 'days').toDate().getTime();
+        const events = _.filter(this.props.calendarEvents, event => {
+            const eventStartDay = moment(event.start).startOf('day').toDate().getTime();
+            return targetDay === eventStartDay;
+        });
+        return events;
+    }
+}
+
 export class ScheduleCalendar extends React.PureComponent<Props,{}>{
     private root: HTMLDivElement | null;
 
@@ -61,23 +138,14 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
             <div className="schedule-calendar" ref={this.setRef}>
                 <div className="current-month">{month} {startOfWeek} - {endOfWeek}</div>
                 <div className="calendar-body" >
-                    <TimeColumn currentHour={currentHour} />
-                    {_.map(daysOfTheWeek, (day, dayIndex) =>
-                        <div key={day} className="day-column">
-                            <div className="day-name"><div>{day}</div></div>
-                            {_.times(24, hour => {
-                                const classes = ["hour-row"];
-                                const active = hour === currentHour;
-                                if(active){
-                                    classes.push("current-hour");
-                                }
-                                return (
-                                    <div key={hour} className={classes.join(' ')} data-hour={hour} data-day={dayIndex} onMouseDown={this.onMouseDown}>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
+                    <div className="background-grid">
+                        <TimeColumn currentHour={currentHour} />
+                        <DaysOfTheWeek currentHour={currentHour} onMouseDown={this.onMouseDown} />
+                    </div>
+                    <div className="event-grid">
+                        <div></div>{/*placeholder for time column, so the rest of the event grid is aligned with the day columns*/}
+                        <EventColumns calendarEvents={this.props.calendarEvents} />
+                    </div>
                 </div>
             </div>
         );
@@ -91,9 +159,11 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
     private startHour: number;
     private hourHeight: number;
     private draggingCalendarEventID: string;
+
     private onMouseDown = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        console.log("DISCO");
         const day = $(event.target).data('day');
         const hour = $(event.target).data('hour');
         this.startHour = parseInt(hour, 10);
@@ -122,8 +192,9 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
         const deltaY = pageY - this.startPosition.top;
         const hourDelta = deltaY / this.hourHeight;
         const endHour = Math.floor(this.startHour + hourDelta);
+        console.log("Start Hour to End Hour", this.startHour, endHour);
         const calendarEvent = _.find(this.props.calendarEvents, {id: this.draggingCalendarEventID});
-        calendarEvent.set({end: moment(calendarEvent.start).add(endHour, 'hours').toDate()});
+        calendarEvent.set({end: moment(calendarEvent.start).startOf('day').add(endHour, 'hours').toDate()});
     }
 
     private onMouseUp = (evnet) => {

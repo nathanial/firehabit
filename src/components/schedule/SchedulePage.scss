@@ -16,9 +16,26 @@
         }
         .calendar-body {
             background: #333;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-column-gap: 1px;
+            position: relative;
+            .background-grid, .event-grid {
+                height: 100%;
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                grid-column-gap: 1px;
+            }
+            .event-grid {
+                background: transparent;
+                .day-column {
+                    background: transparent;
+                }
+                pointer-events: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+            }
             .time-column {
                 background: #333;
                 width: 100%;
@@ -64,6 +81,13 @@
                 }
             }
         }
+    }
+
+    .calendar-event {
+        pointer-events: all;
+        background: red;
+        height: 100%;
+        width: 100%;
     }
 
 }
