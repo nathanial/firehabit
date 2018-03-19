@@ -752,20 +752,45 @@
     height: 100%;
     width: 100%;
     max-height: 100%;
-    overflow: hidden;
-    position: relative; }
+    position: relative;
+    overflow-x: visible; }
     .schedule-page .calendar-event .event-title {
-      overflow: hidden;
+      overflow-x: visible;
+      overflow-y: auto;
       padding-left: 4px;
       padding-right: 4px;
-      padding-top: 3px; }
+      padding-top: 3px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0; }
+      .schedule-page .calendar-event .event-title > .inline-text {
+        font-size: 11px;
+        line-height: 1.2; }
+    .schedule-page .calendar-event .top-dragger, .schedule-page .calendar-event .bottom-dragger {
+      height: 4px;
+      cursor: ns-resize; }
+    .schedule-page .calendar-event .top-dragger {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      right: 0; }
+    .schedule-page .calendar-event .bottom-dragger {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0; }
+    .schedule-page .calendar-event:hover .calendar-event-controls {
+      opacity: 1; }
     .schedule-page .calendar-event .calendar-event-controls {
+      background: white;
+      padding-left: 5px;
       position: absolute;
       right: 0;
-      top: 0;
-      opacity: 0; }
-      .schedule-page .calendar-event .calendar-event-controls:hover {
-        opacity: 1; }
+      bottom: 0;
+      opacity: 0;
+      border-radius: 2px; }
       .schedule-page .calendar-event .calendar-event-controls .delete-btn, .schedule-page .calendar-event .calendar-event-controls .settings-btn {
         padding: 0;
         margin: 0;

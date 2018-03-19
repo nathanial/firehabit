@@ -122,11 +122,12 @@ interface Array<T> {
 
 interface BigCalendarEvent {
 	id: string;
+	color?: string;
 	editing?: boolean;
     title: string;
     desc?: string;
     start: Date;
-    end: Date;
+	end: Date;
     set?(update: Partial<BigCalendarEvent>);
 }
 

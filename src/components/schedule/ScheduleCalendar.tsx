@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Color from 'color';
 import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
 import * as moment from 'moment';
@@ -7,8 +8,10 @@ import { generatePushID } from '../../db/util';
 import InlineText from '../InlineText';
 import {Button} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
-
+import {ChromePicker} from 'react-color';
 const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+const hourRowHeight = 26;
 
 type Props = {
     calendarEvents: BigCalendarEvent[];
@@ -111,11 +114,25 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
         const delta = end.diff(start);
         const hourStart = start.hours();
         const hourEnd = hourStart + (delta / 1000 / 60 / 60);
+        const style: any = {
+            gridRowStart: hourStart+2, gridRowEnd: hourEnd + 2
+        };
+        style.background = this.props.calendarEvent.color;
+
+        const backgroundColor = this.props.calendarEvent.color || '#eee';
+        let foregroundColor;
+        if(Color(backgroundColor).light()){
+            foregroundColor = 'black';
+        } else {
+            foregroundColor = 'white';
+        }
+        style.color = foregroundColor;
         return (
-            <div className="calendar-event" style={{gridRowStart: hourStart+2, gridRowEnd: hourEnd + 2}} onMouseDown={this.onMouseDown}>
+            <div className="calendar-event" style={style}>
                 <div className="event-title">
                     <InlineText value={calendarEvent.title}
                             multiline={true}
+                            style={{color: foregroundColor}}
                             placeholder="New Event"
                             editing={calendarEvent.editing || false}
                             onChange={this.onTitleChanged}
@@ -127,16 +144,77 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
                     <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDelete} />
                     <Button className="settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenSettings} />
                 </div>
+                <div className="top-dragger" onMouseDown={this.onTopDraggerMouseDown}>
+                </div>
+                <div className="bottom-dragger" onMouseDown={this.onBottomDraggerMouseDown}>
+                </div>
             </div>
         );
+    }
+
+    private dragDirection: 'top' | 'bottom';
+    private startPosition: Offset;
+    private hourStart: Date;
+
+    private onTopDraggerMouseDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        window.addEventListener('mousemove', this.onMouseMove, true);
+        window.addEventListener('mouseup', this.onMouseUp, true);
+        this.dragDirection = 'top';
+        this.startPosition = {left: event.pageX, top: event.pageY};
+        this.hourStart = this.props.calendarEvent.start;
+    }
+
+    private onBottomDraggerMouseDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        window.addEventListener('mousemove', this.onMouseMove, true);
+        window.addEventListener('mouseup', this.onMouseUp, true);
+        this.dragDirection = 'bottom';
+        this.startPosition = {left: event.pageX, top: event.pageY};
+        this.hourStart = this.props.calendarEvent.end;
+    }
+
+    private onMouseMove = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const {pageX, pageY} = event;
+        const deltaY = pageY - this.startPosition.top;
+        const hourDelta = parseInt((deltaY / hourRowHeight).toString());
+        if(this.dragDirection === 'top'){
+            const newValue = moment(this.hourStart).add('hours', hourDelta).toDate();
+            this.props.calendarEvent.set({start: newValue})
+        } else {
+            const newValue = moment(this.hourStart).add('hours', hourDelta).toDate();
+            this.props.calendarEvent.set({end: newValue})
+        }
+    }
+
+    private onMouseUp = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        window.removeEventListener('mousemove', this.onMouseMove, true);
+        window.removeEventListener('mouseup', this.onMouseUp, true);
     }
 
     private onDelete = () => {
         this.props.onDelete(this.props.calendarEvent.id);
     }
 
-    private onOpenSettings = () => {
-        console.log("Open Settings");
+    private onOpenSettings = async () => {
+        const changeColor = (newColor) => {
+            this.props.calendarEvent.set({color: newColor.hex});
+        };
+        const result = await DialogService.showDialog("Todo Settings", "Save", "Cancel", (
+            <div>
+                <label className="pt-label pt-inline">
+                    Color
+                    <ChromePicker color={this.props.calendarEvent.color} onChange={changeColor}/>
+                </label>
+            </div>
+        ));
     }
 
     private onTitleChanged = (newValue: string) => {
@@ -151,16 +229,12 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
         this.props.calendarEvent.set({editing: false});
     }
 
-    private onMouseDown = (event) => {
-   
-    }
-
     private getRowCount(){
         let value = this.props.calendarEvent.title;
         value = value || "";
         const length = value.length;
         const newlineRows = _.filter(value, v => v === '\n').length;
-        return Math.max(Math.ceil(length / 10) + newlineRows, 1);
+        return Math.max(Math.ceil(length / 13.5) + newlineRows, 1);
     }
 
 }
@@ -241,7 +315,6 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
     private onMouseDown = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        console.log("DISCO");
         const day = $(event.target).data('day');
         const hour = $(event.target).data('hour');
         this.startHour = parseInt(hour, 10);
@@ -270,7 +343,6 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
         const deltaY = pageY - this.startPosition.top;
         const hourDelta = deltaY / this.hourHeight;
         const endHour = Math.floor(this.startHour + hourDelta);
-        console.log("Start Hour to End Hour", this.startHour, endHour);
         const calendarEvent = _.find(this.props.calendarEvents, {id: this.draggingCalendarEventID});
         calendarEvent.set({end: moment(calendarEvent.start).startOf('day').add(endHour, 'hours').toDate()});
     }
