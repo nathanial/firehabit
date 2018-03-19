@@ -1,8 +1,10 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as $ from 'jquery';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { generatePushID } from '../../db/util';
+import InlineText from '../InlineText';
 
 const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -51,6 +53,7 @@ class TimeColumn extends React.PureComponent<TimeColumnProps,{}>{
 
 type DaysOfTheWeekProps = {
     currentHour: number;
+    currentDay: number;
     onMouseDown(event);
 }
 
@@ -62,7 +65,7 @@ class DaysOfTheWeek extends React.PureComponent<DaysOfTheWeekProps,{}>{
                     <div className="day-name"><div>{day}</div></div>
                     {_.times(24, hour => {
                         const classes = ["hour-row"];
-                        const active = hour === this.props.currentHour;
+                        const active = hour === this.props.currentHour && dayIndex === this.props.currentDay;
                         if(active){
                             classes.push("current-hour");
                         }
@@ -84,36 +87,77 @@ type EventColumnsProps = {
     calendarEvents: BigCalendarEvent[];
 }
 
+type CalendarEventProps = {
+    calendarEvent: BigCalendarEvent;
+}
+
+class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
+    render(){
+        const {calendarEvent} = this.props;
+        const start = moment(calendarEvent.start).startOf('hour');
+        const end = moment(calendarEvent.end).startOf('hour');
+        const delta = end.diff(start);
+        const hourStart = start.hours();
+        const hourEnd = hourStart + (delta / 1000 / 60 / 60);
+        return (
+            <div className="calendar-event" style={{gridRowStart: hourStart+2, gridRowEnd: hourEnd + 2}} onMouseDown={this.onMouseDown}>
+                <div className="event-title">
+                    <InlineText value={calendarEvent.title}
+                            multiline={true}
+                            placeholder="New Event"
+                            editing={calendarEvent.editing || false}
+                            onChange={this.onTitleChanged}
+                            onStartEditing={this.onStartEditing}
+                            onStopEditing={this.onStopEditing}
+                            rowCount={this.getRowCount()} />
+                </div>
+            </div>
+        );
+    }
+
+    private onTitleChanged = (newValue: string) => {
+        this.props.calendarEvent.set({title: newValue});
+    }
+
+    private onStartEditing = () => {
+        this.props.calendarEvent.set({editing: true});
+    }
+
+    private onStopEditing = () => {
+        this.props.calendarEvent.set({editing: false});
+    }
+
+    private onMouseDown = (event) => {
+   
+    }
+
+    private getRowCount(){
+        let value = this.props.calendarEvent.title;
+        value = value || "";
+        const length = value.length;
+        const newlineRows = _.filter(value, v => v === '\n').length;
+        return Math.max(Math.ceil(length / 10) + newlineRows, 1);
+    }
+
+}
+
 class EventColumns extends React.PureComponent<EventColumnsProps, {}> {
     render(): any {
-        console.log("Days of the week", daysOfTheWeek)
         return (
             _.map(daysOfTheWeek, (day, dayIndex) => {
                 return (
                     <div key={day} className="day-column">
                         <div className="day-name" style={{opacity: 0}}><div></div></div>
                         {_.map(this.getEventsForDay(dayIndex), (calendarEvent) => {
-                            const start = moment(calendarEvent.start).startOf('hour');
-                            const end = moment(calendarEvent.end).startOf('hour');
-                            const delta = end.diff(start);
-                            const hourStart = start.hours();
-                            const hourEnd = hourStart + (delta / 1000 / 60 / 60);
-                            console.log("Event", calendarEvent);
+                   
                             return (
-                                <div key={calendarEvent.id} className="calendar-event" style={{gridRowStart: hourStart+2, gridRowEnd: hourEnd + 2}} onMouseDown={this.onMouseDown}>
-                                    <div className="event-title">{calendarEvent.title}</div>
-                                </div>
+                                <CalendarEvent key={calendarEvent.id} calendarEvent={calendarEvent} />
                             );
                         })}
                     </div>
                 );
             })
         )
-    }
-
-    private onMouseDown = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
     }
 
     private getEventsForDay(day: number): BigCalendarEvent[] {
@@ -134,13 +178,14 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
         const startOfWeek = this.getStartOfWeek();
         const endOfWeek = this.getEndOfWeek();
         const currentHour = this.getCurrentHour();
+        const currentDay = this.getCurrentDay();
         return (
             <div className="schedule-calendar" ref={this.setRef}>
                 <div className="current-month">{month} {startOfWeek} - {endOfWeek}</div>
                 <div className="calendar-body" >
                     <div className="background-grid">
                         <TimeColumn currentHour={currentHour} />
-                        <DaysOfTheWeek currentHour={currentHour} onMouseDown={this.onMouseDown} />
+                        <DaysOfTheWeek currentHour={currentHour} currentDay={currentDay} onMouseDown={this.onMouseDown} />
                     </div>
                     <div className="event-grid">
                         <div></div>{/*placeholder for time column, so the rest of the event grid is aligned with the day columns*/}
@@ -210,6 +255,10 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
     private getCurrentHour(){
         const now = moment();
         return now.hours();
+    }
+
+    private getCurrentDay(){
+        return moment().startOf('day').days();
     }
 
     private getMonth(){

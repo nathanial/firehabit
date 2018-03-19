@@ -9,6 +9,7 @@ type Props = {
     multiline?: boolean;
     editing?: boolean;
     disabled?: boolean;
+    rowCount?: number;
     onChange(newValue: string);
     onStartEditing?();
     onStopEditing?();
@@ -34,7 +35,7 @@ export default class InlineText extends React.PureComponent<Props> {
                         value={this.props.value}
                         onKeyDown={this.onKeyDown}
                         onChange={this.onChange}
-                        rows={this.getRowCount()} />}
+                        rows={this.props.rowCount || this.getRowCount()} />}
                 {!this.props.multiline &&
                     <input key="input"
                         type="text"

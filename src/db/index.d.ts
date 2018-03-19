@@ -122,6 +122,7 @@ interface Array<T> {
 
 interface BigCalendarEvent {
 	id: string;
+	editing?: boolean;
     title: string;
     desc?: string;
     start: Date;
