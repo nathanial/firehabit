@@ -7,6 +7,7 @@ import {downloadCollection} from "./util";
 import {state} from '../state';
 import * as moment from 'moment';
 import * as config from './config';
+import {Collection} from './Collection';
 
 function encode(columns: TodoColumn[]) {
 	const copy = _.cloneDeep(columns);
@@ -47,18 +48,16 @@ export class DB {
 	private serverVersion: number = 0;
 	private localVersion: number = 0;
 
-	private notesRef: Reference;
-	private dirtyNotes: string[] = [];
-	private deletedNotes: string[] = [];
-
 	private calendarEventsRef: Reference;
 	private dirtyCalendarEvents: string[] = [];
 	private deletedCalendarEvents: string[] = [];
 
+	private notesCollection: Collection<Note>;
+
 	private async loadData(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
-		const notes = await this.loadNotes(userId);
+		const notes = await this.notesCollection.load();
 		const todoColumns = await this.loadTodoColumns(userId);
 		const foodDefinitions = await this.loadFoodDefinitions(userId);
 		const days = await this.loadDays(userId);
@@ -89,7 +88,6 @@ export class DB {
 	private async loadFromCache(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
-		this.notesRef = this.db.ref(`/users/${userId}/notes`);
 		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
 		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
@@ -140,7 +138,7 @@ export class DB {
 			clearInterval(this.syncInterval);
 		}
 		this.db = firebase.database();
-
+		this.notesCollection = new Collection<Note>("notes", this.db);
 
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
@@ -160,7 +158,7 @@ export class DB {
 			this.dirtyFoodDefinitions = [];
 			this.dirtyColumns = [];
 			this.dirtyDays = [];
-			this.dirtyNotes = [];
+			this.notesCollection.clearChanges();
 		}
 		this.startSync(userId);
 		if(!this.versionRef){
@@ -185,7 +183,8 @@ export class DB {
 						this.deletedCalendarEvents = [];
 						this.deletedColumns = [];
 						this.deletedFoodDefinitions = [];
-						this.deletedNotes = [];
+
+						this.notesCollection.clearChanges();
 
 						this.load({noChanges: true});
 					} else {
@@ -203,12 +202,6 @@ export class DB {
 		clearInterval(this.syncInterval);
 		await this.load();
 		$('body').css({'pointer-events': 'auto'});
-	}
-
-	async loadNotes(userId: string): Promise<Note[]> {
-		this.notesRef = this.db.ref(`/users/${userId}/notes`);
-		let notes = await downloadCollection<Note>(this.notesRef);
-		return notes;
 	}
 
 	async loadCalendarEvents(userId: string): Promise<BigCalendarEvent[]> {
@@ -259,16 +252,7 @@ export class DB {
 	addListeners(){
 		setTimeout(() => {
 			state.on('update', (currentState, prevState) => {
-				for(let prevNote of prevState.notes){
-					if(!_.some(currentState.notes, n => n.id === prevNote.id)){
-						this.deletedNotes.push(prevNote.id);
-					}
-				}
-				for(let currentNote of currentState.notes){
-					if(!_.some(prevState.notes, prevNote => prevNote === currentNote)){
-						this.dirtyNotes.push(currentNote.id);
-					}
-				}
+				this.notesCollection.update(currentState.notes, prevState.notes);
 				for(let prevCalendarEvent of prevState.calendarEvents){
 					if(!_.some(currentState.calendarEvents, n => n.id === prevCalendarEvent.id)){
 						this.deletedCalendarEvents.push(prevCalendarEvent.id);
@@ -322,7 +306,7 @@ export class DB {
 	}
 
 	async sync(userId){
-		this.syncNotes();
+		this.notesCollection.save(state.get().notes);
 		this.syncTodoColumns();
 		this.syncFoodDefinitions();
 		this.syncDays(userId);
@@ -332,23 +316,6 @@ export class DB {
 			localStorage.setItem('version', this.localVersion.toString());
 			this.versionRef.set(this.localVersion);
 		}
-	}
-
-	async syncNotes(){
-		const notes = state.get().notes;
-		localStorage.setItem('notes', JSON.stringify(notes));
-		for(let noteID of _.uniq(this.dirtyNotes)){
-			const note = _.find(notes, n => n.id === noteID);
-			this.notesRef.child(noteID).set(_.omit(note, 'id'));
-		}
-		for(let noteID of _.uniq(this.deletedNotes)) {
-			this.notesRef.child(noteID).remove();
-		}
-		if(this.dirtyNotes.length > 0 || this.deletedNotes.length > 0){
-			this.localVersion += 1;
-		}
-		this.dirtyNotes = [];
-		this.deletedNotes = [];
 	}
 
 	async syncCalendarEvents(){
