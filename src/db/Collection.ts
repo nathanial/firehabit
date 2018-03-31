@@ -8,6 +8,20 @@ interface IHasID {
     id: string;
 }
 
+interface Deserializer<T>{
+    (item: T): T;
+}
+
+interface Serializer<T> {
+    (item: T): any;
+}
+
+type CollectionOptions<T> = {
+    deserialize?: Deserializer<T>,
+    serialize?: Serializer<T>,
+    afterLoad?(item: T, index: number);
+}
+
 export class Collection<T extends IHasID> {
 	private ref: Reference;
 	private dirtyItems: string[] = [];
@@ -16,15 +30,28 @@ export class Collection<T extends IHasID> {
     constructor(
         public readonly key: string, 
         private readonly db: Database,
-        private readonly deserialize = (item: T): any => item,
-        private readonly serialize = (item: T): any => _.omit(item, 'id')
+        private readonly options: CollectionOptions<T> = {
+            deserialize: (item: T): T => item,
+            serialize: (item: T): any => _.omit(item, 'id'),
+            afterLoad: (item: T, index: number) => {}
+        }
     ){
         const user = firebase.auth().currentUser;
         this.ref = this.db.ref(`/users/${user.uid}/${this.key}`);
+        _.defaults(options, {
+            deserialize: (item: T): T => item,
+            serialize: (item: T): any => _.omit(item, 'id'),
+            afterLoad: (item: T, index: number) => {}
+        });
     }
 
     async load(): Promise<T[]> {
-		return _.map(await downloadCollection<T>(this.ref), item => this.deserialize(item));
+        let items = await downloadCollection<T>(this.ref);
+        items = _.map(items, (item, index) => this.options.deserialize(item));
+        _.each(items, (item, index) => {
+            this.options.afterLoad(item, index);
+        });
+        return items;
     }
 
     update(newItems:T[], oldItems:T[]){
@@ -41,10 +68,10 @@ export class Collection<T extends IHasID> {
     }
 
     save(currentItems:T[]): boolean {
-		localStorage.setItem(this.key, JSON.stringify(_.map(currentItems, e => this.serialize(e))));
+		localStorage.setItem(this.key, JSON.stringify(_.map(currentItems, e => this.options.serialize(e))));
 		for(let id of _.uniq(this.dirtyItems)){
 			const item = _.find(currentItems, n => n.id === id);
-			this.ref.child(id).set(this.serialize(item));
+			this.ref.child(id).set(this.options.serialize(item));
 		}
 		for(let id of _.uniq(this.deletedItems)) {
 			this.ref.child(id).remove();

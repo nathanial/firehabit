@@ -31,10 +31,6 @@ export class DB {
 
 	private db: Database;
 
-	private todoColumnsRef: Reference;
-	private dirtyColumns: string[] = [];
-	private deletedColumns: string[] = [];
-
 	private versionRef: Reference;
 
 	private daysRef: Reference;
@@ -47,14 +43,15 @@ export class DB {
 
 	private notesCollection: Collection<Note>;
 	private calendarEventsCollection: Collection<BigCalendarEvent>;
-	private foodDefinitionsCollecton: Collection<FoodDefinition>;
+	private foodDefinitionsCollection: Collection<FoodDefinition>;
+	private todoColumnsCollection: Collection<TodoColumn>;
 
 	private async loadData(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		const notes = await this.notesCollection.load();
-		const todoColumns = await this.loadTodoColumns(userId);
-		const foodDefinitions = await this.foodDefinitionsCollecton.load();
+		const foodDefinitions = await this.foodDefinitionsCollection.load();
+		const todoColumns = await this.todoColumnsCollection.load();
 		const days = await this.loadDays(userId);
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
@@ -98,8 +95,30 @@ export class DB {
 		}
 		this.db = firebase.database();
 		this.notesCollection = new Collection<Note>("notes", this.db);
-		this.calendarEventsCollection = new Collection<BigCalendarEvent>("calendar-events", this.db, this.deserializeEvent, this.serializeEvent);
-		this.foodDefinitionsCollecton = new Collection<FoodDefinition>("foodDefinitions", this.db);
+		this.calendarEventsCollection = new Collection<BigCalendarEvent>("calendar-events", this.db, {
+			deserialize: this.deserializeEvent, 
+			serialize: this.serializeEvent
+		});
+		this.foodDefinitionsCollection = new Collection<FoodDefinition>("foodDefinitions", this.db);
+		this.todoColumnsCollection = new Collection<TodoColumn>("todoColumns", this.db, {
+			afterLoad(todoColumn: TodoColumn, index: number){
+				if(_.isEmpty(todoColumn.todos)){
+					todoColumn.todos = [];
+				}
+				if(_.isUndefined(todoColumn.tabs)){
+					todoColumn.tabs = [
+						{
+							id: '0',
+							title: 'Default'
+						}
+					];
+				}
+				todoColumn.todos = _.map(todoColumn.todos, todo => {
+					return {...todo, name: _.trim(todo.name)};
+				});
+				todoColumn.index = index;
+			}
+		});
 
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
@@ -112,11 +131,11 @@ export class DB {
 
 		if(options.noChanges){
 			this.dirtyCalorieSettings = false;
-			this.dirtyColumns = [];
 			this.dirtyDays = [];
 			this.notesCollection.clearChanges();
 			this.calendarEventsCollection.clearChanges();
-			this.foodDefinitionsCollecton.clearChanges();
+			this.foodDefinitionsCollection.clearChanges();
+			this.todoColumnsCollection.clearChanges();
 		}
 		this.startSync(userId);
 		if(!this.versionRef){
@@ -133,13 +152,12 @@ export class DB {
 						this.localVersion = this.serverVersion;
 
 						this.dirtyCalorieSettings = false;
-						this.dirtyColumns = [];
 						this.dirtyDays = [];
-						this.deletedColumns = [];
 
 						this.notesCollection.clearChanges();
 						this.calendarEventsCollection.clearChanges();
-						this.foodDefinitionsCollecton.clearChanges();
+						this.foodDefinitionsCollection.clearChanges();
+						this.todoColumnsCollection.clearChanges();
 
 						this.load({noChanges: true});
 					} else {
@@ -159,32 +177,6 @@ export class DB {
 		$('body').css({'pointer-events': 'auto'});
 	}
 
-	async loadTodoColumns(userId: string): Promise<TodoColumn[]>{
-		this.todoColumnsRef = this.db.ref(`/users/${userId}/todoColumns`);
-		let todoColumns = await downloadCollection<TodoColumn>(this.todoColumnsRef);
-		todoColumns = _.sortBy(todoColumns, column => column.index);
-		let index = 0;
-		for(let todoColumn of todoColumns){
-			if(_.isEmpty(todoColumn.todos)){
-				todoColumn.todos = [];
-			}
-			if(_.isUndefined(todoColumn.tabs)){
-				todoColumn.tabs = [
-					{
-						id: '0',
-						title: 'Default'
-					}
-				];
-			}
-			todoColumn.todos = _.map(todoColumn.todos, todo => {
-				return {...todo, name: _.trim(todo.name)};
-			})
-			todoColumn.index = index;
-			index += 1;
-		}
-		return todoColumns;
-	}
-
 	async loadDays(userId: string): Promise<Day[]> {
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
 		const days = await downloadCollection<Day>(this.daysRef);
@@ -196,19 +188,10 @@ export class DB {
 			state.on('update', (currentState, prevState) => {
 				this.notesCollection.update(currentState.notes, prevState.notes);
 				this.calendarEventsCollection.update(currentState.calendarEvents, prevState.calendarEvents);
-				for(let prevColumn of prevState.todoColumns){
-					if(!_.some(currentState.todoColumns, c => c.id === prevColumn.id)){
-						this.deletedColumns.push(prevColumn.id);
-					}
-				}
-				for(let currentColumn of currentState.todoColumns){
-					if(!_.some(prevState.todoColumns, prevColumn => prevColumn === currentColumn)){
-						this.dirtyColumns.push(currentColumn.id);
-					}
-				}
+				this.todoColumnsCollection.update(currentState.todoColumns, prevState.todoColumns);
 				if(prevState.calories !== currentState.calories){
 					if(prevState.calories.foodDefinitions !== currentState.calories.foodDefinitions){
-						this.foodDefinitionsCollecton.update(currentState.calories.foodDefinitions, prevState.calories.foodDefinitions);
+						this.foodDefinitionsCollection.update(currentState.calories.foodDefinitions, prevState.calories.foodDefinitions);
 					}
 					if(prevState.calories.days !== currentState.calories.days){
 						for(let day of currentState.calories.days){
@@ -232,31 +215,14 @@ export class DB {
 	async sync(userId){
 		this.notesCollection.save(state.get().notes);
 		this.calendarEventsCollection.save(state.get().calendarEvents);
-		this.foodDefinitionsCollecton.save(state.get().calories.foodDefinitions);
-		this.syncTodoColumns();
+		this.foodDefinitionsCollection.save(state.get().calories.foodDefinitions);
+		this.todoColumnsCollection.save(state.get().todoColumns);
 		this.syncDays(userId);
 		if(this.localVersion !== this.serverVersion){
 			this.serverVersion = this.localVersion;
 			localStorage.setItem('version', this.localVersion.toString());
 			this.versionRef.set(this.localVersion);
 		}
-	}
-
-	async syncTodoColumns(){
-		const todoColumns = state.get().todoColumns;
-		localStorage.setItem('todo-columns', JSON.stringify(todoColumns));
-		for(let columnID of _.uniq(this.dirtyColumns)){
-			const column = _.find(todoColumns, c => c.id === columnID);
-			this.todoColumnsRef.child(columnID).set(_.omit(column, 'id'));
-		}
-		for(let columnID of _.uniq(this.deletedColumns)){
-			this.todoColumnsRef.child(columnID).remove();
-		}
-		if(this.dirtyColumns.length > 0 || this.deletedColumns.length > 0){
-			this.localVersion += 1;
-		}
-		this.dirtyColumns = [];
-		this.deletedColumns = [];
 	}
 
 	async syncDays(userId){
