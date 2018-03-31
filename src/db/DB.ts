@@ -35,10 +35,7 @@ export class DB {
 	private dirtyColumns: string[] = [];
 	private deletedColumns: string[] = [];
 
-	private foodDefinitionsRef: Reference;
 	private versionRef: Reference;
-	private dirtyFoodDefinitions: string[] = [];
-	private deletedFoodDefinitions: string[] = [];
 
 	private daysRef: Reference;
 	private dirtyDays: string[] = [];
@@ -50,13 +47,14 @@ export class DB {
 
 	private notesCollection: Collection<Note>;
 	private calendarEventsCollection: Collection<BigCalendarEvent>;
+	private foodDefinitionsCollecton: Collection<FoodDefinition>;
 
 	private async loadData(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		const notes = await this.notesCollection.load();
 		const todoColumns = await this.loadTodoColumns(userId);
-		const foodDefinitions = await this.loadFoodDefinitions(userId);
+		const foodDefinitions = await this.foodDefinitionsCollecton.load();
 		const days = await this.loadDays(userId);
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
@@ -101,6 +99,7 @@ export class DB {
 		this.db = firebase.database();
 		this.notesCollection = new Collection<Note>("notes", this.db);
 		this.calendarEventsCollection = new Collection<BigCalendarEvent>("calendar-events", this.db, this.deserializeEvent, this.serializeEvent);
+		this.foodDefinitionsCollecton = new Collection<FoodDefinition>("foodDefinitions", this.db);
 
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
@@ -113,10 +112,11 @@ export class DB {
 
 		if(options.noChanges){
 			this.dirtyCalorieSettings = false;
-			this.dirtyFoodDefinitions = [];
 			this.dirtyColumns = [];
 			this.dirtyDays = [];
 			this.notesCollection.clearChanges();
+			this.calendarEventsCollection.clearChanges();
+			this.foodDefinitionsCollecton.clearChanges();
 		}
 		this.startSync(userId);
 		if(!this.versionRef){
@@ -135,12 +135,11 @@ export class DB {
 						this.dirtyCalorieSettings = false;
 						this.dirtyColumns = [];
 						this.dirtyDays = [];
-						this.dirtyFoodDefinitions = [];
 						this.deletedColumns = [];
-						this.deletedFoodDefinitions = [];
 
 						this.notesCollection.clearChanges();
 						this.calendarEventsCollection.clearChanges();
+						this.foodDefinitionsCollecton.clearChanges();
 
 						this.load({noChanges: true});
 					} else {
@@ -186,12 +185,6 @@ export class DB {
 		return todoColumns;
 	}
 
-	async loadFoodDefinitions(userId: string): Promise<FoodDefinition[]> {
-		this.foodDefinitionsRef = this.db.ref(`/users/${userId}/foodDefinitions`);
-		const foodDefinitions = await downloadCollection<FoodDefinition>(this.foodDefinitionsRef);
-		return foodDefinitions;
-	}
-
 	async loadDays(userId: string): Promise<Day[]> {
 		this.daysRef = this.db.ref(`/users/${userId}/days`);
 		const days = await downloadCollection<Day>(this.daysRef);
@@ -215,16 +208,7 @@ export class DB {
 				}
 				if(prevState.calories !== currentState.calories){
 					if(prevState.calories.foodDefinitions !== currentState.calories.foodDefinitions){
-						for(let prevFoodDefinition of prevState.calories.foodDefinitions){
-							if(!_.some(currentState.calories.foodDefinitions, fd => fd.id === prevFoodDefinition.id)){
-								this.deletedFoodDefinitions.push(prevFoodDefinition.id);
-							}
-						}
-						for(let currentFoodDefinition of currentState.calories.foodDefinitions){
-							if(!_.some(prevState.calories.foodDefinitions, fd => fd === currentFoodDefinition)){
-								this.dirtyFoodDefinitions.push(currentFoodDefinition.id);
-							}
-						}
+						this.foodDefinitionsCollecton.update(currentState.calories.foodDefinitions, prevState.calories.foodDefinitions);
 					}
 					if(prevState.calories.days !== currentState.calories.days){
 						for(let day of currentState.calories.days){
@@ -248,8 +232,8 @@ export class DB {
 	async sync(userId){
 		this.notesCollection.save(state.get().notes);
 		this.calendarEventsCollection.save(state.get().calendarEvents);
+		this.foodDefinitionsCollecton.save(state.get().calories.foodDefinitions);
 		this.syncTodoColumns();
-		this.syncFoodDefinitions();
 		this.syncDays(userId);
 		if(this.localVersion !== this.serverVersion){
 			this.serverVersion = this.localVersion;
@@ -273,23 +257,6 @@ export class DB {
 		}
 		this.dirtyColumns = [];
 		this.deletedColumns = [];
-	}
-
-	async syncFoodDefinitions(){
-		const foodDefinitions = state.get().calories.foodDefinitions;
-		localStorage.setItem('food-definitions', JSON.stringify(foodDefinitions));
-		for(let foodDefinitionID of _.uniq(this.dirtyFoodDefinitions)){
-			const foodDefinition = _.find(foodDefinitions, f => f.id === foodDefinitionID);
-			this.foodDefinitionsRef.child(foodDefinitionID).set(_.omit(foodDefinition, 'id'));
-		}
-		for(let foodDefinitionID of _.uniq(this.deletedFoodDefinitions)){
-			this.foodDefinitionsRef.child(foodDefinitionID).remove();
-		}
-		if(this.dirtyFoodDefinitions.length > 0 || this.deletedFoodDefinitions.length > 0){
-			this.localVersion += 1;
-		}
-		this.dirtyFoodDefinitions = [];
-		this.deletedFoodDefinitions = [];
 	}
 
 	async syncDays(userId){
