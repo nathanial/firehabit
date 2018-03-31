@@ -15,14 +15,16 @@ export class Collection<T extends IHasID> {
     
     constructor(
         public readonly key: string, 
-        private readonly db: Database
+        private readonly db: Database,
+        private readonly deserialize = (item: T): any => item,
+        private readonly serialize = (item: T): any => _.omit(item, 'id')
     ){
         const user = firebase.auth().currentUser;
         this.ref = this.db.ref(`/users/${user.uid}/${this.key}`);
     }
 
     async load(): Promise<T[]> {
-		return await downloadCollection<T>(this.ref);
+		return _.map(await downloadCollection<T>(this.ref), item => this.deserialize(item));
     }
 
     update(newItems:T[], oldItems:T[]){
@@ -39,10 +41,10 @@ export class Collection<T extends IHasID> {
     }
 
     save(currentItems:T[]): boolean {
-		localStorage.setItem(this.key, JSON.stringify(currentItems));
+		localStorage.setItem(this.key, JSON.stringify(_.map(currentItems, e => this.serialize(e))));
 		for(let id of _.uniq(this.dirtyItems)){
 			const item = _.find(currentItems, n => n.id === id);
-			this.ref.child(id).set(_.omit(item, 'id'));
+			this.ref.child(id).set(this.serialize(item));
 		}
 		for(let id of _.uniq(this.deletedItems)) {
 			this.ref.child(id).remove();
