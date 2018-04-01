@@ -207,3 +207,34 @@ export class DB {
 	}
 
 }
+
+
+export async function loginToFirebase(db: DB){
+	return new Promise((resolve, reject) => {
+		firebase.auth().onAuthStateChanged(async function(user) {
+			if (user) {
+				db.loggedIn = true;
+				db.user.name = user.name;
+				db.user.email = user.email;
+				resolve();
+				// User is signed in.
+			} else {
+				if(firebase.auth().currentUser){
+					db.loggedIn = true;
+					resolve();
+					return;
+				}
+				const provider = new firebase.auth.GoogleAuthProvider();
+				try {
+					await firebase.auth().signInWithRedirect(provider)
+					db.loggedIn = true;
+					resolve();
+				} catch(error){
+					console.error(error);
+					db.loggedIn = false;
+					reject();
+				}
+			}
+		});
+	});
+}

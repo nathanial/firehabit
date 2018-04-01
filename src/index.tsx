@@ -7,6 +7,8 @@ import {db, history} from "./util";
 import {generatePushID} from './db/util';
 import * as firebase from 'firebase';
 import {state, AppState} from './state';
+import {LandingPage} from './components/LandingPage';
+import {loginToFirebase} from './db/DB';
 
 // Initialize Firebase
 var config = {
@@ -19,32 +21,11 @@ var config = {
 };
 firebase.initializeApp(config);
 
-async function loginToFirebase(){
+
+async function isLoggedIn(){
 	return new Promise((resolve, reject) => {
-		firebase.auth().onAuthStateChanged(async function(user) {
-			if (user) {
-				db.loggedIn = true;
-				db.user.name = user.name;
-				db.user.email = user.email;
-				resolve();
-				// User is signed in.
-			} else {
-				if(firebase.auth().currentUser){
-					db.loggedIn = true;
-					resolve();
-					return;
-				}
-				const provider = new firebase.auth.GoogleAuthProvider();
-				try {
-					await firebase.auth().signInWithRedirect(provider)
-					db.loggedIn = true;
-					resolve();
-				} catch(error){
-					console.error(error);
-					db.loggedIn = false;
-					reject();
-				}
-			}
+		firebase.auth().onAuthStateChanged(async (user) => {
+			resolve(!!user);
 		});
 	});
 }
@@ -64,26 +45,33 @@ async function setInitialData(){
 
 function loadDay(appState: AppState){
 	if(!_.some(appState.calories.days, d => d.date ===  appState.calories.selectedDate)){
-		console.log("Load Day");
 		appState.calories.days.push({id: generatePushID(), date: appState.calories.selectedDate, consumed: [], weight: 0});
 	}
 }
 
 async function init(){
-	await loginToFirebase();
-	await setInitialData();
-	await db.load();
-	const appState = state.get();
-	loadDay(appState);
-	ReactDOM.render(
-		<App appState={appState} />,
-		document.getElementById('root')
-	);
-	state.on('update', () => {
+	const loggedIn = await isLoggedIn();
+	if(!loggedIn){
+		ReactDOM.render(
+			<LandingPage />,
+			document.getElementById('root')
+		);
+	} else {
+		await loginToFirebase(db);
+		await setInitialData();
+		await db.load();
 		const appState = state.get();
 		loadDay(appState);
-		ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
-	});
+		ReactDOM.render(
+			<App appState={appState} />,
+			document.getElementById('root')
+		);
+		state.on('update', () => {
+			const appState = state.get();
+			loadDay(appState);
+			ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
+		});
+	}
 }
 
 init();
