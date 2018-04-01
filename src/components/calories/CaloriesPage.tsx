@@ -53,11 +53,13 @@ export default class CaloriesPage extends React.Component<Props,State> {
         let day = moment(this.state.selectedDay).format("MM/DD/YY");
         const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
         if(!dayObj){
-            this.props.caloriesState.days.push({
-                id: generatePushID(),
-                date: day,
-                weight: 0,
-                consumed: []
+            _.defer(() => {
+                this.props.caloriesState.days.push({
+                    id: generatePushID(),
+                    date: day,
+                    weight: 0,
+                    consumed: []
+                });
             });
             return <div />;
         }

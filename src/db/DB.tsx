@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import * as config from './config';
 import {Collection} from './Collection';
 import DayPicker from 'react-day-picker';
+import {generatePushID} from './util';
 
 function encode(columns: TodoColumn[]) {
 	const copy = _.cloneDeep(columns);
@@ -58,15 +59,61 @@ export class DB {
 		const days = await this.daysCollection.load();
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = (await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val() as CalorieSettings;
+
+		if(_.isEmpty(todoColumns)){
+			todoColumns.push({
+				id: generatePushID(),
+				name: 'Some Example Todos',
+				color: '#394B59',
+				enableTabs: false,
+				tabs: [
+					{
+						id: '0',
+						title: 'Default'
+					}
+				],
+				activeTab: '0',
+				showTodoCount: false,
+				editingName: false,
+				confirmDeletion: false,
+				showClearButton: false,
+				todos: [
+					{
+						id: generatePushID(),
+						name: 'Example Todo 1',
+						subtasks: [],
+						attachments: []
+					},
+					{
+						id: generatePushID(),
+						name: 'Example Todo 2',
+						subtasks: [],
+						attachments: []
+					}
+				],
+				index: 0,
+				showSettings: false
+			});
+		}
+
+		if(_.isEmpty(notes)){
+			notes.push({
+				id: generatePushID(),
+				title: 'Example Note',
+				editing: true,
+				text: "{\"entityMap\":{},\"blocks\":[{\"key\":\"7qpco\",\"text\":\"An example note\",\"type\":\"header-one\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":15,\"style\":\"fontsize-24\"}],\"entityRanges\":[],\"data\":{}},{\"key\":\"ee49o\",\"text\":\"With a list\",\"type\":\"ordered-list-item\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":11,\"style\":\"fontsize-24\"}],\"entityRanges\":[],\"data\":{}},{\"key\":\"180g6\",\"text\":\"Of things\",\"type\":\"ordered-list-item\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":9,\"style\":\"fontsize-24\"}],\"entityRanges\":[],\"data\":{}},{\"key\":\"8o8gu\",\"text\":\"About Stuff\",\"type\":\"ordered-list-item\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":11,\"style\":\"fontsize-24\"}],\"entityRanges\":[],\"data\":{}}]}"
+			});
+		}
+
 		state.set({
-			todoColumns,
+			todoColumns: todoColumns,
 			calories: {
 				selectedDate,
 				foodDefinitions,
 				days,
 				'calorie-settings': {
 					caloricGoal: _.get(calorieSettings, 'caloricGoal', 0),
-					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 0)
+					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 2300)
 				}
 			},
 			notes,

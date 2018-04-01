@@ -1,7 +1,7 @@
 interface Note {
 	id: string;
 	title: string;
-	text: string;
+	text?: string;
 	editing?: boolean;
 	set?(note: Partial<Note>);
 }
