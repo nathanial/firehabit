@@ -1,8 +1,10 @@
+import * as React from 'react';
 import * as _ from 'lodash';
 import * as $ from 'jquery';
 import * as firebase from 'firebase';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
+import DialogService from '../services/DialogService';
 import {downloadCollection} from "./util";
 import {state} from '../state';
 import * as moment from 'moment';
@@ -36,7 +38,6 @@ export class DB {
 
 	private syncInterval: number;
 	private loaded: boolean = false;
-	private serverVersion: number = 0;
 	private localVersion: number = 0;
 
 	private notesCollection: Collection<Note>;
@@ -44,6 +45,8 @@ export class DB {
 	private foodDefinitionsCollection: Collection<FoodDefinition>;
 	private todoColumnsCollection: Collection<TodoColumn>;
 	private daysCollection: Collection<Day>;
+
+	private transactionInProgress: boolean = false;
 
 	private async loadData(){
 		const user = firebase.auth().currentUser;
@@ -54,7 +57,7 @@ export class DB {
 		const todoColumns = await this.todoColumnsCollection.load();
 		const days = await this.daysCollection.load();
 		const selectedDate = moment().format('MM/DD/YY');
-		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
+		const calorieSettings = (await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val() as CalorieSettings;
 		state.set({
 			todoColumns,
 			calories: {
@@ -76,18 +79,7 @@ export class DB {
 		}
 	}
 
-	private async getServerVersion(userId: string): Promise<number> {
-		return new Promise<number>(resolve => {
-			this.versionRef = this.db.ref(`/users/${userId}/version`);
-			this.versionRef.once('value', (snapshot) => {
-				const version = snapshot.val() as number;
-				resolve(version);
-			});
-			this.versionRef = null;
-		});
-	}
-
-	async load(options = {noChanges: false}){
+	async load(){
 		const started = moment();
 		if(this.syncInterval){
 			clearInterval(this.syncInterval);
@@ -123,46 +115,26 @@ export class DB {
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 
-		const serverVersion = await this.getServerVersion(userId) || 0;
-
 		localStorage.setItem('app-version', config.appVersion);
 		await this.loadData();
-		localStorage.setItem('version', serverVersion.toString());
 
-		if(options.noChanges){
-			this.notesCollection.clearChanges();
-			this.calendarEventsCollection.clearChanges();
-			this.foodDefinitionsCollection.clearChanges();
-			this.todoColumnsCollection.clearChanges();
-			this.daysCollection.clearChanges();
-		}
 		this.startSync(userId);
 		if(!this.versionRef){
 			this.versionRef = this.db.ref(`/users/${userId}/version`);
-			this.versionRef.once('value', (snapshot) => {
-				const version = snapshot.val();
-				this.serverVersion = version || 0;
-				this.localVersion = version || 0;
-			}).then(() => {
-				this.versionRef.on('value', _.debounce((snapshot) => {
-					const version = snapshot.val();
-					this.serverVersion = version || 0;
-					if(this.serverVersion > this.localVersion){
-						this.localVersion = this.serverVersion;
-
-						this.notesCollection.clearChanges();
-						this.calendarEventsCollection.clearChanges();
-						this.foodDefinitionsCollection.clearChanges();
-						this.todoColumnsCollection.clearChanges();
-						this.daysCollection.clearChanges();
-
-						this.load({noChanges: true});
-					} else {
-						this.localVersion = this.serverVersion;
+			const snapshot = await this.versionRef.once('value');
+			const version = snapshot.val();
+			this.localVersion = version || 0;
+			this.versionRef.on('value', async (snapshot) => {
+				const version = snapshot.val() || 0;
+				if(version > this.localVersion){
+					const result = await DialogService.showDialog("New Changes on Server", "Update to Latest", "Cancel", 
+						<div>There are new changes on the server, would you like to update?</div>
+					);
+					if(result){
+						window.location.reload();
 					}
-				}, 3000));
+				}
 			});
-
 		}
 	}
 
@@ -197,16 +169,23 @@ export class DB {
 	}
 
 	async sync(userId){
+		if(this.transactionInProgress){
+			throw new Error('Sync during transaction');
+		}
 		const {notes, calendarEvents, calories, todoColumns} = state.get();
-		this.notesCollection.save(notes);
-		this.calendarEventsCollection.save(calendarEvents);
-		this.foodDefinitionsCollection.save(calories.foodDefinitions);
-		this.todoColumnsCollection.save(todoColumns);
-		this.daysCollection.save(calories.days);
-		if(this.localVersion !== this.serverVersion){
-			this.serverVersion = this.localVersion;
-			localStorage.setItem('version', this.localVersion.toString());
-			this.versionRef.set(this.localVersion);
+		const notesChanged = this.notesCollection.save(notes);
+		const calendarChanged = this.calendarEventsCollection.save(calendarEvents);
+		const foodChanged = this.foodDefinitionsCollection.save(calories.foodDefinitions);
+		const todosChanged = this.todoColumnsCollection.save(todoColumns);
+		const daysChanged = this.daysCollection.save(calories.days);
+		const changed = notesChanged || calendarChanged || foodChanged || todosChanged || daysChanged;
+		if(changed){
+			this.transactionInProgress = true;
+			await this.versionRef.transaction((version) => {
+				this.localVersion = version + 1;
+				return version + 1;
+			})
+			this.transactionInProgress = false;
 		}
 	}
 
