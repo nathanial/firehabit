@@ -137,8 +137,7 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
                             editing={calendarEvent.editing || false}
                             onChange={this.onTitleChanged}
                             onStartEditing={this.onStartEditing}
-                            onStopEditing={this.onStopEditing}
-                            rowCount={this.getRowCount()} />
+                            onStopEditing={this.onStopEditing}/>
                 </div>
                 <div className="calendar-event-controls">
                     <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDelete} />
@@ -228,15 +227,6 @@ class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
     private onStopEditing = () => {
         this.props.calendarEvent.set({editing: false});
     }
-
-    private getRowCount(){
-        let value = this.props.calendarEvent.title;
-        value = value || "";
-        const length = value.length;
-        const newlineRows = _.filter(value, v => v === '\n').length;
-        return Math.max(Math.ceil(length / 13.5) + newlineRows, 1);
-    }
-
 }
 
 class EventColumns extends React.PureComponent<EventColumnsProps, {}> {

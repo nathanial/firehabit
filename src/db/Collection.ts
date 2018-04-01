@@ -71,13 +71,12 @@ export class Collection<T extends IHasID> {
         if(this.dirtyItems.length <= 0 && this.deletedItems.length <= 0){
             return;
         }
-        console.log("Save",currentItems);
 		for(let id of _.uniq(this.dirtyItems)){
 			const item = _.find(currentItems, n => n.id === id);
-			this.ref.child(id).set(this.options.serialize(item));
+            this.ref.child(id).set(this.options.serialize(item));
 		}
 		for(let id of _.uniq(this.deletedItems)) {
-			this.ref.child(id).remove();
+            this.ref.child(id).remove();
         }
         let changed = false;
 		if(this.dirtyItems.length > 0 || this.deletedItems.length > 0){

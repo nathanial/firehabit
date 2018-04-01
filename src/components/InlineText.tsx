@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as AutoTextArea from 'react-textarea-autosize';
 
 type Props = {
     className?: string;
@@ -9,7 +10,6 @@ type Props = {
     multiline?: boolean;
     editing?: boolean;
     disabled?: boolean;
-    rowCount?: number;
     onChange(newValue: string);
     onStartEditing?();
     onStopEditing?();
@@ -28,24 +28,32 @@ export default class InlineText extends React.PureComponent<Props> {
         }
         return (
             <div style={{...style, ...outerStyle}} ref={root => this.root = root} className={className + " inline-text"} onClick={this.onStartEditing}>
-                {this.props.multiline &&
-                    <textarea key="input"
-                        disabled={this.props.disabled}
-                        style={style}
-                        value={this.props.value}
-                        onKeyDown={this.onKeyDown}
-                        onChange={this.onChange}
-                        rows={this.props.rowCount || this.getRowCount()} />}
-                {!this.props.multiline &&
-                    <input key="input"
-                        type="text"
-                        disabled={this.props.disabled}
-                        style={style}
-                        value={this.props.value}
-                        onKeyDown={this.onKeyDown}
-                        onChange={this.onChange} />}
+                {this.renderContent(style)}
             </div>
         );
+    }
+
+    private renderContent(style){
+        if(this.props.multiline){
+            return (
+                <AutoTextArea key="input"
+                    disabled={this.props.disabled}
+                    style={style}
+                    value={this.props.value}
+                    onKeyDown={this.onKeyDown}
+                    onChange={this.onChange} />
+            );
+        } else {
+            return (
+                <input key="input"
+                    type="text"
+                    disabled={this.props.disabled}
+                    style={style}
+                    value={this.props.value}
+                    onKeyDown={this.onKeyDown}
+                    onChange={this.onChange} />
+            );
+        }
     }
 
     componentDidMount() {
