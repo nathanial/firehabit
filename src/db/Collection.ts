@@ -68,7 +68,10 @@ export class Collection<T extends IHasID> {
     }
 
     save(currentItems:T[]): boolean {
-		localStorage.setItem(this.key, JSON.stringify(_.map(currentItems, e => this.options.serialize(e))));
+        if(this.dirtyItems.length <= 0 && this.deletedItems.length <= 0){
+            return;
+        }
+        console.log("Save",currentItems);
 		for(let id of _.uniq(this.dirtyItems)){
 			const item = _.find(currentItems, n => n.id === id);
 			this.ref.child(id).set(this.options.serialize(item));
@@ -77,7 +80,7 @@ export class Collection<T extends IHasID> {
 			this.ref.child(id).remove();
         }
         let changed = false;
-		if(this.dirtyItems.length > 0 || this.dirtyItems.length > 0){
+		if(this.dirtyItems.length > 0 || this.deletedItems.length > 0){
             changed = true;
         }
         this.clearChanges();

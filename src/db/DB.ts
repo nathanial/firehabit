@@ -8,6 +8,7 @@ import {state} from '../state';
 import * as moment from 'moment';
 import * as config from './config';
 import {Collection} from './Collection';
+import DayPicker from 'react-day-picker';
 
 function encode(columns: TodoColumn[]) {
 	const copy = _.cloneDeep(columns);
@@ -33,9 +34,6 @@ export class DB {
 
 	private versionRef: Reference;
 
-	private daysRef: Reference;
-	private dirtyDays: string[] = [];
-	private dirtyCalorieSettings = false;
 	private syncInterval: number;
 	private loaded: boolean = false;
 	private serverVersion: number = 0;
@@ -45,17 +43,18 @@ export class DB {
 	private calendarEventsCollection: Collection<BigCalendarEvent>;
 	private foodDefinitionsCollection: Collection<FoodDefinition>;
 	private todoColumnsCollection: Collection<TodoColumn>;
+	private daysCollection: Collection<Day>;
 
 	private async loadData(){
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
 		const notes = await this.notesCollection.load();
+		const calendarEvents = await this.calendarEventsCollection.load();
 		const foodDefinitions = await this.foodDefinitionsCollection.load();
 		const todoColumns = await this.todoColumnsCollection.load();
-		const days = await this.loadDays(userId);
+		const days = await this.daysCollection.load();
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = <CalorieSettings>(await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val();
-		const calendarEvents = await this.calendarEventsCollection.load();
 		state.set({
 			todoColumns,
 			calories: {
@@ -119,6 +118,7 @@ export class DB {
 				todoColumn.index = index;
 			}
 		});
+		this.daysCollection = new Collection<Day>("days", this.db);
 
 		const user = firebase.auth().currentUser;
 		const userId = user.uid;
@@ -130,12 +130,11 @@ export class DB {
 		localStorage.setItem('version', serverVersion.toString());
 
 		if(options.noChanges){
-			this.dirtyCalorieSettings = false;
-			this.dirtyDays = [];
 			this.notesCollection.clearChanges();
 			this.calendarEventsCollection.clearChanges();
 			this.foodDefinitionsCollection.clearChanges();
 			this.todoColumnsCollection.clearChanges();
+			this.daysCollection.clearChanges();
 		}
 		this.startSync(userId);
 		if(!this.versionRef){
@@ -151,13 +150,11 @@ export class DB {
 					if(this.serverVersion > this.localVersion){
 						this.localVersion = this.serverVersion;
 
-						this.dirtyCalorieSettings = false;
-						this.dirtyDays = [];
-
 						this.notesCollection.clearChanges();
 						this.calendarEventsCollection.clearChanges();
 						this.foodDefinitionsCollection.clearChanges();
 						this.todoColumnsCollection.clearChanges();
+						this.daysCollection.clearChanges();
 
 						this.load({noChanges: true});
 					} else {
@@ -177,12 +174,6 @@ export class DB {
 		$('body').css({'pointer-events': 'auto'});
 	}
 
-	async loadDays(userId: string): Promise<Day[]> {
-		this.daysRef = this.db.ref(`/users/${userId}/days`);
-		const days = await downloadCollection<Day>(this.daysRef);
-		return days;
-	}
-
 	addListeners(){
 		setTimeout(() => {
 			state.on('update', (currentState, prevState) => {
@@ -194,15 +185,8 @@ export class DB {
 						this.foodDefinitionsCollection.update(currentState.calories.foodDefinitions, prevState.calories.foodDefinitions);
 					}
 					if(prevState.calories.days !== currentState.calories.days){
-						for(let day of currentState.calories.days){
-							if(!_.some(prevState.calories.days, d => d === day)){
-								this.dirtyDays.push(day.id);
-							}
-						}
+						this.daysCollection.update(currentState.calories.days, prevState.calories.days);
 					}
-				}
-				if(prevState.calories['calorie-settings'] !== currentState.calories['calorie-settings']){
-					this.dirtyCalorieSettings = true;
 				}
 			})
 		}, 500);
@@ -213,39 +197,17 @@ export class DB {
 	}
 
 	async sync(userId){
-		this.notesCollection.save(state.get().notes);
-		this.calendarEventsCollection.save(state.get().calendarEvents);
-		this.foodDefinitionsCollection.save(state.get().calories.foodDefinitions);
-		this.todoColumnsCollection.save(state.get().todoColumns);
-		this.syncDays(userId);
+		const {notes, calendarEvents, calories, todoColumns} = state.get();
+		this.notesCollection.save(notes);
+		this.calendarEventsCollection.save(calendarEvents);
+		this.foodDefinitionsCollection.save(calories.foodDefinitions);
+		this.todoColumnsCollection.save(todoColumns);
+		this.daysCollection.save(calories.days);
 		if(this.localVersion !== this.serverVersion){
 			this.serverVersion = this.localVersion;
 			localStorage.setItem('version', this.localVersion.toString());
 			this.versionRef.set(this.localVersion);
 		}
-	}
-
-	async syncDays(userId){
-		const appState = state.get();
-		const days = appState.calories.days;
-		localStorage.setItem('days', JSON.stringify(days));
-		for(let dayID of _.uniq(this.dirtyDays)){
-			const day = _.find(days, d => d.id === dayID);
-			this.daysRef.child(dayID).set(_.omit(day, 'id'));
-		}
-		if(this.dirtyDays.length > 0){
-			this.localVersion += 1;
-		}
-		this.dirtyDays = [];
-
-		if(this.dirtyCalorieSettings){
-			localStorage.setItem('calorie-settings', JSON.stringify({...appState.calories['calorie-settings']}));
-			this.db.ref(`/users/${userId}/calorie-settings`).set({...appState.calories['calorie-settings']});
-			this.localVersion += 1;
-		}
-
-
-		this.dirtyCalorieSettings = false;
 	}
 
 	private eventDateFormat = 'MM/DD/YY HH:mm:ss';
