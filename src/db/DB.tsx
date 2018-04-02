@@ -154,6 +154,9 @@ export class DB {
 				todoColumn.todos = _.map(todoColumn.todos, todo => {
 					return {...todo, name: _.trim(todo.name)};
 				});
+				if(_.isUndefined(todoColumn.index)){
+					this.todoColumnsCollection.dirtyItems.push(todoColumn.id);
+				}
 				todoColumn.index = index;
 			}
 		});

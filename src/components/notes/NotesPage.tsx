@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
-import {Button} from '@blueprintjs/core';
+import {Icon, Button} from '@blueprintjs/core';
 import {EditorState, ContentState, convertToRaw, convertFromRaw} from 'draft-js';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import InlineText from '../InlineText';
+import {Draggable, DragDropContext, Droppable} from 'react-beautiful-dnd';
 
 type Props = {
     notes: Note[];
@@ -24,11 +25,22 @@ type NoteToolbarProps = {
 
 }
 
+function reorder(list: Note[], startIndex: number, endIndex: number) {
+    const newList = _.cloneDeep(list);
+    const [removed] = newList.splice(startIndex, 1);
+    newList.splice(endIndex, 0, removed);
+    _.each(newList, (item, index) => {
+        item.index = index;
+    });
+    list.reset(newList);
+};
+
 class NoteListItem extends React.PureComponent<NoteListItemProps, {}> {
     render(){
         const extraClasses = this.props.note.editing ? "editing" : "";
         return (
             <div className={`pt-card pt-elevation-2 note-list-item ${extraClasses}`} onClick={() => this.props.onSelect(this.props.note)}>
+                <Icon iconName="drag-handle-vertical" className="drag-handle" />
                 <InlineText disabled={!this.props.note.editing} value={this.props.note.title} onChange={this.onTitleChanged} />
                 <Button className="delete-btn pt-intent-danger pt-minimal" onClick={this.onDelete} iconName="trash"></Button>
             </div>
@@ -47,12 +59,41 @@ class NoteListItem extends React.PureComponent<NoteListItemProps, {}> {
 class NoteList extends React.PureComponent<NoteListProps, {}> {
     render(){
         return (
-            <div className="note-list">
-                {this.props.notes.map(note => {
-                    return <NoteListItem key={note.id} note={note} onSelect={this.onSelect} onDelete={this.onDelete} />
-                })}
-            </div>
+            <DragDropContext onDragEnd={this.onDragEnd}>
+                <Droppable droppableId="notes-list">
+                    {(provided: any, snapshot) => {
+                        return (
+                            <div className="note-list" ref={provided.innerRef} {...provided.droppableProps} >
+                                {this.props.notes.map((note, index) => {                        
+                                    return <Draggable key={note.id} draggableId={note.id} index={index}>
+                                        {(provided, snapshot) => {
+                                            return (
+                                                <div className="todo-draggable">
+                                                    <div ref={provided.innerRef}
+                                                        {...provided.draggableProps as any}
+                                                        {...provided.dragHandleProps}>
+                                                        <NoteListItem key={note.id} note={note} onSelect={this.onSelect} onDelete={this.onDelete} />
+                                                    </div>
+                                                    {provided.placeholder}
+                                                </div>
+                                            )
+                                        }}
+                                    </Draggable>
+                                })}
+                            </div>
+                        );
+                    }}
+                </Droppable>
+            </DragDropContext>
         );
+    }
+
+    private onDragEnd = (result) => {
+        if (!result.destination) {
+            return;
+        }
+        const note = _.find(this.props.notes, note => note.id === result.draggableId);
+        reorder(this.props.notes, result.source.index, result.destination.index);
     }
 
     onSelect = (selected: Note) => {

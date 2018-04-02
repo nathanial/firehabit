@@ -23,9 +23,9 @@ type CollectionOptions<T> = {
 }
 
 export class Collection<T extends IHasID> {
-	private ref: Reference;
-	private dirtyItems: string[] = [];
-    private deletedItems: string[] = [];
+	public ref: Reference;
+	public dirtyItems: string[] = [];
+    public deletedItems: string[] = [];
     
     constructor(
         public readonly key: string, 
@@ -48,6 +48,7 @@ export class Collection<T extends IHasID> {
     async load(): Promise<T[]> {
         let items = await downloadCollection<T>(this.ref);
         items = _.map(items, (item, index) => this.options.deserialize(item));
+        items = _.sortBy(items, 'index');
         _.each(items, (item, index) => {
             this.options.afterLoad(item, index);
         });
@@ -55,6 +56,7 @@ export class Collection<T extends IHasID> {
     }
 
     update(newItems:T[], oldItems:T[]){
+        let changed = false;
 	    for(let prevItem of oldItems){
             if(!_.some(newItems, n => n.id === prevItem.id)){
                 this.deletedItems.push(prevItem.id);
