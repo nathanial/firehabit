@@ -16,19 +16,19 @@ export class LandingPage extends React.PureComponent<{},{}> {
                     <h1>Welcome to Fire Habit</h1>
                     <div className="examples">
                         <div className="example">
-                            <img src="images/Calories.PNG" onClick={login} />
+                            <img src="icons/Board.png" onClick={login} />
                             <span>Track Calories</span>
                         </div>
                         <div className="example">
-                            <img src="images/Todos.PNG" onClick={login} />
+                            <img src="icons/Goal.png" onClick={login} />
                             <span>Manage Todos</span>
                         </div>
                         <div className="example">
-                            <img src="images/Notes.PNG" onClick={login} />
+                            <img src="icons/open-textbook.png" onClick={login} />
                             <span>Keep Notes</span>
                         </div>
                         <div className="example">
-                            <img src="images/Schedule.PNG" onClick={login} />
+                            <img src="icons/Calendar.png" onClick={login} />
                             <span>Schedule Events</span>
                         </div>
                     </div>
