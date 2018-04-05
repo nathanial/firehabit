@@ -16,10 +16,16 @@ type Props = {
 	onNavigate?(path: string)
 };
 
+type UserSectionProps = {
+	user?: any;
+}
+
 type NavProps = {
+	style?: any;
 	goto: string;
 	icon: string;
 	active: boolean;
+	navIconStyle?: any;
 	onNavigate(path: string);
 };
 
@@ -33,10 +39,6 @@ const gravatarClass = cxs({
 	borderRadius: '50%'
 });
 
-const navItemsClass = cxs({
-	border: '1px solid #313D4F'
-})
-
 class NavBtn extends React.PureComponent<NavProps, {}> {
 	render(){
 		const props = this.props;
@@ -46,9 +48,10 @@ class NavBtn extends React.PureComponent<NavProps, {}> {
 		}
 		return (
 			<div onClick={() => props.onNavigate(props.goto)}
-					className={classes.join(' ')}>
-				<span style={{marginRight: '10px'}} className={`pt-icon-small ${this.props.icon}`}></span>
-				{props.children}
+				className={classes.join(' ')}
+				style={this.props.style}>
+				<img className="nav-icon" style={props.navIconStyle} src={this.props.icon} />
+				<span className="nav-text">{props.children}</span>
 			</div>
 		);
 	}
@@ -64,14 +67,14 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 			await firebase.auth().signOut();
 			window.location.reload();
 		};
-		
+
 		const login = async () => {
 			await loginToFirebase(db);
 		};
 
 		if(!this.props.user){
 			return (
-				<Button className="pt-intent-success pt-icon-log-in" onClick={login}>
+				<Button className="pt-intent-success pt-icon-log-in" style={{marginTop:-3}} onClick={login}>
 					Login
 				</Button>
 			);
@@ -92,43 +95,83 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 	}
 }
 
+class SiteLogo extends React.PureComponent<{},{}> {
+	render(){
+		return (
+			<div className="site-logo pt-navbar-heading">
+				<img src="icons/FireHabitLogo.png" />
+				<span>Fire Habit</span>
+			</div>
+		);
+	}
+}
+
+class NavSection extends React.PureComponent<Props,{}> {
+	render(){
+		const {path} = this.props;
+		if(!this.props.user){
+			return <div />;
+		}
+		const caloriesStyle = {
+			width: 22,
+			height: 22,
+			position: 'absolute',
+			left: 5,
+			top: 3
+		};
+		const todosStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
+		const notesStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
+		const scheduleStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
+		return (
+			<div className="nav-section">
+				<NavBtn navIconStyle={caloriesStyle} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+				<NavBtn goto="" navIconStyle={todosStyle} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
+				<NavBtn goto="notes" navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
+				<NavBtn goto="schedule" navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
+			</div>
+		);
+	}
+}
+
+class UserSection extends React.PureComponent<UserProps,{}>{
+	render(){
+		return (
+			<div className="user-section">
+				<span className="username">{_.get(this.props.user, 'name')}</span>
+				<UserDropdown user={this.props.user} />
+			</div>
+		);
+	}
+}
+
 export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
 		const {path} = this.props;
 		return (
 			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
-				<div className="pt-navbar-group pt-align-left">
-					<div className="pt-navbar-heading" style={{height: '32px', display: 'flex', flexDirection:'row', alignItems:'center', justifyContent: 'center'}}>
-						<img style={{height:32, marginRight: 10}} src="icons/FireHabitLogo.png" />
-						<span>Fire Habit</span>
-					</div>
-					{this.renderNavbar()}
-				</div>
-				<div className="pt-navbar-group pt-align-left">
-					<span className="pt-navbar-divider" />
-					{this.props.children}
-				</div>
-				<div className="pt-navbar-group pt-align-right">
-					<UserDropdown user={this.props.user} />
-				</div>
+				<SiteLogo />
+				<NavSection {...this.props} />
+				<UserSection user={this.props.user} />
 			</nav>
 		);
-	}
-
-	private renderNavbar(){
-		const {path} = this.props;
-		if(!this.props.user){
-			return;
-		}
-		return [
-			<span key="divider" className="pt-navbar-divider" />,
-			<div key="nav-btns" className={navItemsClass}>
-				<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-				<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
-				<NavBtn goto="notes" icon="pt-icon-highlight" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
-				<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
-			</div>
-		];
 	}
 
 }

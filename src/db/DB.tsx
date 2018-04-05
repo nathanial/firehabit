@@ -134,7 +134,7 @@ export class DB {
 		this.db = firebase.database();
 		this.notesCollection = new Collection<Note>("notes", this.db);
 		this.calendarEventsCollection = new Collection<BigCalendarEvent>("calendar-events", this.db, {
-			deserialize: this.deserializeEvent, 
+			deserialize: this.deserializeEvent,
 			serialize: this.serializeEvent
 		});
 		this.foodDefinitionsCollection = new Collection<FoodDefinition>("foodDefinitions", this.db);
@@ -177,7 +177,7 @@ export class DB {
 			this.versionRef.on('value', async (snapshot) => {
 				const version = snapshot.val() || 0;
 				if(version > this.localVersion){
-					const result = await DialogService.showDialog("New Changes on Server", "Update to Latest", "Cancel", 
+					const result = await DialogService.showDialog("New Changes on Server", "Update to Latest", "Cancel",
 						<div>There are new changes on the server, would you like to update?</div>
 					);
 					if(result){
@@ -264,7 +264,7 @@ export async function loginToFirebase(db: DB){
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
 				db.loggedIn = true;
-				db.user.name = user.name;
+				db.user.name = user.name || user.displayName;
 				db.user.email = user.email;
 				resolve();
 				// User is signed in.
