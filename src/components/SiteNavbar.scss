@@ -6,20 +6,50 @@
 	height: 44px;
     padding: 0 20px;
 
-    .nav-btn {
-        border-radius: 0;
-        cursor: pointer;
-        background: #222;
-        padding: 7px 20px;
-        display: inline-block;
-        font-size: 12px;
-        border: 1px solid transparent;
+    .nav-section {
+        height: 32px;
+        .nav-btn {
+            width: 100px;
+            position: relative;
 
-        &.active {
-            background: #245785;
-            border: 1px solid #1A91EB;
+            &:not(:first-child){
+                border-left: 1px solid #313D4F;
+            }
+            .nav-text {
+                position: absolute;
+                right: 12px;
+                top: 0;
+                line-height: 30px;
+                vertical-align: middle;
+                font-size: 12px;
+                font-weight: bold;
+                font-family: 'Roboto';
+                text-align: right;
+            }
+
+            height: 30px;
+            max-height: 30px;
+            overflow: hidden;
+
+            .nav-icon {
+                width: 25px;
+                height: 25px;
+            }
+
+            border-radius: 0;
+            cursor: pointer;
+            background: #222;
+            display: inline-block;
+            font-size: 12px;
+            border: 1px solid transparent;
+
+            &.active {
+                background: #245785;
+                border: 1px solid #1A91EB;
+            }
         }
     }
+
 }
 
 
@@ -65,4 +95,33 @@
     left: 50%;
     transform: translateX(-50%);
     border: 1px solid #313D4F;
+}
+
+.user-section {
+    position: absolute;
+    right: 16px;
+    top: 10px;
+
+    .username {
+        padding: 4px 0;
+        margin-right: 11px;
+        vertical-align: middle;
+        display: inline-block;
+        font-family: 'Roboto';
+    }
+
+    .pt-popover-target {
+        display: inline-block;
+        margin-top: -4px;
+        & > button {
+            padding: 0;
+            min-width: 24px;
+            min-height: 24px;
+            line-height: 24px;
+        }
+        img {
+            width: 24px;
+            height: 24px;
+        }
+    }
 }

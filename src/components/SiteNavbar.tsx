@@ -16,10 +16,16 @@ type Props = {
 	onNavigate?(path: string)
 };
 
+type UserSectionProps = {
+	user?: any;
+}
+
 type NavProps = {
+	style?: any;
 	goto: string;
 	icon: string;
 	active: boolean;
+	navIconStyle?: any;
 	onNavigate(path: string);
 };
 
@@ -42,9 +48,10 @@ class NavBtn extends React.PureComponent<NavProps, {}> {
 		}
 		return (
 			<div onClick={() => props.onNavigate(props.goto)}
-					className={classes.join(' ')}>
-				<span style={{marginRight: '10px'}} className={`pt-icon-small ${this.props.icon}`}></span>
-				{props.children}
+				className={classes.join(' ')}
+				style={this.props.style}>
+				<img className="nav-icon" style={props.navIconStyle} src={this.props.icon} />
+				<span className="nav-text">{props.children}</span>
 			</div>
 		);
 	}
@@ -105,12 +112,51 @@ class NavSection extends React.PureComponent<Props,{}> {
 		if(!this.props.user){
 			return <div />;
 		}
+		const caloriesStyle = {
+			width: 22,
+			height: 22,
+			position: 'absolute',
+			left: 5,
+			top: 3
+		};
+		const todosStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
+		const notesStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
+		const scheduleStyle = {
+			width:25,
+			height:25,
+			position: 'absolute',
+			left: 5,
+			top: 1
+		};
 		return (
 			<div className="nav-section">
-				<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-				<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
-				<NavBtn goto="notes" icon="pt-icon-highlight" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
-				<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
+				<NavBtn navIconStyle={caloriesStyle} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+				<NavBtn goto="" navIconStyle={todosStyle} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+				<NavBtn goto="notes" navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
+				<NavBtn goto="schedule" navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
+			</div>
+		);
+	}
+}
+
+class UserSection extends React.PureComponent<UserProps,{}>{
+	render(){
+		return (
+			<div className="user-section">
+				<span className="username">{this.props.user.name}</span>
+				<UserDropdown user={this.props.user} />
 			</div>
 		);
 	}
@@ -123,12 +169,7 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<SiteLogo />
 				<NavSection {...this.props} />
-				{/* <div className="pt-navbar-group pt-align-left">
-					{this.props.children}
-				</div> */}
-				<div className="pt-navbar-group pt-align-right">
-					<UserDropdown user={this.props.user} />
-				</div>
+				<UserSection user={this.props.user} />
 			</nav>
 		);
 	}
