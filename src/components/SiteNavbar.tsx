@@ -33,10 +33,6 @@ const gravatarClass = cxs({
 	borderRadius: '50%'
 });
 
-const navItemsClass = cxs({
-	border: '1px solid #313D4F'
-})
-
 class NavBtn extends React.PureComponent<NavProps, {}> {
 	render(){
 		const props = this.props;
@@ -64,7 +60,7 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 			await firebase.auth().signOut();
 			window.location.reload();
 		};
-		
+
 		const login = async () => {
 			await loginToFirebase(db);
 		};
@@ -92,43 +88,49 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 	}
 }
 
-export default class SiteNavbar extends React.PureComponent<Props, {}> {
+class SiteLogo extends React.PureComponent<{},{}> {
 	render(){
-		const {path} = this.props;
 		return (
-			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
-				<div className="pt-navbar-group pt-align-left">
-					<div className="pt-navbar-heading" style={{height: '32px', display: 'flex', flexDirection:'row', alignItems:'center', justifyContent: 'center'}}>
-						<img style={{height:32, marginRight: 10}} src="icons/FireHabitLogo.png" />
-						<span>Fire Habit</span>
-					</div>
-					{this.renderNavbar()}
-				</div>
-				<div className="pt-navbar-group pt-align-left">
-					<span className="pt-navbar-divider" />
-					{this.props.children}
-				</div>
-				<div className="pt-navbar-group pt-align-right">
-					<UserDropdown user={this.props.user} />
-				</div>
-			</nav>
+			<div className="site-logo pt-navbar-heading">
+				<img src="icons/FireHabitLogo.png" />
+				<span>Fire Habit</span>
+			</div>
 		);
 	}
+}
 
-	private renderNavbar(){
+class NavSection extends React.PureComponent<Props,{}> {
+	render(){
 		const {path} = this.props;
 		if(!this.props.user){
-			return;
+			return <div />;
 		}
-		return [
-			<span key="divider" className="pt-navbar-divider" />,
-			<div key="nav-btns" className={navItemsClass}>
+		return (
+			<div className="nav-section">
 				<NavBtn goto="calories" icon="pt-icon-heart" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
 				<NavBtn goto="" icon="pt-icon-th" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
 				<NavBtn goto="notes" icon="pt-icon-highlight" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
 				<NavBtn goto="schedule" icon="pt-icon-calendar" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
 			</div>
-		];
+		);
+	}
+}
+
+export default class SiteNavbar extends React.PureComponent<Props, {}> {
+	render(){
+		const {path} = this.props;
+		return (
+			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
+				<SiteLogo />
+				<NavSection {...this.props} />
+				{/* <div className="pt-navbar-group pt-align-left">
+					{this.props.children}
+				</div> */}
+				<div className="pt-navbar-group pt-align-right">
+					<UserDropdown user={this.props.user} />
+				</div>
+			</nav>
+		);
 	}
 
 }
