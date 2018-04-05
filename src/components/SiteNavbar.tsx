@@ -143,7 +143,7 @@ class NavSection extends React.PureComponent<Props,{}> {
 		return (
 			<div className="nav-section">
 				<NavBtn navIconStyle={caloriesStyle} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-				<NavBtn goto="" navIconStyle={todosStyle} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todo</NavBtn>
+				<NavBtn goto="" navIconStyle={todosStyle} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
 				<NavBtn goto="notes" navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
 				<NavBtn goto="schedule" navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
 			</div>
