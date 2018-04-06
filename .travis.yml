@@ -2,10 +2,5 @@ language: node_js
 node_js:
   - "8"
 
-cache: 
+cache:
   yarn: true
-
-addons:
-  sauce_connect:
-    username: "nathanial.hartman@gmail.com"
-    access_key: "fad301cf-11bb-432a-a771-2ad553369aa1"
