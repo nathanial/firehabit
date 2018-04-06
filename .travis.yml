@@ -10,6 +10,6 @@ addons:
 cache:
   yarn: true
 
-script:
+before_script:
   - yarn build-css
   - nohup yarn start-js &
