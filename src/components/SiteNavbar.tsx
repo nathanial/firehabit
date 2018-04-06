@@ -169,6 +169,9 @@ export default class SiteNavbar extends React.PureComponent<Props, {}> {
 			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<SiteLogo />
 				<NavSection {...this.props} />
+				<div style={{position: 'absolute', top: 7, right: 190}}>
+					{this.props.children}
+				</div>
 				<UserSection user={this.props.user} />
 			</nav>
 		);
