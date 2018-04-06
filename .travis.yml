@@ -12,4 +12,4 @@ cache:
 
 script:
   - yarn build-css
-  - yarn start-js
+  - nohup yarn start-js &
