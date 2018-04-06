@@ -11,9 +11,9 @@
 
 <h4 align="center">Minimal Todo App and Calorie Tracker </h4>
 
-<a href="#" id="status-image-popup" title="Latest push build on default branch: " name="status-images" class="open-popup" data-ember-action="" data-ember-action-1339="1339">
-          <img src="https://travis-ci.org/nathanial/firehabit.svg?branch=master" alt="build:">
-        </a>
+
+<img src="https://travis-ci.org/nathanial/firehabit.svg?branch=master" alt="build:">
+  
 
 ## Prerequisites
 ```
