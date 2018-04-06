@@ -276,8 +276,14 @@ export async function loginToFirebase(db: DB){
 				}
 				const provider = new firebase.auth.GoogleAuthProvider();
 				try {
-					await firebase.auth().signInWithRedirect(provider)
-					db.loggedIn = true;
+					if(window.location.hostname === 'localhost'){
+						await firebase.auth().signInAnonymously();
+						db.loggedIn = true;
+						window.location.reload();
+					} else {
+						await firebase.auth().signInWithRedirect(provider);
+						db.loggedIn = true;
+					}
 					resolve();
 				} catch(error){
 					console.error(error);

@@ -85,10 +85,21 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 				<MenuItem iconName="log-out" text="Logout" onClick={logout} />
 			</Menu>
 		);
+
+		const renderGravatar = () => {
+			if(!this.props.user.email){
+				return (
+					<span style={{display: 'inline-block', position:'relative', padding: 4}}>Anonymous</span>
+				);
+			}
+			return (
+				<Gravatar email={this.props.user.email} className={gravatarClass} />
+			);
+		}
 		return (
 			<Popover content={compassMenu} position={Position.BOTTOM}>
 				<button className="pt-button pt-minimal" type="button">
-					<Gravatar email={this.props.user.email} className={gravatarClass} />
+					{renderGravatar()}
 				</button>
 			</Popover>
 		);
