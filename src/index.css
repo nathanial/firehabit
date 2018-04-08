@@ -203,13 +203,6 @@
   .inline-text input {
     margin-top: -1px; }
 
-@media (max-width: 500px) {
-  .notes-page .note-list {
-    font-size: 8px;
-    width: 100px !important; }
-  .notes-page .editor-panel {
-    left: 100px !important; } }
-
 .notes-page {
   color: black;
   position: absolute;
@@ -217,102 +210,177 @@
   right: 0;
   bottom: 0;
   top: 0;
+  background: #222;
   overflow: hidden; }
-  .notes-page .editor-panel {
-    overflow: auto;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 200px; }
-  .notes-page .rdw-editor-toolbar {
-    width: 900px;
-    border-width: 0;
-    padding: 10px;
-    padding-bottom: 5px;
-    background-color: transparent; }
-    .notes-page .rdw-editor-toolbar:before {
-      content: '.';
-      background: red;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 90px;
-      position: absolute;
-      background: #222;
-      z-index: -1;
-      border-bottom: 1px solid #050505; }
-    .notes-page .rdw-editor-toolbar .rdw-option-wrapper {
-      background: #aaa;
-      border: 1px solid black; }
-    .notes-page .rdw-editor-toolbar .rdw-dropdown-wrapper {
-      background: #aaa;
-      border: 1px solid black; }
-      .notes-page .rdw-editor-toolbar .rdw-dropdown-wrapper .rdw-dropdown-selectedtext {
-        color: white; }
-  .notes-page .public-DraftStyleDefault-block {
-    margin: 0; }
-  .notes-page .DraftEditor-root {
-    color: white;
-    margin-left: 35px; }
-  .notes-page .rdw-editor-main {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 130px;
-    height: calc(100% - 130px);
-    bottom: 0;
-    overflow: auto; }
   .notes-page .note-toolbar {
     text-align: left; }
-  .notes-page .rdw-editor-wrapper {
-    position: absolute;
-    left: 0px;
-    top: 0;
+  .notes-page .editor-toolbar {
+    vertical-align: top;
+    background: #333;
+    height: 32px;
+    left: 0;
     right: 0;
-    bottom: 0;
-    overflow: hidden; }
+    top: 0px;
+    position: absolute;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 9; }
+    .notes-page .editor-toolbar .pt-button {
+      box-shadow: none;
+      background: transparent;
+      border-width: 0 !important;
+      outline-width: 0 !important;
+      padding: 0;
+      overflow: hidden;
+      height: 30px;
+      max-height: 30px;
+      margin-top: -8px;
+      box-shadow: none;
+      border-radius: 0; }
+      .notes-page .editor-toolbar .pt-button:hover {
+        border-width: 0 !important;
+        outline-width: 0 !important;
+        box-shadow: none !important; }
+      .notes-page .editor-toolbar .pt-button > img {
+        position: relative;
+        top: -8px; }
   .notes-page .note-list {
+    z-index: 8;
     text-align: left;
     position: absolute;
     background: white;
     left: 0;
-    top: 0;
+    top: 32px;
     bottom: 0;
     width: 200px;
-    overflow-y: auto;
-    background: #222;
+    background: #333;
     padding-top: 1px;
     border-right: 1px solid #111; }
     .notes-page .note-list .note-list-item {
-      background: #333;
+      color: #E6E4E4;
+      background: #555;
       position: relative;
       display: block;
-      padding: 10px 20px;
+      padding: 6px 20px;
       cursor: pointer;
-      border-radius: 0;
-      border: 1px solid transparent; }
+      overflow: hidden;
+      border-radius: 0; }
       .notes-page .note-list .note-list-item .drag-handle {
         color: white;
         position: absolute;
         left: 0;
-        top: 11px; }
+        top: 7px; }
       .notes-page .note-list .note-list-item.editing {
         background: #245785;
-        border: 1px solid #1a91eb; }
+        border-width: 0 !important;
+        outline-width: 0 !important; }
+        .notes-page .note-list .note-list-item.editing::before {
+          border-width: 0 !important;
+          outline-width: 0 !important; }
+        .notes-page .note-list .note-list-item.editing::after {
+          border-width: 0 !important;
+          outline-width: 0 !important; }
       .notes-page .note-list .note-list-item .inline-text > input {
-        color: white; }
+        outline-width: 0;
+        font-family: Roboto;
+        color: #E6E4E4; }
         .notes-page .note-list .note-list-item .inline-text > input:disabled {
           cursor: pointer; }
       .notes-page .note-list .note-list-item .delete-btn {
         position: absolute;
         right: 0;
-        top: 2px;
-        display: none; }
+        top: 0px;
+        display: none;
+        outline-width: 0;
+        border-width: 0;
+        box-shadow: none; }
         .notes-page .note-list .note-list-item .delete-btn::before {
-          font-size: 11px; }
+          font-size: 11px;
+          position: relative;
+          top: -3px; }
       .notes-page .note-list .note-list-item.editing:hover .delete-btn {
         display: block; }
+
+.editor-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0; }
+  .editor-panel .DraftEditor-root {
+    position: absolute;
+    top: 35px;
+    bottom: 0;
+    right: 0;
+    left: 200px;
+    width: auto;
+    cursor: text;
+    text-align: left;
+    color: white;
+    overflow-y: auto; }
+    .editor-panel .DraftEditor-root h1 {
+      font-size: 40px; }
+    .editor-panel .DraftEditor-root h2 {
+      font-size: 24px; }
+    .editor-panel .DraftEditor-root h3 {
+      font-size: 18px; }
+    .editor-panel .DraftEditor-root .DraftEditor-editorContainer {
+      width: 565px;
+      margin: 0 auto;
+      margin-top: 10px;
+      position: relative; }
+
+.font-size-dropdown, .block-type-dropdown {
+  display: inline-block;
+  overflow: hidden;
+  background: #676767;
+  color: #E6E4E4;
+  width: 48px;
+  height: 24px;
+  position: relative;
+  top: 4px;
+  cursor: pointer;
+  margin: 0 10px; }
+  .font-size-dropdown:hover, .block-type-dropdown:hover {
+    background: #787878; }
+  .font-size-dropdown:active, .block-type-dropdown:active {
+    background: #565656; }
+  .font-size-dropdown.open, .block-type-dropdown.open {
+    overflow: visible; }
+    .font-size-dropdown.open .dropdown, .block-type-dropdown.open .dropdown {
+      opacity: 1;
+      position: absolute;
+      background: #676767; }
+      .font-size-dropdown.open .dropdown > div, .block-type-dropdown.open .dropdown > div {
+        padding: 3px 0;
+        user-select: none;
+        -webkit-user-select: none; }
+        .font-size-dropdown.open .dropdown > div:hover, .block-type-dropdown.open .dropdown > div:hover {
+          background: #787878; }
+        .font-size-dropdown.open .dropdown > div.selected, .block-type-dropdown.open .dropdown > div.selected {
+          background: #565656; }
+  .font-size-dropdown .dropdown, .block-type-dropdown .dropdown {
+    opacity: 0;
+    transition: opacity 0.15s ease-in; }
+
+.block-type-dropdown {
+  width: 150px;
+  text-transform: uppercase; }
+  .block-type-dropdown.open .dropdown {
+    width: 150px; }
+  .block-type-dropdown .selected-item {
+    line-height: 24px;
+    vertical-align: middle; }
+
+.font-size-dropdown.open .dropdown {
+  width: 48px; }
+
+.font-size-dropdown .selected-item {
+  line-height: 24px;
+  vertical-align: middle; }
+
+.note-draggable {
+  outline-width: 0;
+  border-width: 0; }
 
 @media (max-width: 600px) {
   .calories-page {
@@ -648,11 +716,12 @@
           text-align: right; }
 
 .site-navbar {
-  background: #333;
+  background: #222;
   display: block;
   width: 100%;
   height: 44px;
-  padding: 0 20px; }
+  padding: 0 20px;
+  z-index: 99; }
   .site-navbar .nav-section {
     height: 32px; }
     .site-navbar .nav-section .nav-btn {

@@ -21,6 +21,7 @@ type UserSectionProps = {
 }
 
 type NavProps = {
+	className?: string;
 	style?: any;
 	goto: string;
 	icon: string;
@@ -45,6 +46,9 @@ class NavBtn extends React.PureComponent<NavProps, {}> {
 		const classes = ["nav-btn"];
 		if(props.active){
 			classes.push('active');
+		}
+		if(props.className){
+			classes.push(props.className);
 		}
 		return (
 			<div onClick={() => props.onNavigate(props.goto)}
@@ -153,10 +157,10 @@ class NavSection extends React.PureComponent<Props,{}> {
 		};
 		return (
 			<div className="nav-section">
-				<NavBtn navIconStyle={caloriesStyle} style={{width:95}} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-				<NavBtn goto="" navIconStyle={todosStyle} style={{width:88}} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
-				<NavBtn goto="notes" style={{width:88}} navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
-				<NavBtn goto="schedule" style={{width:105}} navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
+				<NavBtn className="calories-nav-btn" navIconStyle={caloriesStyle} style={{width:95}} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+				<NavBtn className="todo-nav-btn" goto="" navIconStyle={todosStyle} style={{width:88}} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
+				<NavBtn className="notes-nav-btn" goto="notes" style={{width:88}} navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
+				<NavBtn className="schedule-nav-btn" goto="schedule" style={{width:105}} navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
 			</div>
 		);
 	}

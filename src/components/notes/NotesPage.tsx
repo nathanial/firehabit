@@ -1,120 +1,123 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Editor } from 'react-draft-wysiwyg';
 import {Icon, Button} from '@blueprintjs/core';
-import {EditorState, ContentState, convertToRaw, convertFromRaw} from 'draft-js';
-import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import InlineText from '../InlineText';
-import {Draggable, DragDropContext, Droppable} from 'react-beautiful-dnd';
+import {Editor, EditorState, ContentState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
+import {NoteList} from './NoteList';
+import {Dropdown} from './NoteDropdown';
+import * as DraftUtils from 'draftjs-utils';
 
 type Props = {
     notes: Note[];
 }
 
-type NoteListProps = {
-    notes: Note[];
+type State = {
+    editorState: any
+}
+const fontSizes = [
+    9,10,11,12,14,18,20,
+    24,36,48,64,72,144,288
+];
+
+
+type FontSizeDropdownProps = {
+    fontSize: number;
 }
 
-type NoteListItemProps = {
-    note: Note;
-    onSelect(note: Note);
-    onDelete(note: Note);
+type BlockTypeDropdownProps = {
+    blockType: string;
+    onChange(blockType: string);
 }
 
-type NoteToolbarProps = {
+const styleMap = _.fromPairs(_.map(fontSizes, fontSize => {
+    return [`fontsize-${fontSize}`, {fontSize: `${fontSize}px`}];
+}));
 
+const blockTypes = [
+    'header-one',
+    'header-two',
+    'header-three',
+    'unstyled'
+];
+
+type EditorToolbarProps = {
+    editorState: EditorState;
+    onChange(editorState: EditorState);
 }
 
-function reorder(list: Note[], startIndex: number, endIndex: number) {
-    const newList = _.cloneDeep(list);
-    const [removed] = newList.splice(startIndex, 1);
-    newList.splice(endIndex, 0, removed);
-    _.each(newList, (item, index) => {
-        item.index = index;
-    });
-    list.reset(newList);
-};
-
-class NoteListItem extends React.PureComponent<NoteListItemProps, {}> {
+class EditorToolbar extends React.PureComponent<EditorToolbarProps,{}> {
     render(){
-        const extraClasses = this.props.note.editing ? "editing" : "";
+        const {editorState} = this.props;
+        const style = editorState.getCurrentInlineStyle().toJS();
+        const content = editorState.getCurrentContent().toJS();
+        const block = DraftUtils.getSelectedBlock(editorState).toJS();
+        const fontSize = this.getFontSize(block, style);
         return (
-            <div className={`pt-card pt-elevation-2 note-list-item ${extraClasses}`} onClick={() => this.props.onSelect(this.props.note)}>
-                <Icon iconName="drag-handle-vertical" className="drag-handle" />
-                <InlineText disabled={!this.props.note.editing} value={this.props.note.title} onChange={this.onTitleChanged} />
-                <Button className="delete-btn pt-intent-danger pt-minimal" onClick={this.onDelete} iconName="trash"></Button>
+            <div className="editor-toolbar">
+                <Button onClick={this.onBold}>
+                    <img src="icons/notes-icons/bold.svg" />
+                </Button>
+                <Button onClick={this.onItalic}>
+                    <img src="icons/notes-icons/italic.svg" />
+                </Button>
+                <Button onClick={this.onUnderline}>
+                    <img src="icons/notes-icons/underline.svg" />
+                </Button>
+                <Button onClick={this.onStrikethrough}>
+                    <img src="icons/notes-icons/strikethrough.svg" />
+                </Button>
+                <Dropdown className="block-type-dropdown" items={blockTypes} selected={block.type} onChange={this.toggleBlockType} />
+                <Dropdown className="font-size-dropdown" items={fontSizes} selected={fontSize} onChange={this.changeFontSize} />
             </div>
         );
     }
 
-    private onTitleChanged = (newValue) => {
-        this.props.note.set({title: newValue});
+    private onBold = () => {
+        this.toggleInlineStyle("BOLD");
+    };
+
+    private onItalic = () => {
+        this.toggleInlineStyle("ITALIC");
+    };
+
+    private onUnderline = () => {
+        this.toggleInlineStyle("UNDERLINE");
+    };
+
+    private onStrikethrough = () => {
+        this.toggleInlineStyle("STRIKETHROUGH");
     }
 
-    private onDelete = () => {
-        this.props.onDelete(this.props.note);
-    }
-}
-
-class NoteList extends React.PureComponent<NoteListProps, {}> {
-    render(){
-        return (
-            <DragDropContext onDragEnd={this.onDragEnd}>
-                <Droppable droppableId="notes-list">
-                    {(provided: any, snapshot) => {
-                        return (
-                            <div className="note-list" ref={provided.innerRef} {...provided.droppableProps} >
-                                {this.props.notes.map((note, index) => {                        
-                                    return <Draggable key={note.id} draggableId={note.id} index={index}>
-                                        {(provided, snapshot) => {
-                                            return (
-                                                <div className="todo-draggable">
-                                                    <div ref={provided.innerRef}
-                                                        {...provided.draggableProps as any}
-                                                        {...provided.dragHandleProps}>
-                                                        <NoteListItem key={note.id} note={note} onSelect={this.onSelect} onDelete={this.onDelete} />
-                                                    </div>
-                                                    {provided.placeholder}
-                                                </div>
-                                            )
-                                        }}
-                                    </Draggable>
-                                })}
-                            </div>
-                        );
-                    }}
-                </Droppable>
-            </DragDropContext>
-        );
+    private toggleInlineStyle(style: string){
+        this.props.onChange(RichUtils.toggleInlineStyle(this.props.editorState, style));
     }
 
-    private onDragEnd = (result) => {
-        if (!result.destination) {
-            return;
-        }
-        const note = _.find(this.props.notes, note => note.id === result.draggableId);
-        reorder(this.props.notes, result.source.index, result.destination.index);
+    private toggleBlockType = (type: string) => {
+        this.props.onChange(RichUtils.toggleBlockType(this.props.editorState, type));
     }
 
-    onSelect = (selected: Note) => {
-        for(let note of this.props.notes){
-            if(note !== selected){
-                note.set({editing: false});
+    private changeFontSize = (fontSize: number) => {
+        this.props.onChange(RichUtils.toggleInlineStyle(this.props.editorState, 'fontsize-' + fontSize));
+    }
+
+    private getFontSize = (block, styles: string[]) => {
+        const fontSize = _.find(styles, style => _.startsWith(style, "fontsize-"));
+        if(!fontSize){
+            if(block.type === 'header-one'){
+                return 40;
             }
+            if(block.type === 'header-two'){
+                return 24;
+            }
+            if(block.type === 'header-three'){
+                return 18;
+            }
+            return 14;
+        } else {
+            const [prefix, value] = fontSize.split('-');
+            return parseInt(value, 10);
         }
-        selected.set({editing: true});
     }
 
-    onDelete = (note: Note) => {
-        const index = _.findIndex(this.props.notes, n => n.id === note.id);
-        if(index !== -1){
-            this.props.notes.splice(index, 1);
-        }
-    }
-}
-
-type State = {
-    editorState: any
 }
 
 export default class NotesPage extends React.Component<Props, State> {
@@ -136,20 +139,19 @@ export default class NotesPage extends React.Component<Props, State> {
     render(){
         return (
             <div className="notes-page">
-                <NoteList notes={this.props.notes} />
-                {this.renderEditor()}
+               <div className="editor-panel">
+                    <NoteList notes={this.props.notes} />
+                    {this.renderEditor()}
+                </div>
             </div>
         );
     }
 
     renderEditor() {
-        if(_.find(this.props.notes, note => note.editing)){
-            return (
-                <div className="editor-panel">
-                    <Editor editorState={this.state.editorState} onEditorStateChange={this.onEditorStateChange} />
-                </div>
-            );
-        }
+        return [
+            <EditorToolbar key="editor-toolbar" editorState={this.state.editorState} onChange={this.onEditorStateChange} />,
+            <Editor customStyleMap={styleMap} key="editor" editorState={this.state.editorState} onChange={this.onEditorStateChange} />
+        ];
     }
 
     componentWillReceiveProps(nextProps: Props){
