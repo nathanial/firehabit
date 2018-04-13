@@ -2,7 +2,7 @@ describe('Login Page', function() {
     beforeEach(function(){
         cy.on('uncaught:exception', (err, runnable) => {
             // ignore uncaught exceptions. just proceed.
-            return true;
+            return false;
         });
         cy.visit('http://localhost:3000');
     });

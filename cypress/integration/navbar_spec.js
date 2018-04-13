@@ -2,7 +2,7 @@ describe('Navbar', function() {
     beforeEach(() => {
         cy.on('uncaught:exception', (err, runnable) => {
             // ignore uncaught exceptions. just proceed.
-            return true;
+            return false;
         });
     });
     it('should goto calories', () => {
