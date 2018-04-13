@@ -29,7 +29,7 @@ class NoteListItem extends React.PureComponent<NoteListItemProps, {}> {
     render(){
         const extraClasses = this.props.note.editing ? "editing" : "";
         return (
-            <div className={`pt-card pt-elevation-2 note-list-item ${extraClasses}`} onClick={() => this.props.onSelect(this.props.note)}>
+            <div className={`pt-card note-list-item ${extraClasses}`} onClick={() => this.props.onSelect(this.props.note)}>
                 <Icon iconName="drag-handle-vertical" className="drag-handle" />
                 <InlineText disabled={!this.props.note.editing} value={this.props.note.title} onChange={this.onTitleChanged} />
                 <Button className="delete-btn pt-intent-danger pt-minimal" onClick={this.onDelete} iconName="trash"></Button>

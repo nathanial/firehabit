@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import * as $ from 'jquery';
 
 type DropdownProps = {
     selected: any;
@@ -35,8 +36,30 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
         );
     }
 
-    private onClick = () => {
-        this.setState({open: !this.state.open});
+    private onClick = (event) => {
+        event.stopPropagation();
+        const isOpen = !this.state.open;
+        this.setState({open: isOpen});
+    }
+
+    componentDidUpdate(){
+        if(this.state.open){
+            document.addEventListener('mousedown', this.onOuterMouseDown);
+        } else {
+            document.removeEventListener('mousedown', this.onOuterMouseDown);
+        }
+    }
+
+    private onOuterMouseDown = () => {
+        const noteDropdown = (
+            $(event.target).hasClass('note-dropdown') ||
+            $(event.target).parents('.note-dropdown').length > 0
+        );
+        if(noteDropdown){
+            return;
+        }
+
+        this.setState({open: false});
     }
 
     private renderSelected(){
