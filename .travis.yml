@@ -11,5 +11,6 @@ cache:
   yarn: true
 
 before_script:
+  - npm rebuild
   - yarn build-css
   - nohup yarn start-js &
