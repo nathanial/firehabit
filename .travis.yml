@@ -14,3 +14,4 @@ before_script:
   - npm rebuild
   - yarn build-css
   - yarn start-js &
+  - sleep 30
