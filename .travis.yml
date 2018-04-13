@@ -8,7 +8,7 @@ addons:
     packages:
       - google-chrome-stable
 cache:
-  yarn: false
+  yarn: true
 
 before_script:
   - yarn build-css

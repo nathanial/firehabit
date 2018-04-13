@@ -1,9 +1,9 @@
 describe('Navbar', function() {
     beforeEach(() => {
         cy.on('uncaught:exception', (err, runnable) => {
-            expect(err.message).to.include("Cannot read property 'getBoundingClientRect' of null");
-            return false;
-        })
+            // ignore uncaught exceptions. just proceed.
+            return true;
+        });
     });
     it('should goto calories', () => {
         cy.visit('http://localhost:3000');

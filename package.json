@@ -94,7 +94,7 @@
     "build-js": "node scripts/build.js",
     "start": "npm-run-all -p build-css watch-sass start-js",
     "build": "npm-run-all build-css build-js",
-    "test": "cypress run --browser chrome",
+    "test": "cypress run --browser electron",
     "cypress:open": "cypress open"
   },
   "jest": {
