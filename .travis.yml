@@ -13,4 +13,4 @@ cache:
 before_script:
   - npm rebuild
   - yarn build-css
-  - nohup yarn start-js &
+  - yarn start-js &
