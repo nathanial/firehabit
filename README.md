@@ -12,7 +12,7 @@
 <h4 align="center">Minimal Todo App and Calorie Tracker </h4>
 
 
-<img src="https://travis-ci.org/nathanial/firehabit.svg?branch=master" alt="build:">
+<!-- <img src="https://travis-ci.org/nathanial/firehabit.svg?branch=master" alt="build:"> -->
   
 
 ## Prerequisites
