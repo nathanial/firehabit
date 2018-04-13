@@ -223,6 +223,9 @@ export default class ScrollArea extends React.Component<Props,State> {
     }
 
     resizeHandle = () => {
+        if(!this.root || !this.content){
+            return;
+        }
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
         const scrollHeight = this.content.scrollHeight + bottomMargin;
