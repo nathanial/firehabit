@@ -2,15 +2,13 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
-import './index.css';
+import './index.scss';
 import {db, history} from "./util";
 import {generatePushID} from './db/util';
 import * as firebase from 'firebase';
 import {state, AppState} from './state';
 import {LandingPage} from './components/LandingPage';
 import {loginToFirebase} from './db/DB';
-
-console.log("HELO");
 
 // Initialize Firebase
 var config = {
@@ -21,7 +19,9 @@ var config = {
 	storageBucket: "personal-life-tracker.appspot.com",
 	messagingSenderId: "892752440591"
 };
-firebase.initializeApp(config);
+if(firebase.apps.length === 0){
+	firebase.initializeApp(config); 
+}
 
 
 async function isLoggedIn(){
@@ -85,5 +85,6 @@ history.listen(() =>{
 });
 
 if(module['hot']){
+	console.log("ACCEPT IT");
 	module['hot'].accept();
 }

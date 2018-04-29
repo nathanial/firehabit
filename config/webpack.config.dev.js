@@ -3,8 +3,10 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 
+var webpack = require('webpack');
 var paths = require('./paths');
 var path = require('path');
+var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 var publicPath = '/';
 var publicUrl = '';
@@ -18,7 +20,9 @@ module.exports = {
   target: 'web',
   mode: 'development',
   devServer: {
-    contentBase: './public'
+    contentBase: './public',
+    historyApiFallback: true,
+    hot: true
   },
   entry: [
     paths.appIndexJs
@@ -49,9 +53,13 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
+        exclude: [resolve('node_modules/@types/node')],
         use: [
           {
-            loader: 'ts-loader'
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true
+            }
           }
         ]
       },
@@ -74,15 +82,28 @@ module.exports = {
         ]
       },
       {
-        test: /\.json$/,
+        test: /\.scss$/,
         include: [resolve('src')],
-        exclude: resolve('node_modules'),
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'sass-loader'
+          }
+        ]
+      },
+      {
+        test: /\.json$/,
+        include: [resolve('src'), resolve('node_modules')],
         loader: 'json-loader'
       },
       {
         test: /\.svg$/,
-        include: [resolve('src')],
-        exclude: resolve('node_modules'),
+        include: [resolve('src'), resolve('node_modules')],
         loader: 'file-loader',
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
@@ -92,5 +113,8 @@ module.exports = {
   },
   
   plugins: [
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new ForkTsCheckerWebpackPlugin()
   ]
 };
