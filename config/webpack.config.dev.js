@@ -1,19 +1,26 @@
 'use strict';
 
-var autoprefixer = require('autoprefixer');
-var webpack = require('webpack');
-var WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-var getClientEnvironment = require('./env');
+process.env.BABEL_ENV = 'development';
+process.env.NODE_ENV = 'development';
+
 var paths = require('./paths');
+var path = require('path');
 
 var publicPath = '/';
 var publicUrl = '';
-var env = getClientEnvironment(publicUrl);
+
+function resolve(name){
+  return path.resolve(__dirname, '../' + name);
+}
 
 module.exports = {
   devtool: 'cheap-module-source-map',
+  target: 'web',
+  mode: 'development',
+  devServer: {
+    contentBase: './public'
+  },
   entry: [
-    require.resolve('./polyfills'),
     paths.appIndexJs
   ],
   output: {
@@ -29,29 +36,54 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        include: paths.appSrc,
-        loader: 'babel',
-        query: {
-          cacheDirectory: true
-        }
+        test: /\.(png|jpg|gif|eot|woff|ttf)$/,
+        include: [resolve('src'), resolve('node_modules')],
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
       },
       {
-        test: /\.(ts|tsx)$/,
-        include: paths.appSrc,
-        loader: 'awesome-typescript-loader'
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ]
+      },
+      {
+        test: /\.js$/,
+        exclude: resolve('node_modules'),
+        include: resolve('src'),
+        use: 'babel-loader',
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        include: [resolve('src'), resolve('node_modules')],
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          }
+        ]
       },
       {
         test: /\.json$/,
-        loader: 'json'
+        include: [resolve('src')],
+        exclude: resolve('node_modules'),
+        loader: 'json-loader'
       },
       {
         test: /\.svg$/,
-        loader: 'file',
+        include: [resolve('src')],
+        exclude: resolve('node_modules'),
+        loader: 'file-loader',
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
         }
@@ -60,12 +92,5 @@ module.exports = {
   },
   
   plugins: [
-    new webpack.DefinePlugin(env.stringified),
-    new webpack.HotModuleReplacementPlugin()
-  ],
-  node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
-  }
+  ]
 };

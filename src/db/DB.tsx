@@ -37,7 +37,7 @@ export class DB {
 
 	private versionRef: Reference;
 
-	private syncInterval: number;
+	private syncInterval: any;
 	private loaded: boolean = false;
 	private localVersion: number = 0;
 

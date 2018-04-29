@@ -26,7 +26,6 @@ module.exports = {
   bail: true,
   devtool: 'source-map',
   entry: [
-    require.resolve('./polyfills'),
     paths.appIndexJs
   ],
   output: {

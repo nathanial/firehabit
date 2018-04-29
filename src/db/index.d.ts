@@ -132,3 +132,7 @@ interface BigCalendarEvent {
     set?(update: Partial<BigCalendarEvent>);
 }
 
+declare module 'react-textarea-autosize' {
+	var x: any;
+	export default x;
+}

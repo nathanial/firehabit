@@ -50,7 +50,7 @@ export default class ScrollArea extends React.Component<Props,State> {
     private handle: HTMLElement;
     private originalY: number;
     private startY: number;
-    private interval: number;
+    private interval: any;
     public stayInPlace = true;
 
     private previousScrollY = 0;

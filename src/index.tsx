@@ -10,6 +10,8 @@ import {state, AppState} from './state';
 import {LandingPage} from './components/LandingPage';
 import {loginToFirebase} from './db/DB';
 
+console.log("HELO");
+
 // Initialize Firebase
 var config = {
 	apiKey: "AIzaSyB8MpJg-KhRzFrc7nWEgbwWx3An27lLMx4",
@@ -81,3 +83,7 @@ history.listen(() =>{
 	loadDay(appState);
 	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
 });
+
+if(module['hot']){
+	module['hot'].accept();
+}

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as AutoTextArea from 'react-textarea-autosize';
+import AutoTextArea from 'react-textarea-autosize';
+
+console.log("Auto Text Area", AutoTextArea);
 
 type Props = {
     className?: string;
