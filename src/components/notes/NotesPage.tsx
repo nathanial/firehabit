@@ -4,9 +4,10 @@ import * as ReactDOM from 'react-dom';
 import {Icon, Button} from '@blueprintjs/core';
 import {Editor, EditorState, ContentState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
 import {NoteList} from './NoteList';
-import {Dropdown} from './NoteDropdown';
+import {Dropdown, ValueItem} from './NoteDropdown';
 import * as DraftUtils from 'draftjs-utils';
 import {Modifier as DraftModifier} from 'draft-js';
+import {MousePosition} from '../../util';
 
 type Props = {
     notes: Note[];
@@ -24,35 +25,16 @@ type BlockTypeDropdownProps = {
 }
 
 const blockTypes = [
-    'header',
-    'subheader',
-    'text',
+    {name: 'Header', value: 'header-one'},
+    {name: 'Sub Header', value: 'header-two'},
+    {name: 'Text', value: 'unstyled'},
+    {name: 'List', value: 'ordered-list-item'}
 ];
 
 const styleMap = {
 };
 
-class Header extends React.PureComponent<{block: any},{}> {
-    render(){
-        const text = this.props.block.getText();
-        return (
-            <div className="header">
-                {text}
-            </div>
-        );
-    }
-}
-
 function customBlockRenderer(contentBlock){
-    const type = contentBlock.getType();
-    if(type === 'header'){
-        return {
-            component: Header,
-            editable: true,
-            props: {
-            }
-        };
-    }
 }
 
 
@@ -110,7 +92,7 @@ class EditorToolbar extends React.PureComponent<EditorToolbarProps,{}> {
                 <ToolbarButton onClick={this.onStrikethrough}>
                     <img src="icons/notes-icons/strikethrough.svg" />
                 </ToolbarButton>
-                <Dropdown className="block-type-dropdown" items={blockTypes} selected={block.type} onChange={this.toggleBlockType} />
+                <Dropdown className="block-type-dropdown" items={blockTypes} selected={_.find(blockTypes, {value: block.type})} onChange={this.toggleBlockType} />
             </div>
         );
     }
@@ -142,10 +124,10 @@ class EditorToolbar extends React.PureComponent<EditorToolbarProps,{}> {
         this.props.onChange(RichUtils.toggleInlineStyle(this.props.editorState, style));
     }
 
-    private toggleBlockType = (type: string) => {
+    private toggleBlockType = (type: ValueItem) => {
         event.preventDefault();
         event.stopPropagation();
-        this.props.onChange(RichUtils.toggleBlockType(this.props.editorState, type));
+        this.props.onChange(RichUtils.toggleBlockType(this.props.editorState, type.value));
     }
 }
 
@@ -181,15 +163,14 @@ export default class NotesPage extends React.Component<Props, State> {
 
     private renderToolbar(){
         if(this.state.selectionArea){
-            const {left,top, width, height} = this.state.selectionArea;
-            const toolbarWidth = 366;
-            const centerSelection = width / 2;
+            const {left,top} = this.state.selectionArea;
+            const toolbarWidth = 298;
             const centerToolbar = toolbarWidth / 2;
-            const delta = centerSelection - centerToolbar;
+            const delta = MousePosition.x - centerToolbar;
             return (
                 <EditorToolbar style={{
                     position: 'fixed',
-                    left: left + delta,
+                    left: MousePosition.x - centerToolbar,
                     top: top - 34,
                 }} editorState={this.state.editorState} onChange={this.onEditorStateChange} />
             );
@@ -220,17 +201,12 @@ export default class NotesPage extends React.Component<Props, State> {
 
     onEditorStateChange = (editorState) => {
         this.setState({
-            editorState
-        });
-        const currentEditing = _.find(this.props.notes, note => note.editing);
-
-        // delay updating selection area in case any buttons have been pressed 
-        // on the toolbar
-        this.setState({
+            editorState,
             selectionArea: this.getSelectionArea()
         });
+        const currentEditing = _.find(this.props.notes, note => note.editing);
         if(currentEditing){
-            currentEditing.set({text: JSON.stringify(convertToRaw(editorState.getCurrentContent()))});
+            currentEditing.set({text: JSON.stringify(convertToRaw(editorState.getCurrentContent()))})
         }
     }
 

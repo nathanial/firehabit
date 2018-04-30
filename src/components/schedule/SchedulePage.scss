@@ -1,11 +1,19 @@
 .schedule-page {
     & > h1 {
+        position: absolute;
+        top: 50px;
         margin-bottom: 30px;
+        width: 100%;
+        left: 0;
+        right: 0;
+        text-align: center;
     }
     margin: 20px auto;
     width: 800px;
     height: calc(100% - 40px);
     .schedule-calendar {
+        opacity: 0.05;
+        pointer-events: none;
         display: grid;
         width: 100%;
         height: 680px;

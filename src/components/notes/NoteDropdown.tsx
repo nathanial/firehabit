@@ -2,11 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as $ from 'jquery';
 
+export type ValueItem = {
+    value: string;
+    name: string;
+}
 type DropdownProps = {
-    selected: any;
-    items: any[];
+    selected: ValueItem;
+    items: ValueItem[];
     className?: string;
-    onChange(item: any);
+    onChange(item: ValueItem);
 }
 
 type DropdownState = {
@@ -89,9 +93,10 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
         if(this.state.open){
             return;
         }
+        const name = _.get(this.props, 'selected.name', 'unknown');
         return (
             <DropdownItem className="selected-item" onClick={this.onClick}>
-                {this.props.selected}
+                {name}
             </DropdownItem>
         );
     }
@@ -107,13 +112,13 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
                 classes.push('selected-item');
             }
             return (
-                <DropdownItem key={item} className={classes.join(' ')} onClick={() => this.onClickItem(item)}>{item}</DropdownItem>
+                <DropdownItem key={item.value} className={classes.join(' ')} onClick={() => this.onClickItem(item)}>{item.name}</DropdownItem>
             );
         })));
         return results;
     }
 
-    private onClickItem = (item: string) => {
+    private onClickItem = (item: ValueItem) => {
         this.props.onChange(item);
         this.setState({open: false});
     }

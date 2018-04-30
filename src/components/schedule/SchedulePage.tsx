@@ -11,6 +11,7 @@ export class SchedulePage extends React.PureComponent<ScheduleProps,{}> {
         return (
             <div className="schedule-page">
                 <ScheduleCalendar calendarEvents={this.props.calendarEvents} />
+                <h1>Under Construction</h1>
             </div>
         );
     }
