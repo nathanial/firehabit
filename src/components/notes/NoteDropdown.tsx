@@ -13,6 +13,30 @@ type DropdownState = {
     open: boolean
 }
 
+class DropdownItem extends React.PureComponent<{className: string, onClick()},{}> {
+    private itemRef;
+    render(){
+        return (
+            <div ref={r => this.itemRef = r} className={this.props.className}>
+                {this.props.children}
+            </div>
+        );
+    }
+
+    componentDidMount(){
+        this.itemRef.addEventListener('mousedown', this.onMouseDown, true);
+    }
+
+    componentWillUnmount(){
+        this.itemRef.removeEventListener('mousedown', this.onMouseDown, true)
+    }
+
+    private onMouseDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.props.onClick();
+    }
+}
 
 export class Dropdown extends React.Component<DropdownProps,DropdownState> {
     state = {
@@ -36,8 +60,7 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
         );
     }
 
-    private onClick = (event) => {
-        event.stopPropagation();
+    private onClick = () => {
         const isOpen = !this.state.open;
         this.setState({open: isOpen});
     }
@@ -67,9 +90,9 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
             return;
         }
         return (
-            <div className="selected-item" onMouseDown={this.onClick}>
+            <DropdownItem className="selected-item" onClick={this.onClick}>
                 {this.props.selected}
-            </div>
+            </DropdownItem>
         );
     }
 
@@ -78,16 +101,13 @@ export class Dropdown extends React.Component<DropdownProps,DropdownState> {
         const close = () => {
             this.setState({open: false});
         };
-        results.push(
-            <div key="selected-item" className="selected item" onClick={close}>{this.props.selected}</div>
-        );
         results = results.concat(_.compact(_.map(this.props.items, (item) => {
             const classes = ["item"];
             if(item === this.props.selected){
-                return;
+                classes.push('selected-item');
             }
             return (
-                <div key={item} className={classes.join(' ')} onClick={() => this.onClickItem(item)}>{item}</div>
+                <DropdownItem key={item} className={classes.join(' ')} onClick={() => this.onClickItem(item)}>{item}</DropdownItem>
             );
         })));
         return results;

@@ -1,86 +1,137 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {Icon, Button} from '@blueprintjs/core';
 import {Editor, EditorState, ContentState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
 import {NoteList} from './NoteList';
 import {Dropdown} from './NoteDropdown';
 import * as DraftUtils from 'draftjs-utils';
+import {Modifier as DraftModifier} from 'draft-js';
 
 type Props = {
     notes: Note[];
 }
 
 type State = {
-    editorState: any
+    editorState: any;
+    selectionArea: ClientRect;
 }
-const fontSizes = [
-    9,10,11,12,14,18,20,
-    24,36,48,64,72,144,288
-];
 
-
-type FontSizeDropdownProps = {
-    fontSize: number;
-}
 
 type BlockTypeDropdownProps = {
     blockType: string;
     onChange(blockType: string);
 }
 
-const styleMap = _.fromPairs(_.map(fontSizes, fontSize => {
-    return [`fontsize-${fontSize}`, {fontSize: `${fontSize}px`}];
-}));
-
 const blockTypes = [
-    'header-one',
-    'header-two',
-    'header-three',
-    'unstyled'
+    'header',
+    'subheader',
+    'text',
 ];
 
+const styleMap = {
+};
+
+class Header extends React.PureComponent<{block: any},{}> {
+    render(){
+        const text = this.props.block.getText();
+        return (
+            <div className="header">
+                {text}
+            </div>
+        );
+    }
+}
+
+function customBlockRenderer(contentBlock){
+    const type = contentBlock.getType();
+    if(type === 'header'){
+        return {
+            component: Header,
+            editable: true,
+            props: {
+            }
+        };
+    }
+}
+
+
 type EditorToolbarProps = {
+    style: any;
     editorState: EditorState;
     onChange(editorState: EditorState);
 }
 
+type ToolbarButtonProps = {
+    onClick(event);
+}
+
+class ToolbarButton extends React.PureComponent<ToolbarButtonProps,{}> {
+    private ref;
+
+    render(){
+        return (
+            <Button ref={r => this.ref = r}>
+                {this.props.children}
+            </Button>
+        );
+    }
+
+    componentDidMount(){
+        ReactDOM.findDOMNode(this.ref).addEventListener('mousedown', this.onClick, true);
+    }
+
+    componentWillUnmount(){
+        ReactDOM.findDOMNode(this.ref).removeEventListener('mousedown', this.onClick, true);
+    }
+
+    onClick = (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        this.props.onClick(event);
+    }
+}
+
 class EditorToolbar extends React.PureComponent<EditorToolbarProps,{}> {
+    private toolbarRef;
     render(){
         const {editorState} = this.props;
         const style = editorState.getCurrentInlineStyle().toJS();
         const content = editorState.getCurrentContent().toJS();
         const block = DraftUtils.getSelectedBlock(editorState).toJS();
-        const fontSize = this.getFontSize(block, style);
         return (
-            <div className="editor-toolbar">
-                <Button onClick={this.onBold}>
+            <div ref={r => this.toolbarRef = r} className="editor-toolbar" style={this.props.style}>
+                <ToolbarButton onClick={this.onBold}>
                     <img src="icons/notes-icons/bold.svg" />
-                </Button>
-                <Button onClick={this.onItalic}>
+                </ToolbarButton>
+                <ToolbarButton onClick={this.onItalic}>
                     <img src="icons/notes-icons/italic.svg" />
-                </Button>
-                <Button onClick={this.onUnderline}>
-                    <img src="icons/notes-icons/underline.svg" />
-                </Button>
-                <Button onClick={this.onStrikethrough}>
+                </ToolbarButton>
+                <ToolbarButton onClick={this.onStrikethrough}>
                     <img src="icons/notes-icons/strikethrough.svg" />
-                </Button>
+                </ToolbarButton>
                 <Dropdown className="block-type-dropdown" items={blockTypes} selected={block.type} onChange={this.toggleBlockType} />
-                <Dropdown className="font-size-dropdown" items={fontSizes} selected={fontSize} onChange={this.changeFontSize} />
             </div>
         );
     }
 
-    private onBold = () => {
+    componentDidMount(){
+        this.toolbarRef.addEventListener('mousedown', this.onMouseDown, true);
+    }
+
+    componentWillUnmount(){
+        this.toolbarRef.removeEventListener('mousedown', this.onMouseDown, true);
+    }
+
+    onMouseDown = (event) => {
+    }
+
+    private onBold = (event) => {
         this.toggleInlineStyle("BOLD");
     };
 
-    private onItalic = () => {
+    private onItalic = (event) => {
         this.toggleInlineStyle("ITALIC");
-    };
-
-    private onUnderline = () => {
-        this.toggleInlineStyle("UNDERLINE");
     };
 
     private onStrikethrough = () => {
@@ -92,32 +143,10 @@ class EditorToolbar extends React.PureComponent<EditorToolbarProps,{}> {
     }
 
     private toggleBlockType = (type: string) => {
+        event.preventDefault();
+        event.stopPropagation();
         this.props.onChange(RichUtils.toggleBlockType(this.props.editorState, type));
     }
-
-    private changeFontSize = (fontSize: number) => {
-        this.props.onChange(RichUtils.toggleInlineStyle(this.props.editorState, 'fontsize-' + fontSize));
-    }
-
-    private getFontSize = (block, styles: string[]) => {
-        const fontSize = _.find(styles, style => _.startsWith(style, "fontsize-"));
-        if(!fontSize){
-            if(block.type === 'header-one'){
-                return 40;
-            }
-            if(block.type === 'header-two'){
-                return 24;
-            }
-            if(block.type === 'header-three'){
-                return 18;
-            }
-            return 14;
-        } else {
-            const [prefix, value] = fontSize.split('-');
-            return parseInt(value, 10);
-        }
-    }
-
 }
 
 export default class NotesPage extends React.Component<Props, State> {
@@ -127,11 +156,13 @@ export default class NotesPage extends React.Component<Props, State> {
         const editing = _.find(this.props.notes, note => note.editing);
         if(editing && editing.text){
             this.state = {
-                editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(editing.text)))
+                editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(editing.text))),
+                selectionArea: null
             };
         } else {
             this.state = {
-                editorState: EditorState.createEmpty()
+                editorState: EditorState.createEmpty(),
+                selectionArea: null
             };
         }
     }
@@ -141,17 +172,28 @@ export default class NotesPage extends React.Component<Props, State> {
             <div className="notes-page">
                <div className="editor-panel">
                     <NoteList notes={this.props.notes} />
-                    {this.renderEditor()}
+                    {this.renderToolbar()}
+                    <Editor blockRendererFn={customBlockRenderer} customStyleMap={styleMap} key="editor" editorState={this.state.editorState} onChange={this.onEditorStateChange} />
                 </div>
             </div>
         );
     }
 
-    renderEditor() {
-        return [
-            <EditorToolbar key="editor-toolbar" editorState={this.state.editorState} onChange={this.onEditorStateChange} />,
-            <Editor customStyleMap={styleMap} key="editor" editorState={this.state.editorState} onChange={this.onEditorStateChange} />
-        ];
+    private renderToolbar(){
+        if(this.state.selectionArea){
+            const {left,top, width, height} = this.state.selectionArea;
+            const toolbarWidth = 366;
+            const centerSelection = width / 2;
+            const centerToolbar = toolbarWidth / 2;
+            const delta = centerSelection - centerToolbar;
+            return (
+                <EditorToolbar style={{
+                    position: 'fixed',
+                    left: left + delta,
+                    top: top - 34,
+                }} editorState={this.state.editorState} onChange={this.onEditorStateChange} />
+            );
+        }
     }
 
     componentWillReceiveProps(nextProps: Props){
@@ -181,8 +223,22 @@ export default class NotesPage extends React.Component<Props, State> {
             editorState
         });
         const currentEditing = _.find(this.props.notes, note => note.editing);
+
+        // delay updating selection area in case any buttons have been pressed 
+        // on the toolbar
+        this.setState({
+            selectionArea: this.getSelectionArea()
+        });
         if(currentEditing){
             currentEditing.set({text: JSON.stringify(convertToRaw(editorState.getCurrentContent()))});
+        }
+    }
+
+    private getSelectionArea(){
+        const selection = window.getSelection();
+        if(selection.rangeCount > 0 && selection.anchorOffset !== selection.extentOffset){
+            const firstRange = selection.getRangeAt(0);
+            return firstRange.getBoundingClientRect();
         }
     }
 }

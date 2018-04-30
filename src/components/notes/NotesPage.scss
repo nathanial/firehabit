@@ -10,16 +10,16 @@
 
     .note-toolbar {
         text-align: left;
+        user-select: none;
+        * {
+            user-select: none;
+        }
     }
 
     .editor-toolbar {
         vertical-align: top;
         background: #333;
         height: 32px;
-        left: 0;
-        right: 0;
-        top: 0px;
-        position: absolute;
         box-shadow: 0 0 15px rgba(0,0,0,0.1);
         z-index: 9;
         .pt-button {
@@ -52,7 +52,7 @@
         position: absolute;
         background: white;
         left: 0;
-        top: 32px;
+        top: 0px;
         bottom: 0;
         width: 200px;
         background: #333;
@@ -129,8 +129,9 @@
     bottom: 0;
     top: 0;
     .DraftEditor-root {
+        border-top: 1px solid #333;
         position: absolute;
-        top: 35px;
+        top: 1px;
         bottom: 0;
         right: 0;
         left: 184px;
@@ -151,10 +152,14 @@
         }
 
         .DraftEditor-editorContainer {
-            width: 565px;
             margin: 0 auto;
-            margin-top: 10px;
+            margin-left: 30px;
+            height: 100%;
             position: relative;
+
+            .public-DraftEditor-content {
+                height: 100%;
+            }
         }
     }
 }
@@ -232,4 +237,11 @@
 .note-draggable {
     outline-width: 0;
     border-width: 0;
+}
+
+.DraftEditor-root {
+    // block types
+    .header {
+        font-size: 32px;
+    }
 }
