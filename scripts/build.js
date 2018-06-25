@@ -16,18 +16,12 @@ var url = require('url');
 var webpack = require('webpack');
 var config = require('../config/webpack.config.prod');
 var paths = require('../config/paths');
-var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-var FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 var measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
 var printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-  process.exit(1);
-}
-
 // First, read the current file sizes in build directory.
 // This lets us display how much they changed later.
 measureFileSizesBeforeBuild(paths.appBuild).then(previousFileSizes => {
