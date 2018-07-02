@@ -811,20 +811,22 @@
       height: 24px; }
 
 .schedule-page {
-  margin: 20px auto;
-  width: 800px;
+  margin: 20px;
+  width: calc(100% - 40px);
   height: calc(100% - 40px); }
   .schedule-page > h1 {
     margin-bottom: 30px; }
   .schedule-page .schedule-calendar {
     display: grid;
     width: 100%;
-    height: 680px;
+    height: 100%;
     grid-template-columns: 1fr;
     grid-template-rows: 30px 1fr;
     box-shadow: 3px 3px 20px black;
     background: #333;
-    color: white; }
+    color: white;
+    min-height: 700px;
+    min-width: 800px; }
     .schedule-page .schedule-calendar .calendar-body {
       background: #333;
       position: relative; }
@@ -853,7 +855,7 @@
         width: 100%;
         display: grid;
         height: 100%;
-        grid-template-rows: repeat(25, 25px);
+        grid-template-rows: repeat(25, 1fr);
         grid-row-gap: 1px; }
         .schedule-page .schedule-calendar .calendar-body .time-column .hour-row {
           position: relative;
@@ -876,7 +878,7 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: repeat(25, 25px);
+        grid-template-rows: repeat(25, 1fr);
         grid-row-gap: 1px; }
         .schedule-page .schedule-calendar .calendar-body .day-column.current-day .day-name {
           text-decoration: underline; }
@@ -910,8 +912,8 @@
       right: 0;
       bottom: 0; }
       .schedule-page .calendar-event .event-title > .inline-text {
-        font-size: 11px;
-        line-height: 1.2; }
+        font-size: 16px;
+        line-height: 16px; }
     .schedule-page .calendar-event .top-dragger, .schedule-page .calendar-event .bottom-dragger {
       height: 4px;
       cursor: ns-resize; }

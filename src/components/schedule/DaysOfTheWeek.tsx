@@ -33,6 +33,7 @@ export class DaysOfTheWeek extends React.PureComponent<DaysOfTheWeekProps,{}>{
                             if(active){
                                 classes.push("current-hour");
                                 minutePercentage = (moment().minutes() / 60) * 100;
+                                console.log("Minute Percentage", minutePercentage)
                             }
                             return (
                                 <div key={hour} className={classes.join(' ')}

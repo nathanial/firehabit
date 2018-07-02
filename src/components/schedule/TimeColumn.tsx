@@ -13,6 +13,7 @@ export class TimeColumn extends React.PureComponent<TimeColumnProps,{}>{
                 {_.times(24, hour => {
                     const suffix = hour > 12 ? "PM" : "AM";
                     const active = hour === this.props.currentHour;
+                    console.log("Current Hour", this.props.currentHour);
                     const key = hour;
                     if(hour === 0){
                         hour = 12;

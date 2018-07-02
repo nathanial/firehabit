@@ -121,11 +121,11 @@ export class ScheduleCalendar extends React.Component<Props,State>{
     };
 
     private getCurrentHour(){
-        return this.now.hours();
+        return moment().hours();
     }
 
     private getCurrentDay(){
-        return this.now.startOf('day').days();
+        return moment().startOf('day').days();
     }
 
     private getMonth(){
