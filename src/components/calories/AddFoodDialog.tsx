@@ -10,7 +10,8 @@ import InlineText from '../InlineText';
 
 type Props = {
     visible: boolean;
-    caloriesState: CaloriesState;
+    foodDefinitions: FoodDefinition[];
+    days: Day[];
     selectedDay: Date;
     onClose();
 }
@@ -110,7 +111,7 @@ export class AddFoodDialog extends React.PureComponent<Props,State> {
 
     private onAddNewFood = () => {
         const search = this.state.search;
-        this.props.caloriesState.foodDefinitions.push({
+        this.props.foodDefinitions.push({
             id: generatePushID(),
             name: search,
             calories: '0'
@@ -129,7 +130,7 @@ export class AddFoodDialog extends React.PureComponent<Props,State> {
     }
 
     private filteredDefinitions(){
-        const foodDefinitions = this.props.caloriesState.foodDefinitions;
+        const foodDefinitions = this.props.foodDefinitions;
         const matches = _.filter(foodDefinitions, (definition: FoodDefinition) => {
             return _.includes(definition.name.toLowerCase(), this.state.search.toLowerCase())
         });
@@ -154,9 +155,9 @@ export class AddFoodDialog extends React.PureComponent<Props,State> {
 
     private onSelectResult = (match: FoodDefinition) => {
         let day = moment(this.props.selectedDay).format("MM/DD/YY");
-        const dayObj = _.find(this.props.caloriesState.days, (d: Day) => d.date === day);
+        const dayObj = _.find(this.props.days, (d: Day) => d.date === day);
         if(_.isUndefined(dayObj)){
-            this.props.caloriesState.days.push({
+            this.props.days.push({
                 id: generatePushID(),
                 date: day,
                 weight: 0,

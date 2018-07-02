@@ -11,6 +11,10 @@
         height: 680px;
         grid-template-columns: 1fr;
         grid-template-rows: 30px 1fr;
+        box-shadow: 3px 3px 20px black;
+        background: #333;
+        color: white;
+        padding-top: 10px;
         .current-month {
 
         }
@@ -63,8 +67,8 @@
                 margin-bottom:-1px;
                 background: #555;
 
-                display: flex;      
-                flex-direction: column; 
+                display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
             }
@@ -84,7 +88,7 @@
 
                 .hour-row {
                     position: relative;
-                    background: #888;
+                    background: white;
                     &.current-hour {
                         .now-marker {
                             position: absolute;
@@ -159,7 +163,7 @@
             bottom: 0;
             opacity: 0;
             border-radius: 2px;
-        
+
             .delete-btn,.settings-btn {
                 padding: 0;
                 margin: 0;
@@ -173,7 +177,7 @@
                 }
             }
             .delete-btn {
-                margin-right: 3px;                
+                margin-right: 3px;
             }
             .settings-btn{
                 margin-right: 3px;

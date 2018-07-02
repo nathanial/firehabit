@@ -18,27 +18,35 @@ const dayPickerClass = cxs({
 	}
 });
 
-export default function DayPicker(props){
-	const currentDate = moment(props.date, 'MM/DD/YY');
+type Props = {
+	date: String
+	onChange(newDate: String)
+}
 
-	const prevDay = () => {
-		const newDate = moment(currentDate);
-		newDate.subtract(1, 'day');
-		props.onChange(newDate.format('MM/DD/YY'));
-	};
+export default class DayPicker extends React.PureComponent<Props> {
+	render(){
+		const props = this.props;
+		const currentDate = moment(props.date as any, 'MM/DD/YY');
 
-	const nextDay = () => {
-		const newDate = moment(currentDate);
-		newDate.add(1, 'day');
-		props.onChange(newDate.format('MM/DD/YY'));
-	};
+		const prevDay = () => {
+			const newDate = moment(currentDate);
+			newDate.subtract(1, 'day');
+			props.onChange(newDate.format('MM/DD/YY'));
+		};
 
-	return (
-		<div className={dayPickerClass + " day-picker"}>
-			<span>Date</span>
-			<Button iconName="chevron-left" className="pt-minimal" onClick={prevDay} />
-			<span>{props.date}</span>
-			<Button iconName="chevron-right" className="pt-minimal" onClick={nextDay} />
-		</div>
-	);
+		const nextDay = () => {
+			const newDate = moment(currentDate);
+			newDate.add(1, 'day');
+			props.onChange(newDate.format('MM/DD/YY'));
+		};
+
+		return (
+			<div className={dayPickerClass + " day-picker"}>
+				<span>Date</span>
+				<Button iconName="chevron-left" className="pt-minimal" onClick={prevDay} />
+				<span>{props.date}</span>
+				<Button iconName="chevron-right" className="pt-minimal" onClick={nextDay} />
+			</div>
+		);
+	}
 }

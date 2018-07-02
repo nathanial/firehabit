@@ -199,6 +199,8 @@ export class DB {
 	addListeners(){
 		setTimeout(() => {
 			state.on('update', (currentState, prevState) => {
+				const user = firebase.auth().currentUser;
+				const userId = user.uid;
 				this.notesCollection.update(currentState.notes, prevState.notes);
 				this.calendarEventsCollection.update(currentState.calendarEvents, prevState.calendarEvents);
 				this.todoColumnsCollection.update(currentState.todoColumns, prevState.todoColumns);
@@ -208,6 +210,9 @@ export class DB {
 					}
 					if(prevState.calories.days !== currentState.calories.days){
 						this.daysCollection.update(currentState.calories.days, prevState.calories.days);
+					}
+					if(prevState.calories["calorie-settings"] !== currentState.calories["calorie-settings"]){
+						this.db.ref(`/users/${userId}/calorie-settings`).update(currentState.calories["calorie-settings"])
 					}
 				}
 			})
@@ -276,14 +281,14 @@ export async function loginToFirebase(db: DB){
 				}
 				const provider = new firebase.auth.GoogleAuthProvider();
 				try {
-					if(window.location.hostname === 'localhost'){
-						await firebase.auth().signInAnonymously();
-						db.loggedIn = true;
-						window.location.reload();
-					} else {
+					// if(window.location.hostname === 'localhost'){
+					// 	await firebase.auth().signInAnonymously();
+					// 	db.loggedIn = true;
+					// 	window.location.reload();
+					// } else {
 						await firebase.auth().signInWithRedirect(provider);
 						db.loggedIn = true;
-					}
+					// }
 					resolve();
 				} catch(error){
 					console.error(error);

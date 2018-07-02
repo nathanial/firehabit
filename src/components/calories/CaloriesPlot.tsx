@@ -10,6 +10,8 @@ type Props = {
     caloriesState: CaloriesState;
 }
 
+const plotConfig = {displayModeBar:false, editable: false, scrollZoom: false};
+
 // smoothing whole array
 function lpf(values: number[], smoothing: number){
     var value = values[0];
@@ -33,13 +35,18 @@ export class CaloriesPlot extends React.Component<Props, State> {
 
     render(){
         const days = this.props.caloriesState.days;
-        const values = _.filter(_.map(days, d => ({date: d.date, calories: _.sumBy(d.consumed, c => parseInt(c.calories, 10))})), x => x.calories !== 0)
+        const values = _.filter(
+            _.map(days, d => ({
+                date: d.date,
+                calories: _.sumBy(d.consumed, c => parseInt(c.calories, 10))
+            })
+        ), x => x.calories !== 0)
         const calories = _.map(values, v => v.calories);
-        lpf(calories, 30.0);
+        lpf(calories, 7.0);
         const data = [{
            type: 'line' ,
            name: 'Calories',
-           x: _.map(values, v => moment(v.date).format('MM/DD')),
+           x: _.map(values, v => moment(v.date).format('MM/DD/YY')),
            y: calories
         }];
         const layout = {
@@ -64,7 +71,7 @@ export class CaloriesPlot extends React.Component<Props, State> {
             plot_bgcolor: '#FFF'
         };
         return (
-            <Plot data={data} layout={layout} config={{displayModeBar:false, editable: false, scrollZoom: false}}/>
+            <Plot data={data} layout={layout} config={plotConfig}/>
         );
     }
 

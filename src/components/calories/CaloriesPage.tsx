@@ -66,7 +66,10 @@ export default class CaloriesPage extends React.Component<Props,State> {
         return (
             <div className="calories-page pt-card pt-elevation-3">
                 <div className={classes}>
-                    <Calendar selectedDay={this.state.selectedDay} caloriesState={caloriesState} onChange={this.onDateChanged} />
+                    <Calendar selectedDay={this.state.selectedDay}
+                        days={caloriesState.days}
+                        weightStasisGoal={caloriesState["calorie-settings"].weightStasisGoal}
+                        onChange={this.onDateChanged} />
                     <WeightForm caloriesState={caloriesState} selectedDay={this.state.selectedDay} />
                     <ConsumedFoodsList day={dayObj} onToggleAddFood={this.onToggleAddFood}/>
                     <CaloriesPercentage caloriesState={caloriesState} selectedDay={this.state.selectedDay} onOpenSettings={this.onOpenSettings} />
@@ -76,7 +79,11 @@ export default class CaloriesPage extends React.Component<Props,State> {
                         <WeightPlot caloriesState={this.props.caloriesState} />
                         <CaloriesPlot caloriesState={this.props.caloriesState} />
                     </div>
-                    <AddFoodDialog caloriesState={this.props.caloriesState} selectedDay={this.state.selectedDay} visible={this.state.showAddFoodDialog} onClose={this.onCloseFoodDialog} />
+                    <AddFoodDialog days={this.props.caloriesState.days}
+                            foodDefinitions={this.props.caloriesState.foodDefinitions}
+                            selectedDay={this.state.selectedDay}
+                            visible={this.state.showAddFoodDialog}
+                            onClose={this.onCloseFoodDialog} />
                     <SettingsDialog
                          caloriesState={this.props.caloriesState}
                          visible={this.state.showSettingsDialog}

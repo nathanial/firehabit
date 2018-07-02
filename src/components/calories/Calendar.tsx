@@ -5,7 +5,8 @@ import * as _ from 'lodash';
 import DayPicker from 'react-day-picker';
 
 type Props = {
-    caloriesState: CaloriesState;
+    weightStasisGoal: string | number;
+    days: Day[];
     selectedDay: Date;
     onChange(selectedDay: Date);
 }
@@ -13,14 +14,14 @@ type Props = {
 export class Calendar extends React.PureComponent<Props,{}> {
 
     render(){
-        const caloriesState = this.props.caloriesState;
-        const goal = parseInt(caloriesState['calorie-settings'].weightStasisGoal as any, 10);
+        const goal = parseInt(this.props.weightStasisGoal as any, 10);
+        const days = this.props.days;
 
         let day = moment(this.props.selectedDay).format("MM/DD/YY");
         const modifiers = {
             tooManyCalories: (day) => {
                 day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+                const dayObj = _.find(days, (d: Day) => d.date === day);
                 if(!dayObj){
                     return false;
                 }
@@ -32,7 +33,7 @@ export class Calendar extends React.PureComponent<Props,{}> {
             },
             zeroCalories: (day) => {
                 day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+                const dayObj = _.find(days, (d: Day) => d.date === day);
                 if(!dayObj){
                     return true;
                 }
@@ -44,7 +45,7 @@ export class Calendar extends React.PureComponent<Props,{}> {
             },
             justRight: (day) => {
                 day = moment(day).format("MM/DD/YY");
-                const dayObj = _.find(caloriesState.days, (d: Day) => d.date === day);
+                const dayObj = _.find(days, (d: Day) => d.date === day);
                 if(!dayObj){
                     return false;
                 }
