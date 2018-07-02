@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import DialogService from "../../services/DialogService";
 
 type EventColumnsProps = {
+    currentWeek: Date;
     calendarEvents: BigCalendarEvent[];
 }
 
@@ -28,7 +29,7 @@ export class EventColumns extends React.PureComponent<EventColumnsProps, {}> {
     }
 
     private getEventsForDay(day: number): BigCalendarEvent[] {
-        const targetDay = moment().startOf('week').add(day, 'days').toDate().getTime();
+        const targetDay = moment(this.props.currentWeek).startOf('week').add(day, 'days').toDate().getTime();
         const events = _.filter(this.props.calendarEvents, event => {
             const eventStartDay = moment(event.start).startOf('day').toDate().getTime();
             return targetDay === eventStartDay;

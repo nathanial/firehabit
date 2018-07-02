@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { generatePushID } from '../../db/util';
 import InlineText from '../InlineText';
 import {Button} from "@blueprintjs/core";
-import {MonthPicker} from './MonthPicker';
+import {WeekPicker} from './WeekPicker';
 import {TimeColumn} from './TimeColumn';
 import {DaysOfTheWeek, daysOfTheWeek} from './DaysOfTheWeek';
 import {CalendarEvent, Offset} from './CalendarEvent';
@@ -18,11 +18,19 @@ type Props = {
     calendarEvents: BigCalendarEvent[];
 }
 
+type State = {
+    currentWeek: Date
+}
 
-export class ScheduleCalendar extends React.PureComponent<Props,{}>{
+export class ScheduleCalendar extends React.Component<Props,State>{
     private root: HTMLDivElement | null;
 
+    state = {
+        currentWeek: moment().startOf("week").toDate()
+    }
+
     render(){
+        const currentDate = this.state.currentWeek
         const month = this.getMonth();
         const startOfWeek = this.getStartOfWeek();
         const endOfWeek = this.getEndOfWeek();
@@ -30,19 +38,32 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
         const currentDay = this.getCurrentDay();
         return (
             <div className="schedule-calendar" ref={this.setRef}>
-                <MonthPicker value={month} />
+                <WeekPicker date={currentDate} onChange={this.onWeekChanged} />
                 <div className="calendar-body" >
                     <div className="background-grid">
-                        <TimeColumn currentHour={currentHour} />
-                        <DaysOfTheWeek currentHour={currentHour} currentDay={currentDay} onMouseDown={this.onMouseDown} />
+                        <TimeColumn
+                            currentHour={currentHour} />
+                        <DaysOfTheWeek
+                            currentWeek={this.state.currentWeek}
+                            currentHour={currentHour}
+                            currentDay={currentDay}
+                            onMouseDown={this.onMouseDown} />
                     </div>
                     <div className="event-grid">
                         <div></div>{/*placeholder for time column, so the rest of the event grid is aligned with the day columns*/}
-                        <EventColumns calendarEvents={this.props.calendarEvents} />
+                        <EventColumns
+                            currentWeek={this.state.currentWeek}
+                            calendarEvents={this.props.calendarEvents} />
                     </div>
                 </div>
             </div>
         );
+    }
+
+    private onWeekChanged = (newDate: Date) => {
+        this.setState({
+            currentWeek: newDate
+        })
     }
 
     private setRef = (root: HTMLDivElement) => {
@@ -68,7 +89,7 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
         window.addEventListener('mouseup', this.onMouseUp, true);
         const newId = generatePushID();
         this.draggingCalendarEventID = newId;
-        const start = moment().startOf('week').add(day, 'days').add(hour,'hours');
+        const start = this.now.startOf('week').add(day, 'days').add(hour,'hours');
         const end = start;
         this.props.calendarEvents.push({
             id: newId,
@@ -100,25 +121,23 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
     };
 
     private getCurrentHour(){
-        const now = moment();
-        return now.hours();
+        return this.now.hours();
     }
 
     private getCurrentDay(){
-        return moment().startOf('day').days();
+        return this.now.startOf('day').days();
     }
 
     private getMonth(){
-        const now = moment();
-        return now.format("MMMM");
+        return this.now.format("MMMM");
     }
 
     private getStartOfWeek(){
-        return moment().startOf('week').format('DD');
+        return this.now.startOf('week').format('DD');
     }
 
     private getEndOfWeek(){
-        return moment().endOf('week').format('DD');
+        return this.now.endOf('week').format('DD');
     }
 
 
@@ -130,5 +149,9 @@ export class ScheduleCalendar extends React.PureComponent<Props,{}>{
 
     componentWillUnmount(){
         clearInterval(this.refreshInterval);
+    }
+
+    get now(){
+        return moment(this.state.currentWeek);
     }
 }

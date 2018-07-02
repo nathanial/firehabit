@@ -5,6 +5,7 @@ import * as moment from 'moment';
 export const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 type DaysOfTheWeekProps = {
+    currentWeek: Date;
     currentHour: number;
     currentDay: number;
     onMouseDown(event);
@@ -23,7 +24,11 @@ export class DaysOfTheWeek extends React.PureComponent<DaysOfTheWeekProps,{}>{
                         <div className="day-name"><div>{day}</div></div>
                         {_.times(24, hour => {
                             const classes = ["hour-row"];
-                            const active = hour === this.props.currentHour && dayIndex === this.props.currentDay;
+                            const active = (
+                                hour === this.props.currentHour &&
+                                dayIndex === this.props.currentDay &&
+                                moment(this.props.currentWeek).week() === moment().week()
+                            );
                             let minutePercentage = 0;
                             if(active){
                                 classes.push("current-hour");
