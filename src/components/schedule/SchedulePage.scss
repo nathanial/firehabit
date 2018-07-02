@@ -111,6 +111,24 @@
         position: relative;
         overflow-x: visible;
 
+        &:hover {
+            .hour-span {
+                display: flex;
+            }
+            .hour-length {
+                display: block;
+            }
+        }
+
+        .hour-length {
+            display: none;
+            font-size: 18px;
+            text-align: center;
+            position: absolute;
+            right: 5px;
+            top: 0;
+        }
+
         .event-title {
             overflow-x: visible;
             overflow-y: auto;
@@ -128,21 +146,31 @@
             }
         }
 
+        .hour-span {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            align-content: space-between;
+            .hour-start, .hour-end {
+                margin: 0 5px;
+            }
+        }
+
         .top-dragger,.bottom-dragger {
-            height: 4px;
+            height: 6px;
             cursor: ns-resize;
         }
 
         .top-dragger {
             position: absolute;
-            top: -2px;
+            top: -3px;
             left: 0;
             right: 0;
         }
 
         .bottom-dragger {
             position: absolute;
-            bottom: -2px;
+            bottom: -3px;
             left: 0;
             right: 0;
         }

@@ -55,10 +55,20 @@ export class CalendarEvent extends React.PureComponent<CalendarEventProps, {}> {
                     <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDelete} />
                     <Button className="settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenSettings} />
                 </div>
-                <div className="top-dragger" onMouseDown={this.onTopDraggerMouseDown}>
+                <div className="hour-length" style={{color: foregroundColor}}>
+                    {hourEnd - hourStart}
                 </div>
-                <div className="bottom-dragger" onMouseDown={this.onBottomDraggerMouseDown}>
+                <div className="hour-span">
+                    <div className="hour-start" style={{color: foregroundColor}}>
+                        {hourStart}
+                    </div>
+                    to
+                    <div className="hour-end" style={{color: foregroundColor}}>
+                        {hourEnd}
+                    </div>
                 </div>
+                <div className="top-dragger" onMouseDown={this.onTopDraggerMouseDown} />
+                <div className="bottom-dragger" onMouseDown={this.onBottomDraggerMouseDown} />
             </div>
         );
     }

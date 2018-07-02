@@ -900,6 +900,17 @@
     max-height: 100%;
     position: relative;
     overflow-x: visible; }
+    .schedule-page .calendar-event:hover .hour-span {
+      display: flex; }
+    .schedule-page .calendar-event:hover .hour-length {
+      display: block; }
+    .schedule-page .calendar-event .hour-length {
+      display: none;
+      font-size: 18px;
+      text-align: center;
+      position: absolute;
+      right: 5px;
+      top: 0; }
     .schedule-page .calendar-event .event-title {
       overflow-x: visible;
       overflow-y: auto;
@@ -914,17 +925,24 @@
       .schedule-page .calendar-event .event-title > .inline-text {
         font-size: 16px;
         line-height: 16px; }
+    .schedule-page .calendar-event .hour-span {
+      display: none;
+      position: absolute;
+      bottom: 0;
+      align-content: space-between; }
+      .schedule-page .calendar-event .hour-span .hour-start, .schedule-page .calendar-event .hour-span .hour-end {
+        margin: 0 5px; }
     .schedule-page .calendar-event .top-dragger, .schedule-page .calendar-event .bottom-dragger {
-      height: 4px;
+      height: 6px;
       cursor: ns-resize; }
     .schedule-page .calendar-event .top-dragger {
       position: absolute;
-      top: -2px;
+      top: -3px;
       left: 0;
       right: 0; }
     .schedule-page .calendar-event .bottom-dragger {
       position: absolute;
-      bottom: -2px;
+      bottom: -3px;
       left: 0;
       right: 0; }
     .schedule-page .calendar-event:hover .calendar-event-controls {
