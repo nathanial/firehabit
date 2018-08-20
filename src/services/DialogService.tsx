@@ -20,9 +20,7 @@ class BasicDialog extends React.PureComponent<Props,{}> {
 							onClose={this.onCancel}
 							title={this.props.title}>
 				<div className="pt-dialog-body">
-					<label className="pt-label .modifier">
-						{this.props.question}
-					</label>
+					{this.renderLabel()}
 					{this.props.children}
 				</div>
 				<div className="pt-dialog-footer">
@@ -37,6 +35,14 @@ class BasicDialog extends React.PureComponent<Props,{}> {
 				</div>
 			</Dialog>
 		);
+	}
+
+	private renderLabel(){
+		if(this.props.question){
+			<label className="pt-label">
+				{this.props.question}
+			</label>
+		}
 	}
 
 	onCancel = () => {

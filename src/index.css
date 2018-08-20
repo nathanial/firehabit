@@ -1028,6 +1028,16 @@
           padding: 5px 10px;
           font-weight: bold; }
 
+.todo-settings-dialog .chrome-picker {
+  display: inline-block;
+  margin-left: 20px;
+  vertical-align: middle;
+  box-shadow: none !important;
+  border: 1px solid #aaa; }
+
+.todo-settings-dialog .form-group:not(:first-child) {
+  margin-top: 40px; }
+
 body {
   background: #111; }
 
@@ -1090,10 +1100,3 @@ body {
     display: block;
     font-size: 16px;
     margin-top: 20px; }
-
-.todo-settings-dialog .chrome-picker {
-  display: inline-block;
-  margin-left: 20px;
-  vertical-align: middle;
-  box-shadow: none !important;
-  border: 1px solid #aaa; }

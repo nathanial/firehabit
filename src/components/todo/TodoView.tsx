@@ -128,15 +128,12 @@ export default class TodoView extends React.PureComponent<Props, {}> {
     };
 
     private onOpenTodoSettings = async () => {
-        let settings: TodoSettings = this.props.todo.settings || {
-            recurring: false,
-            color: '#eee'
-        };
+        let settings: TodoSettings = this.props.todo.settings;
         function onChange(newSettings: TodoSettings){
             settings = newSettings;
         }
         const result = await DialogService.showDialog("Todo Settings", "Save", "Cancel", (
-            <TodoSettingsDialog settings={settings} onChange={onChange}>
+            <TodoSettingsDialog todo={this.props.todo} onChange={onChange}>
             </TodoSettingsDialog>
         ));
 

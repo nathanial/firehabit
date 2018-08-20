@@ -6,6 +6,7 @@
 @import 'components/SiteNavbar.scss';
 @import 'components/schedule/SchedulePage.scss';
 @import "components/LandingPage.scss";
+@import "components/todo/TodoSettingsDialog.scss";
 
 $fh-color-1: rgb(43, 43, 43);
 $fh-color-2: #2d2e30;
@@ -111,12 +112,3 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
   }
 }
 
-.todo-settings-dialog {
-  .chrome-picker {
-    display: inline-block;
-    margin-left: 20px;
-    vertical-align: middle;
-    box-shadow: none !important;
-    border: 1px solid #aaa;
-  }
-}
