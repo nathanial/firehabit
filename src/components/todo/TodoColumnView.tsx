@@ -210,7 +210,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             subtasks: [],
             attachments: [],
             editing: true,
-            tab: this.props.column.activeTab || '0'
+            tab: this.props.column.activeTab || '0',
+            startStopEvents: []
         });
     };
 

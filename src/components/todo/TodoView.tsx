@@ -118,13 +118,25 @@ export default class TodoView extends React.PureComponent<Props, State> {
                             {this.renderRecurring()}
                             {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                         </div>
-                        <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={178} style={{background: 'white'}}>
+                        <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={300} style={{background: 'white'}}>
                             {this.renderSettings()}
                         </Drawer>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    private refreshInterval: any;
+    componentDidMount(){
+        const timed = _.get(this.props.todo.settings, 'timed', false);
+        if(timed){
+            this.refreshInterval = setInterval(() => this.forceUpdate(), 10 * 1000);
+        }
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.refreshInterval);
     }
 
     private renderRecurring = () => {
@@ -149,20 +161,133 @@ export default class TodoView extends React.PureComponent<Props, State> {
             } else {
                 throw new Error(`Unknown interval: ${settings.recurringInterval}`);
             }
-            const minutesExpired = moment.duration(
-                moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
-            const percentageOfExpiration = Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
+            const timed = _.get(this.props.todo.settings, 'timed', false);
+            const minutesRequired = _.get(this.props.todo.settings, 'minutesRequired', 0);
+            let percentage = 0;
+            let deficit = 0;
+            let minutesExpired = 0;
+            let timeCompleted = 0;
+            if(timed){
+                minutesExpired = this.getMinutesExpired();
+                deficit = (minutesExpired / intervalMinutes) * minutesRequired
+                const timeCompleted = this.timeCompleted();
+                percentage = 100 - Math.max(0, Math.min(((deficit / minutesRequired) * 100), 100));
+            } else {
+                minutesExpired = moment.duration(
+                    moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
+                percentage = Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
+            }
             return (
                 <div className="recurring-task">
-                    <div className="recurring-progress" style={{width: `${percentageOfExpiration}%`}}></div>
-                    <div className="complete-btn" onMouseDown={this.onRecurringComplete}>
-                        <i className="fa fa-check" />
-                    </div>
-                    <span className="last-completed-title">Last Completed:</span>
-                    <span className="last-completed-value">{lastCompleted}</span>
+                    <div className="recurring-progress" style={{width: `${percentage}%`}}></div>
+                    {!timed &&
+                        <div className="complete-btn" onMouseDown={this.onRecurringComplete}>
+                            <i className="fa fa-check" />
+                        </div>
+                    }
+
+                    {this.renderStartTopBtn()}
+                    {this.renderTimedStatus(lastCompleted, timeCompleted, deficit)}
                 </div>
             )
         }
+    }
+
+    private renderTimedStatus = (lastCompleted: String, timeCompleted: number, deficit: number) => {
+        const timed = _.get(this.props.todo.settings, 'timed', false);
+        if(timed){
+            return [
+                <span className="last-completed-title">Deficit:</span>,
+                <span className="last-completed-value">{Math.round(deficit)} minutes</span>
+            ]
+        } else {
+            return [
+                <span className="last-completed-title">Last Completed:</span>,
+                <span className="last-completed-value">{lastCompleted}</span>
+            ];
+        }
+
+    }
+
+    private getMinutesExpired = () => {
+        const todo = this.props.todo;
+        const timed = _.get(this.props.todo.settings, 'timed', false);
+        if(timed){
+            const start = _.first(this.props.todo.startStopEvents);
+            if(start){
+                return moment.duration(moment().diff(moment(start.time))).asMinutes();
+            } else {
+                return 0;
+            }
+        } else {
+            return moment.duration(moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
+        }
+    }
+
+    private timeCompleted = () => {
+        type Period = {start: moment.Moment; stop: moment.Moment}
+
+        const startStopEvents = this.props.todo.startStopEvents || [];
+        const periods: Period[] = [];
+        let newPeriod: Period = null;
+        for(let event of startStopEvents){
+            if(event.kind === "play"){
+                newPeriod = {start: moment(event.time), stop: null};
+            }
+            if(event.kind === "stop"){
+                newPeriod.stop = moment(event.time);
+                periods.push(newPeriod)
+                newPeriod = null;
+            }
+        }
+        if(newPeriod){
+            newPeriod.stop = moment();
+            periods.push(newPeriod);
+        }
+        return _.sumBy(periods, p => {
+            return moment.duration(p.stop.diff(p.start)).asMinutes()
+        });
+    }
+
+    private renderStartTopBtn = () => {
+        const timed = _.get(this.props.todo.settings, 'timed');
+        const startStopEvents = this.props.todo.startStopEvents || [];
+        const lastEvent = _.last(startStopEvents)
+        const isPlaying = _.get(lastEvent, 'kind') === 'play';
+        if(timed){
+            if(isPlaying){
+               return (
+                    <div className="stop-btn" onMouseDown={this.onStopTask}>
+                        <i className="fa fa-pause" />
+                    </div>
+               );
+            } else {
+                return (
+                    <div className="start-btn" onMouseDown={this.onStartTask}>
+                        <i className="fa fa-play" />
+                    </div>
+                );
+            }
+        }
+
+    }
+
+    private onStartTask = (event) =>  {
+        event.preventDefault();
+        event.stopPropagation();
+        const currentEvents = this.props.todo.startStopEvents || [];
+        this.props.todo.set({startStopEvents: currentEvents.concat(
+            {kind: 'play', time: moment().format()}
+        )})
+    }
+
+    private onStopTask = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const currentEvents = this.props.todo.startStopEvents || [];
+        this.props.todo.set({startStopEvents: currentEvents.concat(
+            {kind: 'stop', time: moment().format()}
+        )})
     }
 
     private onRecurringComplete = (event) => {
@@ -183,6 +308,13 @@ export default class TodoView extends React.PureComponent<Props, State> {
                         <span className="pt-control-indicator">Recurring</span>
                     </div>
                     {this.renderRecurringSettings(settings)}
+                    <div className="form-group">
+                        <input type="checkbox" checked={settings.timed} onClick={this.onChangeTimed} />
+                        <span className="pt-control-indicator">Timed</span>
+                    </div>
+                    {this.renderTimedSettings(settings)}
+                    <button className="pt-small" onClick={this.onClearEvents}>Clear Events</button>
+                    <button className="pt-small" onClick={this.onClearLastCompleted}>Clear Last Completed</button>
                     <CompactPicker color={settings.color} colors={availableColors} onChange={this.onChangeColor}/>
                 </div>
             )
@@ -209,6 +341,29 @@ export default class TodoView extends React.PureComponent<Props, State> {
         }
     }
 
+    private renderTimedSettings = (settings: TodoSettings) => {
+        if(settings.timed){
+            return [
+                <div className="form-group time-required">
+                    <label>Time Required (in minutes):</label>
+                    <InlineText value={(settings.minutesRequired || 0).toString()} onChange={this.onChangeMinutesRequired} />
+                </div>
+            ]
+        }
+    }
+
+    private onClearLastCompleted = () => {
+        this.props.todo.set({
+            lastCompleted: null
+        });
+    }
+
+    private onClearEvents = () => {
+        this.props.todo.set({
+            startStopEvents: []
+        });
+    }
+
     private onChangeInterval = (event) => {
         const newInterval = event.target.value;
         this.props.todo.set({
@@ -216,9 +371,24 @@ export default class TodoView extends React.PureComponent<Props, State> {
         });
     }
 
+    private onChangeMinutesRequired = (value) => {
+        this.props.todo.set({
+            settings: _.extend({}, this.props.todo.settings || {}, {
+                minutesRequired: parseInt(value, 10)
+            }) as any
+        });
+    }
+
     private onChangeColor = (newColor) => {
         this.props.todo.set({
             settings: _.extend({}, this.props.todo.settings || {}, {color: newColor.hex}) as any
+        });
+    }
+
+    private onChangeTimed = (event) => {
+        const timed = _.get(this.props, 'todo.settings.timed', false);
+        this.props.todo.set({
+            settings: _.extend({}, this.props.todo.settings || {}, {timed: !timed}) as any
         });
     }
 

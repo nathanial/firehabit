@@ -83,13 +83,15 @@ export class DB {
 						id: generatePushID(),
 						name: 'Example Todo 1',
 						subtasks: [],
-						attachments: []
+						attachments: [],
+						startStopEvents: []
 					},
 					{
 						id: generatePushID(),
 						name: 'Example Todo 2',
 						subtasks: [],
-						attachments: []
+						attachments: [],
+						startStopEvents: []
 					}
 				],
 				index: 0,

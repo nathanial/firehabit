@@ -79,6 +79,18 @@
     margin-top: 0px;
 }
 
+.todo-view-btn {
+    margin-right: 5px;
+    background: rgba(0,0,0,0.2);
+    padding: 3px 5px;
+    &:hover {
+        background: rgba(0,0,0,0.3);
+    }
+    &:active {
+        background: rgba(0,0,0,0.4);
+    }
+    cursor: pointer;
+}
 
 .todo-main-content {
     &:hover {
@@ -109,17 +121,17 @@
         }
 
         .complete-btn {
-            margin-right: 5px;
-            background: rgba(0,0,0,0.2);
-            padding: 3px 5px;
-            &:hover {
-                background: rgba(0,0,0,0.3);
-            }
-            &:active {
-                background: rgba(0,0,0,0.4);
-            }
-            cursor: pointer;
+            @extend .todo-view-btn;
         }
+
+        .start-btn {
+            @extend .todo-view-btn;
+        }
+
+        .stop-btn {
+            @extend .todo-view-btn;
+        }
+
 
         .last-completed-title {
             margin-right: 5px;
@@ -129,4 +141,5 @@
 
         }
     }
+
 }

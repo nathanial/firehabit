@@ -237,6 +237,16 @@
 .todo-draggable:first-child {
   margin-top: 0px; }
 
+.todo-view-btn, .todo-main-content .recurring-task .complete-btn, .todo-main-content .recurring-task .start-btn, .todo-main-content .recurring-task .stop-btn {
+  margin-right: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 3px 5px;
+  cursor: pointer; }
+  .todo-view-btn:hover, .todo-main-content .recurring-task .complete-btn:hover, .todo-main-content .recurring-task .start-btn:hover, .todo-main-content .recurring-task .stop-btn:hover {
+    background: rgba(0, 0, 0, 0.3); }
+  .todo-view-btn:active, .todo-main-content .recurring-task .complete-btn:active, .todo-main-content .recurring-task .start-btn:active, .todo-main-content .recurring-task .stop-btn:active {
+    background: rgba(0, 0, 0, 0.4); }
+
 .todo-main-content:hover .todo-controls {
   opacity: 1; }
 
@@ -257,15 +267,6 @@
     top: 0;
     left: 0;
     right: 0; }
-  .todo-main-content .recurring-task .complete-btn {
-    margin-right: 5px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 3px 5px;
-    cursor: pointer; }
-    .todo-main-content .recurring-task .complete-btn:hover {
-      background: rgba(0, 0, 0, 0.3); }
-    .todo-main-content .recurring-task .complete-btn:active {
-      background: rgba(0, 0, 0, 0.4); }
   .todo-main-content .recurring-task .last-completed-title {
     margin-right: 5px; }
 
@@ -1123,6 +1124,13 @@
       position: absolute;
       right: 20px;
       top: 15px; }
+  .todo-settings .time-required {
+    display: flex; }
+    .todo-settings .time-required > label {
+      color: #333 !important;
+      margin-right: 20px; }
+    .todo-settings .time-required > .inline-text {
+      width: 50px; }
   .todo-settings .last-completed {
     margin: 10px 0;
     margin-left: 5px;
@@ -1139,6 +1147,11 @@
       box-shadow: unset !important; }
       .todo-settings > div:last-child .compact-picker > div {
         width: 205px !important; }
+  .todo-settings button {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5px; }
 
 body {
   background: #111; }

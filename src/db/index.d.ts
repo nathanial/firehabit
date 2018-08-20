@@ -68,6 +68,13 @@ interface TodoSettings {
 	recurring: boolean;
 	color: string;
 	recurringInterval: string;
+	timed: boolean;
+	minutesRequired: number;
+}
+
+interface StartStopEvents {
+	kind: 'play' | 'stop';
+	time: string;
 }
 
 interface Todo {
@@ -81,6 +88,7 @@ interface Todo {
 	editing?: boolean;
 	tab?: string;
 	lastCompleted?: string;
+	startStopEvents: StartStopEvents[];
 	set?(updates: Partial<Todo>);
 }
 
