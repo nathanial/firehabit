@@ -106,6 +106,7 @@
     margin-top: 36px;
 }
 
+
 .todo-wrapper {
     position: relative;
     .drag-handle {
@@ -121,55 +122,13 @@
     }
     border-radius: 0;
 
-    &:hover {
-        .todo-controls {
-            opacity: 1;
-        }
-    }
+
 
     input[type="file"] {
         display: none;
     }
 
-    .todo-controls {
-        position: relative;
-        display: flex;
-        height: 20px;
-        flex-direction: row;
-        position: absolute;
-        right: -1px;
-        top: -1px;
-        background: white;
-        border: 1px solid #444;
-        border-radius: 0;
-        opacity: 0;
-        .delete-btn {
-            height: 18px;
-            min-width: 18px;
-            min-height: 18px;
-            line-height: 18px;
-            transition: opacity 0.2s ease-out;
-            &:before {
-                font-size: 11px;
-                line-height: 14px;
-                vertical-align: middle;
-            }
-        }
 
-        transition: opacity 0.2s ease-in-out;
-
-        .add-subtask-btn, .file-upload-btn, .todo-settings-btn {
-            min-width: 18px;
-            height: 18px;
-            min-height: 18px;
-            line-height: 10px;
-            border-radius: 0;
-            &:before {
-                font-size: 12px;
-                vertical-align: middle;
-            }
-        }
-    }
 }
 
 

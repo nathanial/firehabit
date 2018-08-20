@@ -67,6 +67,7 @@ interface Attachment {
 interface TodoSettings {
 	recurring: boolean;
 	color: string;
+	recurringInterval: string;
 }
 
 interface Todo {
@@ -79,6 +80,7 @@ interface Todo {
 	isDragging?: boolean;
 	editing?: boolean;
 	tab?: string;
+	lastCompleted?: string;
 	set?(updates: Partial<Todo>);
 }
 

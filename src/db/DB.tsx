@@ -25,6 +25,8 @@ function encode(columns: TodoColumn[]) {
 	return result;
 }
 
+export const LAST_COMPLETED_FORMAT = "MM/DD/YY HH:mm"
+
 export class DB {
 	loggedIn = false;
 	user = {

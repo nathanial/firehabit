@@ -9,6 +9,8 @@ import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
 import {CompactPicker} from 'react-color';
 import posed from 'react-pose';
+import { LAST_COMPLETED_FORMAT } from '../../db/DB';
+import * as moment from 'moment';
 
 interface Props {
     todo: Todo;
@@ -113,9 +115,10 @@ export default class TodoView extends React.PureComponent<Props, State> {
                                     <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
                                 </div>
                             </div>
+                            {this.renderRecurring()}
                             {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                         </div>
-                        <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={138} style={{background: 'white'}}>
+                        <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={178} style={{background: 'white'}}>
                             {this.renderSettings()}
                         </Drawer>
                     </div>
@@ -124,24 +127,105 @@ export default class TodoView extends React.PureComponent<Props, State> {
         );
     }
 
+    private renderRecurring = () => {
+        const todo = this.props.todo;
+        const settings = this.getSettings();
+        let lastCompleted = "never";
+        if(todo.lastCompleted) {
+            lastCompleted = moment(todo.lastCompleted, LAST_COMPLETED_FORMAT).fromNow();
+        }
+        if(settings.recurring){
+            let intervalMinutes = 0;
+            if(settings.recurringInterval == "hourly"){
+                intervalMinutes = 60;
+            } else if(settings.recurringInterval == "daily"){
+                intervalMinutes = 60 * 24;
+            } else if(settings.recurringInterval == "weekly") {
+                intervalMinutes = 60 * 24 * 7;
+            } else if(settings.recurringInterval == "monthly") {
+                intervalMinutes = 60 * 24 * 30;
+            } else if(settings.recurringInterval == "yearly") {
+                intervalMinutes = 60 * 24 * 365;
+            } else {
+                throw new Error(`Unknown interval: ${settings.recurringInterval}`);
+            }
+            const minutesExpired = moment.duration(
+                moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
+            const percentageOfExpiration = Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
+            return (
+                <div className="recurring-task">
+                    <div className="recurring-progress" style={{width: `${percentageOfExpiration}%`}}></div>
+                    <div className="complete-btn" onMouseDown={this.onRecurringComplete}>
+                        <i className="fa fa-check" />
+                    </div>
+                    <span className="last-completed-title">Last Completed:</span>
+                    <span className="last-completed-value">{lastCompleted}</span>
+                </div>
+            )
+        }
+    }
+
+    private onRecurringComplete = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.props.todo.set({
+            lastCompleted: moment().format(LAST_COMPLETED_FORMAT)
+        })
+    }
+
     private renderSettings = () => {
         if(this.state.settingsVisible){
-            const settings = this.props.todo.settings || {
-                recurring: false,
-                color: '#eee'
-            };
+            const settings = this.getSettings()
             return (
                 <div className="todo-settings" onMouseDown={(event) => event.stopPropagation()}>
-                    <label>Is Recurring</label>
+                    <div className="form-group">
+                        <input type="checkbox" checked={settings.recurring} onClick={this.onChangeRecurring} />
+                        <span className="pt-control-indicator">Recurring</span>
+                    </div>
+                    {this.renderRecurringSettings(settings)}
                     <CompactPicker color={settings.color} colors={availableColors} onChange={this.onChangeColor}/>
                 </div>
             )
         }
     }
 
+    private renderRecurringSettings = (settings: TodoSettings) => {
+        if(settings.recurring){
+            return [
+                <div className="form-group frequency">
+                    <select value={settings.recurringInterval} onChange={this.onChangeInterval}>
+                        <option value="hourly">Hourly</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>,
+                <div className="last-completed">
+                    <span>Last Completed: </span>
+                    <span>{this.props.todo.lastCompleted || "never"}</span>
+                </div>
+            ]
+        }
+    }
+
+    private onChangeInterval = (event) => {
+        const newInterval = event.target.value;
+        this.props.todo.set({
+            settings: _.extend({}, this.props.todo.settings || {}, {recurringInterval: newInterval}) as any
+        });
+    }
+
     private onChangeColor = (newColor) => {
         this.props.todo.set({
             settings: _.extend({}, this.props.todo.settings || {}, {color: newColor.hex}) as any
+        });
+    }
+
+    private onChangeRecurring = (event) => {
+        const recurring = _.get(this.props, 'todo.settings.recurring', false);
+        this.props.todo.set({
+            settings: _.extend({}, this.props.todo.settings || {}, {recurring: !recurring}) as any
         });
     }
 
@@ -192,5 +276,12 @@ export default class TodoView extends React.PureComponent<Props, State> {
         })
     }
 
+    private getSettings = () => {
+        return _.defaults(_.cloneDeep(this.props.todo.settings || {}), {
+            recurring: false,
+            color: '#eee',
+            recurringInterval: 'daily'
+        }) as TodoSettings;
+    }
 }
 

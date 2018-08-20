@@ -88,42 +88,8 @@
       position: absolute;
       top: 50%;
       margin-top: -17px; }
-  .todo-wrapper:hover .todo-controls {
-    opacity: 1; }
   .todo-wrapper input[type="file"] {
     display: none; }
-  .todo-wrapper .todo-controls {
-    position: relative;
-    display: flex;
-    height: 20px;
-    flex-direction: row;
-    position: absolute;
-    right: -1px;
-    top: -1px;
-    background: white;
-    border: 1px solid #444;
-    border-radius: 0;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out; }
-    .todo-wrapper .todo-controls .delete-btn {
-      height: 18px;
-      min-width: 18px;
-      min-height: 18px;
-      line-height: 18px;
-      transition: opacity 0.2s ease-out; }
-      .todo-wrapper .todo-controls .delete-btn:before {
-        font-size: 11px;
-        line-height: 14px;
-        vertical-align: middle; }
-    .todo-wrapper .todo-controls .add-subtask-btn, .todo-wrapper .todo-controls .file-upload-btn, .todo-wrapper .todo-controls .todo-settings-btn {
-      min-width: 18px;
-      height: 18px;
-      min-height: 18px;
-      line-height: 10px;
-      border-radius: 0; }
-      .todo-wrapper .todo-controls .add-subtask-btn:before, .todo-wrapper .todo-controls .file-upload-btn:before, .todo-wrapper .todo-controls .todo-settings-btn:before {
-        font-size: 12px;
-        vertical-align: middle; }
 
 .todo-column-header {
   z-index: 19;

@@ -81,3 +81,10 @@ history.listen(() =>{
 	loadDay(appState);
 	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
 });
+
+window.addEventListener('focus', () => {
+	console.log("Window Focused");
+	const appState = state.get();
+	loadDay(appState);
+	ReactDOM.render(<App appState={appState} />, document.getElementById('root'));
+}, false);

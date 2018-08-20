@@ -88,42 +88,8 @@
       position: absolute;
       top: 50%;
       margin-top: -17px; }
-  .todo-wrapper:hover .todo-controls {
-    opacity: 1; }
   .todo-wrapper input[type="file"] {
     display: none; }
-  .todo-wrapper .todo-controls {
-    position: relative;
-    display: flex;
-    height: 20px;
-    flex-direction: row;
-    position: absolute;
-    right: -1px;
-    top: -1px;
-    background: white;
-    border: 1px solid #444;
-    border-radius: 0;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out; }
-    .todo-wrapper .todo-controls .delete-btn {
-      height: 18px;
-      min-width: 18px;
-      min-height: 18px;
-      line-height: 18px;
-      transition: opacity 0.2s ease-out; }
-      .todo-wrapper .todo-controls .delete-btn:before {
-        font-size: 11px;
-        line-height: 14px;
-        vertical-align: middle; }
-    .todo-wrapper .todo-controls .add-subtask-btn, .todo-wrapper .todo-controls .file-upload-btn, .todo-wrapper .todo-controls .todo-settings-btn {
-      min-width: 18px;
-      height: 18px;
-      min-height: 18px;
-      line-height: 10px;
-      border-radius: 0; }
-      .todo-wrapper .todo-controls .add-subtask-btn:before, .todo-wrapper .todo-controls .file-upload-btn:before, .todo-wrapper .todo-controls .todo-settings-btn:before {
-        font-size: 12px;
-        vertical-align: middle; }
 
 .todo-column-header {
   z-index: 19;
@@ -225,8 +191,39 @@
   cursor: pointer;
   width: 240px;
   border-radius: 0;
-  overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.2), 0 1px 1px rgba(16, 22, 26, 0.4), 0 2px 6px rgba(16, 22, 26, 0.1) !important; }
+  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.2), 0 1px 1px rgba(16, 22, 26, 0.4), 0 2px 6px rgba(16, 22, 26, 0.1) !important;
+  overflow: hidden; }
+  .todo-view .todo-controls {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    background: white;
+    border: 1px solid #444;
+    border-radius: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out; }
+    .todo-view .todo-controls .delete-btn {
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      line-height: 18px;
+      transition: opacity 0.2s ease-out; }
+      .todo-view .todo-controls .delete-btn:before {
+        font-size: 11px;
+        line-height: 14px;
+        vertical-align: middle; }
+    .todo-view .todo-controls .add-subtask-btn, .todo-view .todo-controls .file-upload-btn, .todo-view .todo-controls .todo-settings-btn {
+      min-width: 18px;
+      height: 18px;
+      min-height: 18px;
+      line-height: 10px;
+      border-radius: 0; }
+      .todo-view .todo-controls .add-subtask-btn:before, .todo-view .todo-controls .file-upload-btn:before, .todo-view .todo-controls .todo-settings-btn:before {
+        font-size: 12px;
+        vertical-align: middle; }
 
 .todo-wrapper {
   position: relative;
@@ -239,6 +236,38 @@
 
 .todo-draggable:first-child {
   margin-top: 0px; }
+
+.todo-main-content:hover .todo-controls {
+  opacity: 1; }
+
+.todo-main-content .recurring-task {
+  position: relative;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding-left: 7px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  display: flex;
+  align-items: center; }
+  .todo-main-content .recurring-task .recurring-progress {
+    height: 2px;
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0; }
+  .todo-main-content .recurring-task .complete-btn {
+    margin-right: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 3px 5px;
+    cursor: pointer; }
+    .todo-main-content .recurring-task .complete-btn:hover {
+      background: rgba(0, 0, 0, 0.3); }
+    .todo-main-content .recurring-task .complete-btn:active {
+      background: rgba(0, 0, 0, 0.4); }
+  .todo-main-content .recurring-task .last-completed-title {
+    margin-right: 5px; }
 
 .inline-text {
   max-width: 200px;
@@ -1072,18 +1101,43 @@
   padding-left: 20px;
   padding-top: 15px;
   padding-bottom: 15px;
-  font-size: 12px; }
+  font-size: 12px;
+  position: relative;
+  margin-bottom: 20px; }
   .todo-settings .slider-picker {
     width: 200px; }
-  .todo-settings > div:first-child {
+  .todo-settings .form-group {
+    margin-bottom: 10px;
+    margin-left: 5px; }
+    .todo-settings .form-group > label {
+      margin-right: 20px; }
+    .todo-settings .form-group > input {
+      position: relative;
+      top: 2px; }
+    .todo-settings .form-group .pt-control {
+      color: #333 !important; }
+    .todo-settings .form-group .pt-control-indicator {
+      margin-left: 10px;
+      color: #333 !important; }
+    .todo-settings .form-group.frequency {
+      position: absolute;
+      right: 20px;
+      top: 15px; }
+  .todo-settings .last-completed {
+    margin: 10px 0;
+    margin-left: 5px;
+    color: #333 !important; }
+    .todo-settings .last-completed > span:first-child {
+      margin-right: 10px; }
+  .todo-settings > div:last-child {
     width: 205px;
     box-shadow: unset !important; }
-    .todo-settings > div:first-child > div:first-child {
+    .todo-settings > div:last-child > div:first-child {
       box-shadow: unset !important; }
-    .todo-settings > div:first-child .compact-picker {
+    .todo-settings > div:last-child .compact-picker {
       width: 205px !important;
       box-shadow: unset !important; }
-      .todo-settings > div:first-child .compact-picker > div {
+      .todo-settings > div:last-child .compact-picker > div {
         width: 205px !important; }
 
 body {
