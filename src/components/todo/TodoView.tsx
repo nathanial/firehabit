@@ -175,7 +175,7 @@ export default class TodoView extends React.PureComponent<Props, State> {
             } else {
                 minutesExpired = moment.duration(
                     moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
-                percentage = Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
+                percentage = 100 - Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
             }
             return (
                 <div className="recurring-task">
