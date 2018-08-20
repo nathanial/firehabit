@@ -1,3 +1,4 @@
+@import "./SubtaskList.scss";
 
 .todo-content-wrapper {
     position: relative;
@@ -16,6 +17,7 @@
     text-align: left;
     cursor: pointer;
     width: 240px;
+    border-radius: 0;
 }
 
 .todo-wrapper {

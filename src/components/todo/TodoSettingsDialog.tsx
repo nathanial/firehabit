@@ -19,7 +19,7 @@ export default class TodoSettingsDialog extends React.PureComponent<Props, {}> {
         return (
             <div className="todo-settings-dialog">
                 <div className="form-group">
-                    <label className="pt-label">Name</label>
+                    <label className="pt-label">Name {this.props.todo.name}</label>
                     <InputGroup
                         onChange={this.onNameChanged}
                         value={this.props.todo.name}

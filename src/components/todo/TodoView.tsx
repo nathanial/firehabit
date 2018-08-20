@@ -34,7 +34,15 @@ function getColorStyle(todo: Todo){
     return colorStyle;
 }
 
-export default class TodoView extends React.PureComponent<Props, {}> {
+type State = {
+    settingsVisible: Boolean
+}
+
+export default class TodoView extends React.PureComponent<Props, State> {
+
+    state = {
+        settingsVisible: false
+    }
 
     render(){
         let extraClasses = '';
@@ -80,10 +88,22 @@ export default class TodoView extends React.PureComponent<Props, {}> {
                             </div>
                         </div>
                         {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
+                        {this.renderSettings()}
                     </div>
                 </div>
             </div>
         );
+    }
+
+    private renderSettings = () => {
+        const colorStyle = getColorStyle(this.props.todo);
+        if(this.state.settingsVisible){
+            return (
+                <div className="todo-settings" style={colorStyle}>
+                    <span>Settings</span>
+                </div>
+            )
+        }
     }
 
     private onStartEditing = () => {
@@ -127,19 +147,10 @@ export default class TodoView extends React.PureComponent<Props, {}> {
         }
     };
 
-    private onOpenTodoSettings = async () => {
-        let settings: TodoSettings = this.props.todo.settings;
-        function onChange(newSettings: TodoSettings){
-            settings = newSettings;
-        }
-        const result = await DialogService.showDialog("Todo Settings", "Save", "Cancel", (
-            <TodoSettingsDialog todo={this.props.todo} onChange={onChange}>
-            </TodoSettingsDialog>
-        ));
-
-        if(result){
-            this.props.todo.set({settings});
-        }
+    private onOpenTodoSettings = () => {
+        this.setState({
+            settingsVisible: !this.state.settingsVisible
+        })
     }
 
 }

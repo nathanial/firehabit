@@ -1,0 +1,52 @@
+.subtask-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+
+    & > .subtask-item {
+        border-top: 1px solid rgba(0,0,0,0.2);
+        .inline-text {
+            width: 170px;
+        }
+        position: relative;
+		padding: 8px 0;
+		margin: 0;
+        padding-left: 28px;
+
+        .pt-editable-text {
+            width: 180px;
+        }
+
+        .subtask-btns {
+            opacity: 0;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            margin-top: -8px;
+            display: flex;
+
+            .close-btn {
+                margin: 0 5px;
+                min-height: 10px;
+                min-width: 10px;
+                font-size: 10px;
+                line-height: 15px;
+            }
+
+            .complete-subtask-btn {
+                margin: 0 5px;
+                min-height: 10px;
+                min-width: 10px;
+                font-size: 10px;
+                line-height: 15px;
+            }
+        }
+
+        &:hover {
+            .subtask-btns {
+                opacity: 1;
+            }
+		}
+    }
+}
