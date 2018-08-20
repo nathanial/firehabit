@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import * as $ from 'jquery';
 import {Button, EditableText, Tabs2, Tab2} from "@blueprintjs/core";
 import {history} from '../../util';
 import {generatePushID} from '../../db/util';

@@ -1,8 +1,29 @@
 .todo-settings {
-    color: black;
+    $color-picker-width: 205px;
 
-    border-top: 1px dashed rgba(255,255,255,0.3);
-    padding-left: 30px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.2);
+    padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 12px;
+
+    .slider-picker {
+        width: 200px;
+    }
+
+    & > div:first-child {
+        & > div:first-child {
+            box-shadow: unset !important;
+        }
+        width: $color-picker-width;
+        box-shadow: unset !important;
+        .compact-picker {
+            width: $color-picker-width !important;
+            box-shadow: unset !important;
+            & > div {
+                width: $color-picker-width !important;
+            }
+        }
+    }
 }

@@ -1,7 +1,7 @@
+import * as $ from 'jquery';
 import * as React from 'react';
 import * as Color from 'color';
 import * as ReactDOM from 'react-dom';
-import * as $ from 'jquery';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { generatePushID } from '../../db/util';

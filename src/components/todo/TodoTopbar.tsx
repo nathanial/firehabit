@@ -92,9 +92,9 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 	};
 
 	private onExportTodos = () => {
-		const blob = new Blob([
+		const blob = new Blob(
 			[JSON.stringify(this.props.todoColumns, undefined, 4)]
-		], {type: 'application/json;charset=utf-8'})
+		, {type: 'application/json;charset=utf-8'})
 		FileSaver.saveAs(blob, 'todos.json');
 	};
 

@@ -137,14 +137,11 @@
         height: 20px;
         flex-direction: row;
         position: absolute;
-        right: 0;
-        top: 0;
+        right: -1px;
+        top: -1px;
         background: white;
-        border-left: 1px solid #ccc;
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        border-top-left-radius: 3px;
-        border-bottom-left-radius: 3px;
+        border: 1px solid #444;
+        border-radius: 0;
         opacity: 0;
         .delete-btn {
             height: 18px;
@@ -166,6 +163,7 @@
             height: 18px;
             min-height: 18px;
             line-height: 10px;
+            border-radius: 0;
             &:before {
                 font-size: 12px;
                 vertical-align: middle;

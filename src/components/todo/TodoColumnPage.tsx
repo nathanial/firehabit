@@ -68,8 +68,8 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
           return;
         }
         const todo = this.findTodoById(result.draggableId);
-        const destinationColumn = _.find(this.props.todoColumns, {id: result.destination.droppableId});
-        const sourceColumn = _.find(this.props.todoColumns, {id: result.source.droppableId});
+        const destinationColumn = _.find(this.props.todoColumns, {id: result.destination.droppableId}) as TodoColumn;
+        const sourceColumn = _.find(this.props.todoColumns, {id: result.source.droppableId}) as TodoColumn;
         if(destinationColumn === sourceColumn) { //re-order
             reorder(sourceColumn.todos, result.source.index, result.destination.index);
         } else {

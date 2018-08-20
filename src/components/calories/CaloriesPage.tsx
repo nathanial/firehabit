@@ -1,4 +1,3 @@
-import * as $ from 'jquery';
 import * as React from 'react';
 import {CaloriesState} from "../../state";
 import {history} from '../../util';

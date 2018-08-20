@@ -1,4 +1,3 @@
-import * as $ from 'jquery';
 import * as  _ from 'lodash';
 import * as React from 'react';
 import * as Color from 'color';
@@ -8,7 +7,8 @@ import {SubtaskList} from "./SubtaskList";
 import InlineText from '../InlineText';
 import cxs from 'cxs';
 import * as ReactDOM from "react-dom";
-import TodoSettingsDialog from './TodoSettingsDialog';
+import {CompactPicker} from 'react-color';
+import posed from 'react-pose';
 
 interface Props {
     todo: Todo;
@@ -38,6 +38,31 @@ type State = {
     settingsVisible: Boolean
 }
 
+const Drawer = posed.div({
+    visible: {
+        height: props => props.height
+    },
+    hidden: {
+        height: 0
+    }
+})
+
+const availableColors = [
+    '#EEEEEE', // default color
+    '#4D4D4D', '#999999', '#FFFFFF',
+    '#F44E3B', '#FE9200', '#FCDC00',
+    '#DBDF00', '#A4DD00', '#68CCCA',
+    '#73D8FF', '#AEA1FF', '#FDA1FF',
+    '#333333', '#808080', '#cccccc',
+    '#D33115', '#E27300', '#FCC400',
+    '#B0BC00', '#68BC00', '#16A5A5',
+    '#009CE0', '#7B64FF', '#FA28FF',
+    '#000000', '#666666', '#B3B3B3',
+    '#9F0500', '#C45100', '#FB9E00',
+    '#808900', '#194D33', '#0C797D',
+    '#0062B1', '#653294', '#AB149E'
+]
+
 export default class TodoView extends React.PureComponent<Props, State> {
 
     state = {
@@ -66,29 +91,33 @@ export default class TodoView extends React.PureComponent<Props, State> {
                     data-todo-id={this.props.todo.id}
                     style={style}
                     {...otherProps}>
-                    <div>
-                        <div className='todo-wrapper' style={colorStyle} >
-                            <div className="drag-handle" draggable={true}>
-                                <div className="inner-icon pt-icon-drag-handle-vertical"/>
+                    <div  style={colorStyle}>
+                        <div className="todo-main-content">
+                            <div className='todo-wrapper' >
+                                <div className="drag-handle" draggable={true}>
+                                    <div className="inner-icon pt-icon-drag-handle-vertical"/>
+                                </div>
+                                <div className='todo-content-wrapper'>
+                                    <InlineText value={this.props.todo.name}
+                                                multiline={true}
+                                                style={colorStyle}
+                                                placeholder="New Todo"
+                                                editing={this.props.todo.editing || false}
+                                                onChange={this.onNameChanged}
+                                                onStartEditing={this.onStartEditing}
+                                                onStopEditing={this.onStopEditing} />
+                                </div>
+                                <div className="todo-controls">
+                                    <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
+                                    <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
+                                    <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
+                                </div>
                             </div>
-                            <div className='todo-content-wrapper'>
-                                <InlineText value={this.props.todo.name}
-                                            multiline={true}
-                                            style={colorStyle}
-                                            placeholder="New Todo"
-                                            editing={this.props.todo.editing || false}
-                                            onChange={this.onNameChanged}
-                                            onStartEditing={this.onStartEditing}
-                                            onStopEditing={this.onStopEditing} />
-                            </div>
-                            <div className="todo-controls">
-                                <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-                                <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-                                <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
-                            </div>
+                            {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                         </div>
-                        {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
-                        {this.renderSettings()}
+                        <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={138} style={{background: 'white'}}>
+                            {this.renderSettings()}
+                        </Drawer>
                     </div>
                 </div>
             </div>
@@ -96,14 +125,24 @@ export default class TodoView extends React.PureComponent<Props, State> {
     }
 
     private renderSettings = () => {
-        const colorStyle = getColorStyle(this.props.todo);
         if(this.state.settingsVisible){
+            const settings = this.props.todo.settings || {
+                recurring: false,
+                color: '#eee'
+            };
             return (
-                <div className="todo-settings" style={colorStyle}>
-                    <span>Settings</span>
+                <div className="todo-settings" onMouseDown={(event) => event.stopPropagation()}>
+                    <label>Is Recurring</label>
+                    <CompactPicker color={settings.color} colors={availableColors} onChange={this.onChangeColor}/>
                 </div>
             )
         }
+    }
+
+    private onChangeColor = (newColor) => {
+        this.props.todo.set({
+            settings: _.extend({}, this.props.todo.settings || {}, {color: newColor.hex}) as any
+        });
     }
 
     private onStartEditing = () => {

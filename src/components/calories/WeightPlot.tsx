@@ -1,10 +1,10 @@
+import * as $ from 'jquery';
 import {CaloriesState} from "../../state";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as Plot from 'react-plotly.js'
-import * as $ from 'jquery';
 
 type Props = {
     caloriesState: CaloriesState;

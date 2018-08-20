@@ -38,10 +38,13 @@ class BasicDialog extends React.PureComponent<Props,{}> {
 	}
 
 	private renderLabel(){
+		console.log("Question", this.props.question);
 		if(this.props.question){
-			<label className="pt-label">
-				{this.props.question}
-			</label>
+			return (
+				<label className="pt-label">
+					{this.props.question}
+				</label>
+			);
 		}
 	}
 
