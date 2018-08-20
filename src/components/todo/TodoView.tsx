@@ -119,6 +119,7 @@ export default class TodoView extends React.PureComponent<Props, State> {
                             {!_.isEmpty(this.props.todo.subtasks) && <SubtaskList style={colorStyle} subtasks={this.props.todo.subtasks} onChange={(i, changes) => this.onSubtaskChanged(i, changes)} onDelete={(i) => this.onDeleteSubtask(i)}/>}
                         </div>
                         <Drawer pose={this.state.settingsVisible ? 'visible' : 'hidden'} height={300} style={{background: 'white'}}>
+                            <div className="settings-border" />
                             {this.renderSettings()}
                         </Drawer>
                     </div>
@@ -179,7 +180,9 @@ export default class TodoView extends React.PureComponent<Props, State> {
             }
             return (
                 <div className="recurring-task">
-                    <div className="recurring-progress" style={{width: `${percentage}%`}}></div>
+                    <div className="recurring-progress">
+                        <div className="progress-indicator" style={{width: `${percentage}%`}} />
+                    </div>
                     {!timed &&
                         <div className="complete-btn" onMouseDown={this.onRecurringComplete}>
                             <i className="fa fa-check" />

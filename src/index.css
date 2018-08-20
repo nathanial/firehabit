@@ -247,6 +247,11 @@
   .todo-view-btn:active, .todo-main-content .recurring-task .complete-btn:active, .todo-main-content .recurring-task .start-btn:active, .todo-main-content .recurring-task .stop-btn:active {
     background: rgba(0, 0, 0, 0.4); }
 
+.settings-border {
+  width: 100%;
+  height: 1px;
+  background: #333; }
+
 .todo-main-content:hover .todo-controls {
   opacity: 1; }
 
@@ -255,18 +260,22 @@
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   padding-left: 7px;
   padding-top: 5px;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
   background: rgba(255, 255, 255, 0.05);
   font-size: 11px;
   display: flex;
   align-items: center; }
   .todo-main-content .recurring-task .recurring-progress {
-    height: 2px;
-    background: rgba(0, 0, 0, 0.7);
+    height: 4px;
+    background: white;
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    right: 0; }
+    right: 0;
+    overflow: hidden; }
+    .todo-main-content .recurring-task .recurring-progress .progress-indicator {
+      background: linear-gradient(#26f026, #22af22);
+      height: 4px; }
   .todo-main-content .recurring-task .last-completed-title {
     margin-right: 5px; }
 
@@ -1098,7 +1107,6 @@
 
 .todo-settings {
   background: white;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
   padding-left: 20px;
   padding-top: 15px;
   padding-bottom: 15px;

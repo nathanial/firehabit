@@ -92,6 +92,12 @@
     cursor: pointer;
 }
 
+.settings-border {
+    width: 100%;
+    height: 1px;
+    background: #333;
+}
+
 .todo-main-content {
     &:hover {
         .todo-controls {
@@ -99,25 +105,32 @@
         }
     }
 
+
     .recurring-task {
         position: relative;
         border-top: 1px solid rgba(0,0,0,0.2);
         padding-left: 7px;
         padding-top: 5px;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
         background: rgba(255,255,255,0.05);
 
         font-size: 11px;
         display: flex;
         align-items: center;
 
+
         .recurring-progress {
-            height: 2px;
-            background: rgba(0,0,0,0.7);
+            height: 4px;
+            background: white;
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             right: 0;
+            overflow:hidden;
+            .progress-indicator {
+                background: linear-gradient( rgb(38, 240, 38), rgb(34, 175, 34));
+                height: 4px;
+            }
         }
 
         .complete-btn {
