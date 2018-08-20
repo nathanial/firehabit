@@ -16,26 +16,6 @@ import InlineText from '../InlineText';
 import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { DragDropContext, Droppable, Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
-const todoColumnClass = cxs({
-    display: 'inline-block',
-    margin: '10px',
-    padding: '20px 10px 10px 10px',
-    width: '280px',
-    textAlign: 'center',
-    height: '100%',
-    position: 'relative',
-    verticalAlign: 'top',
-    overflow: 'hidden',
-    '.settings-btn': {
-        position: 'absolute',
-        top: 0,
-        right: 0
-    },
-    'h4' : {
-        'margin-top': '4px'
-    }
-});
-
 const columnNameClass = cxs({
     marginTop: '7px',
     marginLeft: '30px',
@@ -85,7 +65,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             <Droppable droppableId={column.id}>
                 {(provided: any, snapshot) => {
                     return (
-                        <div ref={provided.innerRef} {...provided.droppableProps} className={`todo-column-and-settings pt-card pt-elevation-2 ${todoColumnClass}`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                        <div ref={provided.innerRef} {...provided.droppableProps} className={`todo-column-and-settings pt-card pt-elevation-2 todo-column-view`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
                             <div className="todo-column-header" style={{background: columnColor}}>
                                 <InlineText className={columnNameClass}
                                             style={{color: 'white'}}

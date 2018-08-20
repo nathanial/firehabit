@@ -28,8 +28,6 @@ const scrollHandleClass = cxs({
     backgroundColor: 'rgba(255,255,255,0.4)',
 });
 
-const bottomMargin = 20;
-
 type Props = {
     className?: string;
     useTranslate?: boolean;
@@ -39,7 +37,7 @@ type State = {
     hidden: boolean;
     scrollY: number;
     handleHeight: number;
-    contentHeight: number;
+    visibleHeight: number;
     scrollHeight: number;
     rootTop: number;
 }
@@ -60,7 +58,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         hidden: true,
         handleHeight: 20,
         scrollHeight: 0,
-        contentHeight: 0,
+        visibleHeight: 0,
         rootTop: 0
     }
 
@@ -71,7 +69,7 @@ export default class ScrollArea extends React.Component<Props,State> {
         if(this.stayInPlace){
             scrollY = this.previousScrollY
         }  else {
-            scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.contentHeight);
+            scrollY = (this.state.scrollY || 0) * (this.state.scrollHeight - this.state.visibleHeight);
         }
         this.previousScrollY = scrollY;
 
@@ -96,7 +94,7 @@ export default class ScrollArea extends React.Component<Props,State> {
             return;
         }
         const handleStyle = {
-            top: this.state.scrollY * (this.state.contentHeight - this.state.handleHeight),
+            top: this.state.scrollY * (this.state.visibleHeight - this.state.handleHeight),
             height: `${this.state.handleHeight}px`
         };
         return (
@@ -205,11 +203,11 @@ export default class ScrollArea extends React.Component<Props,State> {
 
     updateHeight(){
         const root = this.root.getBoundingClientRect();
-        const rect = this.content.getBoundingClientRect();
-        const scrollHeight = this.content.scrollHeight + bottomMargin;
-        const offsetHeight = rect.height;
+        const contentBounds = this.content.getBoundingClientRect();
+        const scrollHeight = this.content.scrollHeight;
         this.setState({
-            scrollHeight, contentHeight: offsetHeight,
+            scrollHeight,
+            visibleHeight: contentBounds.height,
             rootTop: root.top
         })
     }
@@ -225,23 +223,26 @@ export default class ScrollArea extends React.Component<Props,State> {
     resizeHandle = () => {
         const root = this.root.getBoundingClientRect();
         const rect = this.content.getBoundingClientRect();
-        const scrollHeight = this.content.scrollHeight + bottomMargin;
-        const offsetHeight = rect.height;
-        if((scrollHeight - bottomMargin) <= offsetHeight){
+        const scrollHeight = this.content.scrollHeight ;
+        const visibleHeight = rect.height;
+        // hh = (vh / sh) * vh = vh**2 / sh
+        // handle height (hh) is the percentage (vh/sh) of the total content (sh) that is visible (vh), scaled to the visible height (vh).
+        const handleHeight = Math.pow(visibleHeight, 2) / scrollHeight
+        const newState = {
+            handleHeight,
+            visibleHeight,
+            scrollHeight,
+            rootTop: root.top
+        };
+        if(scrollHeight <= visibleHeight){
             this.setState({
                 hidden: true,
-                handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
-                contentHeight: offsetHeight,
-                scrollHeight: scrollHeight,
-                rootTop: root.top
+                ...newState
             });
         } else {
             this.setState({
                 hidden: false,
-                handleHeight: (offsetHeight / scrollHeight) * offsetHeight,
-                contentHeight: offsetHeight,
-                scrollHeight: scrollHeight,
-                rootTop: root.top
+                ...newState
             });
         }
     };
@@ -268,12 +269,12 @@ export default class ScrollArea extends React.Component<Props,State> {
     }
 
     private getRange() {
-        return (this.state.contentHeight - this.state.handleHeight);
+        return (this.state.visibleHeight - this.state.handleHeight);
     }
 
     private startWatchingScrollHeight(){
         this.interval = setInterval(() => {
-            const currentScrollHeight = this.content.scrollHeight + bottomMargin;
+            const currentScrollHeight = this.content.scrollHeight;
             if(currentScrollHeight !== this.state.scrollHeight){
                 this.resizeHandle();
             }

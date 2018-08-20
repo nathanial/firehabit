@@ -10,6 +10,23 @@
   .todo-list .todo-view {
     margin-left: 20px; }
 
+.todo-column-view {
+  display: inline-block;
+  margin: 10px;
+  padding: 20px 10px 10px 10px;
+  width: 280px;
+  text-align: center;
+  height: 100%;
+  position: relative;
+  vertical-align: top;
+  overflow: hidden; }
+  .todo-column-view .settings-btn {
+    position: absolute;
+    top: 0;
+    right: 0; }
+  .todo-column-view h4 {
+    margin-top: 4px; }
+
 .todo-column-tabs {
   margin-top: 15px;
   margin-left: -10px;
