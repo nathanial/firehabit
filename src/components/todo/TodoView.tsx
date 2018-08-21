@@ -163,18 +163,17 @@ export default class TodoView extends React.PureComponent<Props, State> {
                 throw new Error(`Unknown interval: ${settings.recurringInterval}`);
             }
             const timed = _.get(this.props.todo.settings, 'timed', false);
-            const minutesRequired = _.get(this.props.todo.settings, 'minutesRequired', 0);
+            const minutesRequiredPerInterval = _.get(this.props.todo.settings, 'minutesRequired', 0);
             let percentage = 0;
             let deficit = 0;
-            let minutesExpired = 0;
-            let timeCompleted = 0;
             if(timed){
-                minutesExpired = this.getMinutesExpired();
-                deficit = (minutesExpired / intervalMinutes) * minutesRequired
-                const timeCompleted = this.timeCompleted();
-                percentage = 100 - Math.max(0, Math.min(((deficit / minutesRequired) * 100), 100));
+                const intervalsSinceStart = this.getMinutesExpired() / intervalMinutes;
+                const totalMinutes = intervalsSinceStart * minutesRequiredPerInterval;
+                const workedMinutes = this.getTimeCompleted();
+                deficit = totalMinutes - workedMinutes;
+                percentage = 100 - (deficit / minutesRequiredPerInterval) * 100;
             } else {
-                minutesExpired = moment.duration(
+                const minutesExpired = moment.duration(
                     moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
                 percentage = 100 - Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
             }
@@ -190,13 +189,13 @@ export default class TodoView extends React.PureComponent<Props, State> {
                     }
 
                     {this.renderStartTopBtn()}
-                    {this.renderTimedStatus(lastCompleted, timeCompleted, deficit)}
+                    {this.renderTimedStatus(lastCompleted, deficit)}
                 </div>
             )
         }
     }
 
-    private renderTimedStatus = (lastCompleted: String, timeCompleted: number, deficit: number) => {
+    private renderTimedStatus = (lastCompleted: String, deficit: number) => {
         const timed = _.get(this.props.todo.settings, 'timed', false);
         if(timed){
             return [
@@ -227,7 +226,7 @@ export default class TodoView extends React.PureComponent<Props, State> {
         }
     }
 
-    private timeCompleted = () => {
+    private getTimeCompleted = () => {
         type Period = {start: moment.Moment; stop: moment.Moment}
 
         const startStopEvents = this.props.todo.startStopEvents || [];
