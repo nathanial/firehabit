@@ -89,6 +89,7 @@ interface Todo {
 	tab?: string;
 	lastCompleted?: string;
 	startStopEvents: StartStopEvents[];
+	fiatMinutes?: number;
 	set?(updates: Partial<Todo>);
 }
 

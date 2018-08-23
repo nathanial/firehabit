@@ -1,7 +1,7 @@
 import * as  _ from 'lodash';
 import * as React from 'react';
 import * as Color from 'color';
-import {Spinner, Button} from "@blueprintjs/core";
+import {Spinner, Button, Tooltip} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
 import InlineText from '../InlineText';
@@ -177,6 +177,12 @@ export default class TodoView extends React.PureComponent<Props, State> {
                     moment().diff(moment(todo.lastCompleted, LAST_COMPLETED_FORMAT))).asMinutes();
                 percentage = 100 - Math.floor(Math.min((minutesExpired / intervalMinutes) * 100, 100));
             }
+            if(percentage < 0){
+                percentage = 0
+            }
+            if(percentage > 100){
+                percentage = 100
+            }
             return (
                 <div className="recurring-task">
                     <div className="recurring-progress">
@@ -184,12 +190,13 @@ export default class TodoView extends React.PureComponent<Props, State> {
                     </div>
                     {!timed &&
                         <div className="complete-btn" onMouseDown={this.onRecurringComplete}>
-                            <i className="fa fa-check" />
+                            {percentage > 0 && <i className="fa fa-check" />}
                         </div>
                     }
 
-                    {this.renderStartTopBtn()}
+                    {this.renderPauseAndPlay()}
                     {this.renderTimedStatus(lastCompleted, deficit)}
+                    {this.renderControlButtons()}
                 </div>
             )
         }
@@ -248,14 +255,15 @@ export default class TodoView extends React.PureComponent<Props, State> {
         }
         return _.sumBy(periods, p => {
             return moment.duration(p.stop.diff(p.start)).asMinutes()
-        });
+        }) + (this.props.todo.fiatMinutes || 0);
     }
 
-    private renderStartTopBtn = () => {
+    private renderPauseAndPlay = () => {
         const timed = _.get(this.props.todo.settings, 'timed');
         const startStopEvents = this.props.todo.startStopEvents || [];
         const lastEvent = _.last(startStopEvents)
         const isPlaying = _.get(lastEvent, 'kind') === 'play';
+
         if(timed){
             if(isPlaying){
                return (
@@ -271,7 +279,38 @@ export default class TodoView extends React.PureComponent<Props, State> {
                 );
             }
         }
+    }
 
+    private renderControlButtons = () => {
+        const timed = _.get(this.props.todo.settings, 'timed');
+        if(timed){
+            return (
+                <div className="ctrl-btns">
+                    <Tooltip content={<span>Add 10 Minutes to the Deficit</span>}>
+                        <div className="ctrl-btn" onClick={this.onRemoveIncrementOfWork}>
+                            <i className="fa fa-plus"></i>
+                        </div>
+                    </Tooltip>
+                    <Tooltip content={<span>Remove 10 Minutes from the Deficit</span>}>
+                        <div className="ctrl-btn" onClick={this.onAddIncrementOfWork}>
+                            <i className="fa fa-minus"></i>
+                        </div>
+                    </Tooltip>
+                </div>
+            );
+        }
+    }
+
+    private onAddIncrementOfWork = () => {
+        this.props.todo.set({
+            fiatMinutes: (this.props.todo.fiatMinutes || 0) + 10
+        })
+    }
+
+    private onRemoveIncrementOfWork = () => {
+        this.props.todo.set({
+            fiatMinutes: (this.props.todo.fiatMinutes || 0) - 10
+        })
     }
 
     private onStartTask = (event) =>  {

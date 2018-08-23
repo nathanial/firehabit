@@ -117,6 +117,7 @@
         font-size: 11px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
 
 
         .recurring-progress {
@@ -143,6 +144,14 @@
 
         .stop-btn {
             @extend .todo-view-btn;
+        }
+
+        .ctrl-btn {
+            @extend .todo-view-btn;
+        }
+
+        .ctrl-btns {
+            display: flex;
         }
 
 

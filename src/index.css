@@ -237,14 +237,14 @@
 .todo-draggable:first-child {
   margin-top: 0px; }
 
-.todo-view-btn, .todo-main-content .recurring-task .complete-btn, .todo-main-content .recurring-task .start-btn, .todo-main-content .recurring-task .stop-btn {
+.todo-view-btn, .todo-main-content .recurring-task .complete-btn, .todo-main-content .recurring-task .start-btn, .todo-main-content .recurring-task .stop-btn, .todo-main-content .recurring-task .ctrl-btn {
   margin-right: 5px;
   background: rgba(0, 0, 0, 0.2);
   padding: 3px 5px;
   cursor: pointer; }
-  .todo-view-btn:hover, .todo-main-content .recurring-task .complete-btn:hover, .todo-main-content .recurring-task .start-btn:hover, .todo-main-content .recurring-task .stop-btn:hover {
+  .todo-view-btn:hover, .todo-main-content .recurring-task .complete-btn:hover, .todo-main-content .recurring-task .start-btn:hover, .todo-main-content .recurring-task .stop-btn:hover, .todo-main-content .recurring-task .ctrl-btn:hover {
     background: rgba(0, 0, 0, 0.3); }
-  .todo-view-btn:active, .todo-main-content .recurring-task .complete-btn:active, .todo-main-content .recurring-task .start-btn:active, .todo-main-content .recurring-task .stop-btn:active {
+  .todo-view-btn:active, .todo-main-content .recurring-task .complete-btn:active, .todo-main-content .recurring-task .start-btn:active, .todo-main-content .recurring-task .stop-btn:active, .todo-main-content .recurring-task .ctrl-btn:active {
     background: rgba(0, 0, 0, 0.4); }
 
 .settings-border {
@@ -264,7 +264,8 @@
   background: rgba(255, 255, 255, 0.05);
   font-size: 11px;
   display: flex;
-  align-items: center; }
+  align-items: center;
+  justify-content: space-between; }
   .todo-main-content .recurring-task .recurring-progress {
     height: 4px;
     background: white;
@@ -276,6 +277,8 @@
     .todo-main-content .recurring-task .recurring-progress .progress-indicator {
       background: linear-gradient(#26f026, #22af22);
       height: 4px; }
+  .todo-main-content .recurring-task .ctrl-btns {
+    display: flex; }
   .todo-main-content .recurring-task .last-completed-title {
     margin-right: 5px; }
 
