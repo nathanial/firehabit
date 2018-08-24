@@ -1,22 +1,9 @@
 import * as React from 'react';
 import {Button, Checkbox} from "@blueprintjs/core";
 import * as _ from 'lodash';
-import {history} from '../../util';
-import { SketchPicker } from 'react-color';
+import { SliderPicker } from 'react-color';
 import DialogService from "../../services/DialogService";
-import cxs from 'cxs';
-import * as Color from 'color';
 
-const deleteColumnBtnClass = cxs({
-	marginTop: '10px'
-});
-
-const todoColumnSettingsPageClass = cxs({
-	position: 'absolute',
-	zIndex: 9,
-	paddingBottom: 10,
-	paddingLeft: 15
-});
 
 interface Props {
 	style?: Object;
@@ -37,9 +24,9 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 		const style = _.extend({}, {
 		}, this.props.style);
 		return (
-			<div className={"todo-column-settings " + todoColumnSettingsPageClass} style={style}>
+			<div className={"todo-column-settings"} style={style}>
 				<div style={{position: 'relative'}}>
-					<SketchPicker color={color} className="sketch-picker" onChange={this.onChange}/>
+					<SliderPicker color={color} className="sketch-picker" onChange={this.onChange}/>
 					<Button style={{marginTop: 10, marginBottom: 20}} onClick={this.onResetColor}>Reset Color</Button>
 				</div>
 				<Checkbox checked={confirmDeletion} onChange={this.onChangeConfirmDeletion}>
@@ -54,7 +41,7 @@ export default class TodoColumnSettingsPage extends React.PureComponent<Props> {
 				<Checkbox checked={showTodoCount} onChange={this.onChangeShowTodoCount}>
 					Show Todo Count
 				</Checkbox>
-				<Button className={`pt-intent-danger ${deleteColumnBtnClass}`} onClick={this.onDeleteColumn}>Delete Column</Button>
+				<Button className={`pt-intent-danger`} onClick={this.onDeleteColumn}>Delete Column</Button>
 				<div className="move-buttons">
 					<Button onClick={this.onMoveLeft}>Move Left</Button>
 					<Button onClick={this.onMoveRight}>Move Right</Button>

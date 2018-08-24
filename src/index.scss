@@ -38,40 +38,6 @@ body {
   background-color: rgba(255,255,255,0.7);
 }
 
-.todo-column-settings {
-  top: 40px;
-  background: #efefef;
-  width: 250px;
-  left: 15px;
-  color: black;
-  border: 1px solid black !important;
-  border-radius: 5px;
-
-  .pt-checkbox {
-    color: black;
-  }
-
-  .sketch-picker {
-    margin-left: 0px;
-    margin-top: 20px;
-    box-shadow: none !important;
-    outline: 1px solid black;
-  }
-
-  .move-buttons {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    margin-left: -10px;
-    border-top: 1px solid #ccc;
-
-    padding-top: 30px;
-    button {
-      margin-left: 10px;
-    }
-  }
-
-}
-
 .settings-enter{
   transform: translateY(-600px);
 }

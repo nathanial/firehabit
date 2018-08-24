@@ -1,27 +1,15 @@
 
-.todo-list {
-    list-style-type: none;
-    margin: 0;
-    padding-top: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 35px;
-    .todo-view {
-        margin-left: 20px;
-    }
-}
 
 .todo-column-view {
-    display: inline-block;
-    margin: 10px;
-    padding: 20px 10px 10px 10px;
+    display: block;
+    box-sizing: border-box;
+    margin-right: 15px;
+    padding: 0;
     width: 280px;
+    min-width: 280px;
     text-align: center;
     height: 100%;
     position: relative;
-    vertical-align: top;
     overflow: hidden;
     .settings-btn {
         position: absolute;
@@ -31,6 +19,54 @@
     h4 {
         margin-top: 4px;
     }
+
+    .todo-column-header {
+        z-index: 19;
+
+        .todo-column-controls {
+            padding-bottom: 5px;
+        }
+
+        .inline-text {
+            input {
+                text-align: center;
+                color: white;
+            }
+        }
+
+        .todo-count {
+            position: absolute;
+            left: 30px;
+            top: 7px;
+            font-weight: bold;
+        }
+
+        .toolbar-border {
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+            box-shadow: 1px 4px 7px 0px rgba(0,0,0,0.03);
+            height: 1px;
+            width: 100%;
+            z-index: 99;
+        }
+    }
+
+    .todo-column-view-content {
+        position: relative;
+        height: calc(100% - 35px);
+        overflow: hidden;
+
+        .todo-list {
+            list-style-type: none;
+            margin: 0;
+            padding-top: 0;
+            width: 100%;
+            height: 100%;
+            .todo-view {
+                margin: 0 auto;
+            }
+        }
+    }
+
 }
 
 .todo-column-tabs {
@@ -131,30 +167,6 @@
 
 }
 
-
-.todo-column-header {
-    z-index: 19;
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    height: 33px;
-
-    .inline-text {
-        input {
-            text-align: center;
-            color: white;
-        }
-    }
-
-    .todo-count {
-        position: absolute;
-        left: 30px;
-        top: 7px;
-        font-weight: bold;
-    }
-}
 
 .todo-view {
     &.editing {

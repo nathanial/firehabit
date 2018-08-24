@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import TodoColumnView from "./TodoColumnView";
 import cxs from 'cxs';
-import { DragDropContext, Droppable, Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const todoColumnPageClass = cxs({
-    display: 'block',
+    display: 'flex',
     'text-align': 'left',
     position: 'absolute',
     left: 0,
@@ -17,10 +17,10 @@ const todoColumnPageClass = cxs({
 });
 
 const columnsContainerClass = cxs({
-    width: '100%',
+    display: 'flex',
     height: '100%',
     'overflow-x': 'auto',
-    padding: '0 20px'
+    padding: '0px 20px 20px 20px'
 });
 
 type Props = {

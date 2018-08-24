@@ -1,0 +1,32 @@
+.todo-settings-drawer {
+	overflow: hidden;
+	width: 100%;
+	position: relative;
+}
+.todo-column-settings {
+	z-index: 9;
+	margin: 0 auto;
+	color: black;
+	width: 250px;
+	margin: 0 auto;
+	padding-top: 30px;
+
+	.pt-checkbox {
+		color: black;
+	}
+
+	.sketch-picker {
+		margin: 0 auto;
+		box-shadow: none !important;
+		outline: 1px solid black;
+	}
+
+	.move-buttons {
+		margin-bottom: 10px;
+		margin-left: -10px;
+		padding-top: 30px;
+		button {
+			margin-left: 10px;
+		}
+	}
+}

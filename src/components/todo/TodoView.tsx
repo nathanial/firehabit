@@ -1,16 +1,14 @@
 import * as  _ from 'lodash';
 import * as React from 'react';
 import * as Color from 'color';
-import {Spinner, Button, Tooltip} from "@blueprintjs/core";
+import {Button, Tooltip} from "@blueprintjs/core";
 import DialogService from "../../services/DialogService";
 import {SubtaskList} from "./SubtaskList";
 import InlineText from '../InlineText';
-import cxs from 'cxs';
-import * as ReactDOM from "react-dom";
 import {CompactPicker} from 'react-color';
-import posed from 'react-pose';
 import { LAST_COMPLETED_FORMAT } from '../../db/DB';
 import * as moment from 'moment';
+import {Drawer} from '../animation/Drawer';
 
 interface Props {
     todo: Todo;
@@ -18,10 +16,6 @@ interface Props {
     style?: Object;
     confirmDeletion: boolean;
     onDelete(todo: Todo);
-}
-
-type PreviewProps = {
-    todo: Todo;
 }
 
 function getColorStyle(todo: Todo){
@@ -39,15 +33,6 @@ function getColorStyle(todo: Todo){
 type State = {
     settingsVisible: Boolean
 }
-
-const Drawer = posed.div({
-    visible: {
-        height: props => props.height
-    },
-    hidden: {
-        height: 0
-    }
-})
 
 const availableColors = [
     '#EEEEEE', // default color
@@ -205,15 +190,19 @@ export default class TodoView extends React.PureComponent<Props, State> {
     private renderTimedStatus = (lastCompleted: String, deficit: number) => {
         const timed = _.get(this.props.todo.settings, 'timed', false);
         if(timed){
-            return [
-                <span className="last-completed-title">Deficit:</span>,
-                <span className="last-completed-value">{Math.round(deficit)} minutes</span>
-            ]
+            return (
+                <div>
+                    <span className="last-completed-title">Deficit:</span>
+                    <span className="last-completed-value">{Math.round(deficit)} minutes</span>
+                </div>
+            )
         } else {
-            return [
-                <span className="last-completed-title">Last Completed:</span>,
-                <span className="last-completed-value">{lastCompleted}</span>
-            ];
+            return (
+                <div style={{flexGrow: 1}}>
+                    <span className="last-completed-title">Last Completed:</span>
+                    <span className="last-completed-value">{lastCompleted}</span>
+                </div>
+            );
         }
 
     }

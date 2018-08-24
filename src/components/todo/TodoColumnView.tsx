@@ -14,6 +14,7 @@ import TodoColumnSettingsPage from "./TodoColumnSettingsPage";
 import InlineText from '../InlineText';
 import * as  ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { DragDropContext, Droppable, Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import {Drawer} from '../animation/Drawer';
 
 const columnNameClass = cxs({
     marginTop: '7px',
@@ -33,17 +34,6 @@ const trashBtnClass = cxs({
     top: 0
 });
 
-const toolbarBorderClass = cxs({
-    borderBottom: '1px solid rgba(0,0,0,0.15)',
-    boxShadow: "1px 4px 7px 0px rgba(0,0,0,0.03)",
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: '25px',
-    height: '10px',
-    zIndex: 99
-});
-
 interface Props {
     column: TodoColumn;
     onMoveColumnLeft(column: TodoColumn);
@@ -53,9 +43,7 @@ interface Props {
 
 
 export default class TodoColumnView extends React.PureComponent<Props> {
-    private animating: boolean;
     private scrollbar: ScrollArea;
-    private unregisterDropTarget: () => void;
 
     render(){
         const columnColor = this.props.column.color;
@@ -64,24 +52,27 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             <Droppable droppableId={column.id}>
                 {(provided: any, snapshot) => {
                     return (
-                        <div ref={provided.innerRef} {...provided.droppableProps} className={`todo-column-and-settings pt-card pt-elevation-2 todo-column-view`} style={{display:'inline-block', position: 'relative', height: 'calc(100% - 30px)', background: columnColor}}>
+                        <div ref={provided.innerRef} {...provided.droppableProps} className={`pt-card pt-elevation-2 todo-column-view`}  style={{background: columnColor}}>
                             <div className="todo-column-header" style={{background: columnColor}}>
-                                <InlineText className={columnNameClass}
-                                            style={{color: 'white'}}
-                                            editing={this.props.column.editingName}
-                                            value={this.props.column.name}
-                                            onChange={this.onChangeColumnName}
-                                            onStartEditing={this.onStartEditing}
-                                            onStopEditing={this.onStopEditing}/>
-                                <Button iconName="settings"
-                                        className="settings-btn pt-minimal"
-                                        onClick={this.gotoColumnSettings} />
-                                <Button iconName="plus"
-                                        className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
-                                        onClick={this.onAddTodo} />
-                                {this.renderTrashBtn()}
-                                {this.renderTodoCount()}
-                                <div className={toolbarBorderClass}></div>
+                                <div className="todo-column-controls">
+                                    <InlineText className={columnNameClass}
+                                                style={{color: 'white'}}
+                                                editing={this.props.column.editingName}
+                                                value={this.props.column.name}
+                                                onChange={this.onChangeColumnName}
+                                                onStartEditing={this.onStartEditing}
+                                                onStopEditing={this.onStopEditing}/>
+                                    <Button iconName="settings"
+                                            className="settings-btn pt-minimal"
+                                            onClick={this.gotoColumnSettings} />
+                                    <Button iconName="plus"
+                                            className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
+                                            onClick={this.onAddTodo} />
+                                    {this.renderTrashBtn()}
+                                    {this.renderTodoCount()}
+                                </div>
+                                {this.renderSettings()}
+                                <div className="toolbar-border"></div>
                             </div>
                             {this.renderContent()}
                             {provided.placeholder}
@@ -101,11 +92,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     }
 
     private renderContent(){
-        const columnColor = this.props.column.color;
         const column = this.props.column;
         return (
-            <div>
-                {this.renderSettings()}
+            <div className="todo-column-view-content">
                 {this.props.column.enableTabs &&
                     <TodoColumnTabs column={column}
                                     onHandleTabChanged={this.onHandleTabChanged} />}
@@ -170,14 +159,14 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 
     private renderSettings = () => {
         return (
-            <ReactCSSTransitionGroup transitionName="settings" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
-                {this.props.column.showSettings &&
-                    <TodoColumnSettingsPage column={this.props.column}
+            <Drawer className="todo-settings-drawer"
+                    pose={this.props.column.showSettings ? 'visible' : 'hidden'}
+                    height={340}>
+                <TodoColumnSettingsPage column={this.props.column}
                                             onDelete={this.onDeleteColumn}
                                             onMoveLeft={this.props.onMoveColumnLeft}
                                             onMoveRight={this.props.onMoveColumnRight} />
-                }
-            </ReactCSSTransitionGroup>
+            </Drawer>
         );
     };
 
