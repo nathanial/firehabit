@@ -137,6 +137,8 @@
 
         .complete-btn {
             @extend .todo-view-btn;
+            min-width: 21px;
+            min-height: 20px;
         }
 
         .start-btn {

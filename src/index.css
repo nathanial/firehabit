@@ -304,6 +304,9 @@
     .todo-main-content .recurring-task .recurring-progress .progress-indicator {
       background: linear-gradient(#26f026, #22af22);
       height: 4px; }
+  .todo-main-content .recurring-task .complete-btn {
+    min-width: 21px;
+    min-height: 20px; }
   .todo-main-content .recurring-task .ctrl-btns {
     display: flex; }
   .todo-main-content .recurring-task .last-completed-title {
