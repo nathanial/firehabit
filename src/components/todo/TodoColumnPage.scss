@@ -9,7 +9,7 @@
   .todo-sidebar {
     background: #222;
     display: flex;
-    padding: 10px;
+    padding: 0px;
     align-content: center;
     z-index: 1;
     flex-direction: column;
@@ -17,16 +17,16 @@
     .sidebar-button {
       display: block;
       padding: 10px 15px;
-      margin-top: 10px;
+      margin-top: 1px;
 
       &.active {
         background: #1A91EB;
       }
       &:hover:not(.active):not(:active) {
-        background: darken(#1A91EB, 10%);
+        background: darken(#1A91EB, 20%);
       }
       &:active {
-        background: darken(#1A91EB, 20%);
+        background: darken(#1A91EB, 10%);
       }
       cursor: pointer;
     }
