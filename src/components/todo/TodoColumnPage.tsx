@@ -12,7 +12,7 @@ const todoColumnPageClass = cxs({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: '15px',
+    top: 0,
     bottom: 0,
     padding: '0',
     'white-space': 'nowrap'
