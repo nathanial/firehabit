@@ -163,7 +163,6 @@ class UserSection extends React.PureComponent<UserProps,{}>{
 
 export default class SiteNavbar extends React.PureComponent<Props, {}> {
 	render(){
-		const {path} = this.props;
 		return (
 			<nav className="site-navbar" {..._.omit(this.props, ['onNavigate', 'path', 'user'])}>
 				<SiteLogo />

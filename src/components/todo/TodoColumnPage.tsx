@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import TodoColumnView from "./TodoColumnView";
 import cxs from 'cxs';
 import { DragDropContext } from 'react-beautiful-dnd';
+import TodoSidebar from './TodoSidebar';
 
 const todoColumnPageClass = cxs({
     display: 'flex',
@@ -34,28 +35,31 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
     const [removed] = trans.splice(startIndex, 1);
     trans.splice(endIndex, 0, removed);
     list['run']();
-};
+}
 
 export default class TodoColumnPage extends React.PureComponent<Props> {
     render(){
-        let {todoColumns, showDevTools} = this.props;
+        let {todoColumns} = this.props;
         todoColumns = _.sortBy(todoColumns, column => column.index);
         return (
-            <DragDropContext onDragEnd={this.onDragEnd}>
-                <div className={todoColumnPageClass}>
-                    <div className={columnsContainerClass}>
-                        {_.map(todoColumns, (column) => {
-                            return (
-                                <TodoColumnView key={column.id}
-                                                column={column}
-                                                onDeleteColumn={this.onDeleteColumn}
-                                                onMoveColumnLeft={this.onMoveColumnLeft}
-                                                onMoveColumnRight={this.onMoveColumnRight} />
-                            );
-                        })}
-                    </div>
+            <div className={"todo-column-page " + todoColumnPageClass}>
+                <TodoSidebar />
+                <div className="todo-column-page-content">
+                    <DragDropContext onDragEnd={this.onDragEnd}>
+                        <div className={columnsContainerClass}>
+                            {_.map(todoColumns, (column) => {
+                                return (
+                                    <TodoColumnView key={column.id}
+                                                    column={column}
+                                                    onDeleteColumn={this.onDeleteColumn}
+                                                    onMoveColumnLeft={this.onMoveColumnLeft}
+                                                    onMoveColumnRight={this.onMoveColumnRight} />
+                                );
+                            })}
+                        </div>
+                    </DragDropContext>
                 </div>
-            </DragDropContext>
+            </div>
         );
     }
 
