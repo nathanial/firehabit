@@ -5,13 +5,10 @@ import './App.css';
 import SiteNavbar from "./components/SiteNavbar";
 import CaloriesPage from './components/calories/CaloriesPage';
 import TodoColumnPage from './components/todo/TodoColumnPage';
-import NotesPage from './components/notes/NotesPage';
-import NotesTopbar from './components/notes/NotesTopbar';
 import {history,db} from './util';
 import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
 import {Spinner} from '@blueprintjs/core';
-import {SchedulePage} from './components/schedule/SchedulePage';
 import cxs from 'cxs';
 
 interface Props {
@@ -64,14 +61,6 @@ export default class App extends React.PureComponent<Props> {
             return (
                 <CaloriesPage caloriesState={appState.calories} />
             );
-        } else if(history.location.pathname === '/notes') {
-            return (
-                <NotesPage notes={appState.notes} />
-            );
-        } else if(history.location.pathname === '/schedule'){
-            return (
-                <SchedulePage calendarEvents={appState.calendarEvents} />
-            );
         } else {
             return (
                 <h1>Unknown Route</h1>
@@ -83,8 +72,6 @@ export default class App extends React.PureComponent<Props> {
 		if(history.location.pathname === '/') {
             const {todoColumns, showDevTools} = this.props.appState;
 			return <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
-		} else if(history.location.pathname === '/notes') {
-			return <NotesTopbar notes={this.props.appState.notes} />
 		}
 	}
 

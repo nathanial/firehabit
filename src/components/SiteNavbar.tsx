@@ -141,26 +141,10 @@ class NavSection extends React.PureComponent<Props,{}> {
 			left: 5,
 			top: 1
 		};
-		const notesStyle = {
-			width:25,
-			height:25,
-			position: 'absolute',
-			left: 5,
-			top: 1
-		};
-		const scheduleStyle = {
-			width:25,
-			height:25,
-			position: 'absolute',
-			left: 5,
-			top: 1
-		};
 		return (
 			<div className="nav-section">
-				<NavBtn className="calories-nav-btn" navIconStyle={caloriesStyle} style={{width:95}} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
-				<NavBtn className="todo-nav-btn" goto="" navIconStyle={todosStyle} style={{width:88}} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
-				<NavBtn className="notes-nav-btn" goto="notes" style={{width:88}} navIconStyle={notesStyle} icon="icons/open-textbook.png" active={path === '/notes'} onNavigate={this.props.onNavigate}>Notes</NavBtn>
-				<NavBtn className="schedule-nav-btn" goto="schedule" style={{width:105}} navIconStyle={scheduleStyle} icon="icons/Calendar.png" active={path === '/schedule'} onNavigate={this.props.onNavigate}>Schedule</NavBtn>
+				<NavBtn className="calories-nav-btn" navIconStyle={caloriesStyle} style={{width:105}} goto="calories" icon="icons/Board.png" active={path === '/calories'} onNavigate={this.props.onNavigate}>Calories</NavBtn>
+				<NavBtn className="todo-nav-btn" goto="" navIconStyle={todosStyle} style={{width:98}} icon="icons/Goal.png" active={path === '/' || path === '/todo'} onNavigate={this.props.onNavigate}>Todos</NavBtn>
 			</div>
 		);
 	}
