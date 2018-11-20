@@ -4,6 +4,7 @@ import TodoColumnView from "./TodoColumnView";
 import cxs from 'cxs';
 import { DragDropContext } from 'react-beautiful-dnd';
 import TodoSidebar from './TodoSidebar';
+import {TodoPageState} from "../../state";
 
 const todoColumnPageClass = cxs({
     display: 'flex',
@@ -26,6 +27,7 @@ const columnsContainerClass = cxs({
 
 type Props = {
     todoColumns: TodoColumn[];
+    todoPageState: TodoPageState;
     showDevTools: boolean;
 }
 
@@ -39,28 +41,43 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 
 export default class TodoColumnPage extends React.PureComponent<Props> {
     render(){
-        let {todoColumns} = this.props;
-        todoColumns = _.sortBy(todoColumns, column => column.index);
+        let {todoColumns, todoPageState} = this.props;
         return (
             <div className={"todo-column-page " + todoColumnPageClass}>
-                <TodoSidebar />
+                <TodoSidebar todoPageState={todoPageState} />
                 <div className="todo-column-page-content">
-                    <DragDropContext onDragEnd={this.onDragEnd}>
-                        <div className={columnsContainerClass}>
-                            {_.map(todoColumns, (column) => {
-                                return (
-                                    <TodoColumnView key={column.id}
-                                                    column={column}
-                                                    onDeleteColumn={this.onDeleteColumn}
-                                                    onMoveColumnLeft={this.onMoveColumnLeft}
-                                                    onMoveColumnRight={this.onMoveColumnRight} />
-                                );
-                            })}
-                        </div>
-                    </DragDropContext>
+                    {this.renderContent()}
                 </div>
             </div>
         );
+    }
+
+    private renderContent(){
+        let {todoColumns} = this.props
+        todoColumns = _.sortBy(todoColumns, column => column.index);
+        if(this.props.todoPageState.mode == "column-view"){
+            return (
+                <DragDropContext onDragEnd={this.onDragEnd}>
+                    <div className={columnsContainerClass}>
+                        {_.map(todoColumns, (column) => {
+                            return (
+                                <TodoColumnView key={column.id}
+                                                column={column}
+                                                onDeleteColumn={this.onDeleteColumn}
+                                                onMoveColumnLeft={this.onMoveColumnLeft}
+                                                onMoveColumnRight={this.onMoveColumnRight} />
+                            );
+                        })}
+                    </div>
+                </DragDropContext>
+            )
+        } else {
+            return (
+                <div className={"list-view"}>
+                    <h1>List View</h1>
+                </div>
+            );
+        }
     }
 
     onDeleteColumn = (column) => {

@@ -5,7 +5,7 @@ import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import DialogService from '../services/DialogService';
 import {downloadCollection} from "./util";
-import {state} from '../state';
+import {state, TodoPageState} from '../state';
 import * as moment from 'moment';
 import * as config from './config';
 import {Collection} from './Collection';
@@ -60,6 +60,8 @@ export class DB {
 		const days = await this.daysCollection.load();
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = (await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val() as CalorieSettings;
+		const todoPageState = (await this.db.ref(`/users/${userId}/todo-page-state`).once('value')).val() as TodoPageState || {mode: "column-view"};
+		console.log("GET IT", todoPageState)
 
 		if(_.isEmpty(todoColumns)){
 			todoColumns.push({
@@ -119,6 +121,7 @@ export class DB {
 					weightStasisGoal: _.get(calorieSettings, 'weightStasisGoal', 2300)
 				}
 			},
+			todoPageState,
 			notes,
 			calendarEvents
 		});
@@ -130,7 +133,6 @@ export class DB {
 	}
 
 	async load(){
-		const started = moment();
 		if(this.syncInterval){
 			clearInterval(this.syncInterval);
 		}
@@ -140,7 +142,7 @@ export class DB {
 			deserialize: this.deserializeEvent,
 			serialize: this.serializeEvent
 		});
-		this.foodDefinitionsCollection = new Collection<FoodDefinition>("foodDefinitions", this.db);
+        this.foodDefinitionsCollection = new Collection<FoodDefinition>("foodDefinitions", this.db);
 		this.todoColumnsCollection = new Collection<TodoColumn>("todoColumns", this.db, {
 			afterLoad(todoColumn: TodoColumn, index: number){
 				if(_.isEmpty(todoColumn.todos)){
@@ -217,6 +219,9 @@ export class DB {
 					if(prevState.calories["calorie-settings"] !== currentState.calories["calorie-settings"]){
 						this.db.ref(`/users/${userId}/calorie-settings`).update(currentState.calories["calorie-settings"])
 					}
+				}
+				if(prevState.todoPageState !== currentState.todoPageState){
+					this.db.ref(`/users/${userId}/todo-page-state`).update(currentState.todoPageState)
 				}
 			})
 		}, 500);

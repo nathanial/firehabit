@@ -3,6 +3,14 @@ import * as _ from 'lodash';
 import * as uuidv4 from 'uuid/v4';
 import moment = require("moment");
 
+export type TodoPageMode = "column-view" | "list-view"
+
+export interface TodoPageState {
+	mode: TodoPageMode;
+
+    set?(updates: Partial<TodoPageState>);
+}
+
 export interface CalorieSettings {
 	caloricGoal: number,
 	weightStasisGoal: number
@@ -24,6 +32,7 @@ export interface AppState {
 	showDevTools: boolean;
 	calories: CaloriesState;
 	todoColumns: TodoColumn[];
+	todoPageState: TodoPageState;
 	notes: Note[];
 	set?(name: string, value: any);
 	set?(newState: Partial<AppState>);
@@ -37,6 +46,9 @@ interface FreezerData<T> {
 
 const initialAppState: AppState = {
 	showDevTools: false,
+	todoPageState: {
+		mode: "column-view"
+	},
 	calendarEvents: [],
 	calories: {
 		selectedDate: moment().format('MM/DD/YY'),

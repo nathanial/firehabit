@@ -53,9 +53,9 @@ export default class App extends React.PureComponent<Props> {
     private renderPage(){
         const appState = this.props.appState;
         if(history.location.pathname === '/') {
-            const {todoColumns, showDevTools} = appState;
+            const {todoColumns, showDevTools, todoPageState} = appState;
             return 	(
-                <TodoColumnPage todoColumns={todoColumns} showDevTools={showDevTools} />
+                <TodoColumnPage todoColumns={todoColumns} showDevTools={showDevTools} todoPageState={todoPageState} />
             );
         } else if(history.location.pathname === '/calories') {
             return (
