@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {db} from '../../util';
-import {Button} from "@blueprintjs/core/dist/components/button/buttons";
+import {Button} from "@blueprintjs/core";
 import * as _ from 'lodash';
 import { Icon } from '@blueprintjs/core';
 

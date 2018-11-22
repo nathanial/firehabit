@@ -4,28 +4,13 @@ import * as firebase from 'firebase';
 import Database = firebase.database.Database;
 import Reference = firebase.database.Reference;
 import DialogService from '../services/DialogService';
-import {downloadCollection} from "./util";
 import {state, TodoPageState} from '../state';
 import * as moment from 'moment';
 import * as config from './config';
 import {Collection} from './Collection';
-import DayPicker from 'react-day-picker';
 import {generatePushID} from './util';
 
-function encode(columns: TodoColumn[]) {
-	const copy = _.cloneDeep(columns);
-	const result = {};
-	for(let column of copy){
-		result[column.id] = _.omit(column, ['id', 'todos']);
-		result[column.id].todos = {};
-		for(let todo of column.todos){
-			result[column.id].todos[todo.id] = _.omit(todo, ['id']);
-		}
-	}
-	return result;
-}
-
-export const LAST_COMPLETED_FORMAT = "MM/DD/YY HH:mm"
+export const LAST_COMPLETED_FORMAT = "MM/DD/YY HH:mm";
 
 export class DB {
 	loggedIn = false;

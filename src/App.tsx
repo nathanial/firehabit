@@ -1,5 +1,5 @@
 import "normalize.css/normalize.css";
-import "@blueprintjs/core/dist/blueprint.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
 import * as React from 'react';
 import './App.css';
 import SiteNavbar from "./components/SiteNavbar";

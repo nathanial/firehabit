@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import {Button} from "@blueprintjs/core/dist/components/button/buttons";
+import {Button} from "@blueprintjs/core";
 import cxs from 'cxs';
 
 const dayPickerClass = cxs({
