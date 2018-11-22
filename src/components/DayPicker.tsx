@@ -43,9 +43,9 @@ export default class DayPicker extends React.PureComponent<Props> {
 		return (
 			<div className={dayPickerClass + " day-picker"}>
 				<span>Date</span>
-				<Button iconName="chevron-left" className="pt-minimal" onClick={prevDay} />
+				<Button icon="chevron-left" className="pt-minimal" onClick={prevDay} />
 				<span>{props.date}</span>
-				<Button iconName="chevron-right" className="pt-minimal" onClick={nextDay} />
+				<Button icon="chevron-right" className="pt-minimal" onClick={nextDay} />
 			</div>
 		);
 	}

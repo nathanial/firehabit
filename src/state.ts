@@ -1,4 +1,4 @@
-import Freezer from 'freezer-js';
+import * as Freezer from 'freezer-js';
 import * as _ from 'lodash';
 import * as uuidv4 from 'uuid/v4';
 import moment = require("moment");

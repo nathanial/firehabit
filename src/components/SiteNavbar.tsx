@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import {history} from '../util';
 import {Icon, Button, Menu, MenuDivider, MenuItem, Popover, Position} from '@blueprintjs/core';
 import * as firebase from 'firebase';
@@ -86,7 +85,7 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 
 		const compassMenu = (
 			<Menu>
-				<MenuItem iconName="log-out" text="Logout" onClick={logout} />
+				<MenuItem icon="log-out" text="Logout" onClick={logout} />
 			</Menu>
 		);
 

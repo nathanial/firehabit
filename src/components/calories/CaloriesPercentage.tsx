@@ -33,7 +33,7 @@ export class CaloriesPercentage extends React.PureComponent<Props,{}>{
                     <span>{caloriesOfTheDay}/{weightStasisGoal}</span>
                     {this.renderCursor()}
                 </div>
-                <Button className="calories-settings-btn pt-minimal" iconName="settings" onClick={this.props.onOpenSettings} />
+                <Button className="calories-settings-btn pt-minimal" icon="settings" onClick={this.props.onOpenSettings} />
             </div>
         );
     }

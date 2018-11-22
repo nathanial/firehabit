@@ -95,9 +95,9 @@ export default class TodoView extends React.PureComponent<Props, State> {
                                                 onStopEditing={this.onStopEditing} />
                                 </div>
                                 <div className="todo-controls">
-                                    <Button className="delete-btn pt-intent-danger pt-minimal" iconName="trash" onClick={this.onDeleteTodo} />
-                                    <Button className="add-subtask-btn pt-intent-success pt-minimal" iconName="plus" onClick={this.onAddSubtask} />
-                                    <Button className="todo-settings-btn pt-intent-success pt-minimal" iconName="cog" onClick={this.onOpenTodoSettings} />
+                                    <Button className="delete-btn pt-intent-danger pt-minimal" icon="trash" onClick={this.onDeleteTodo} />
+                                    <Button className="add-subtask-btn pt-intent-success pt-minimal" icon="plus" onClick={this.onAddSubtask} />
+                                    <Button className="todo-settings-btn pt-intent-success pt-minimal" icon="cog" onClick={this.onOpenTodoSettings} />
                                 </div>
                             </div>
                             {this.renderRecurring()}

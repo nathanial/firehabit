@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
-import './index.css';
+import './index.scss';
 import {db, history} from "./util";
 import {generatePushID} from './db/util';
 import * as firebase from 'firebase';
@@ -21,6 +21,7 @@ var config = {
 };
 firebase.initializeApp(config);
 
+console.log("LOADED")
 
 async function isLoggedIn(){
 	return new Promise((resolve, reject) => {

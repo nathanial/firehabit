@@ -15,10 +15,10 @@ interface Props {
 class BasicDialog extends React.PureComponent<Props,{}> {
 	render(){
 		return (
-			<Dialog iconName="inbox"
-							isOpen={true}
-							onClose={this.onCancel}
-							title={this.props.title}>
+			<Dialog icon="inbox"
+					isOpen={true}
+					onClose={this.onCancel}
+					title={this.props.title}>
 				<div className="pt-dialog-body">
 					{this.renderLabel()}
 					{this.props.children}

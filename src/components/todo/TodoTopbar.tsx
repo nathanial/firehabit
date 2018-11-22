@@ -34,7 +34,7 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 		return (
 			<div className={`${todoTopbarClass}`}>
 				<Button className="add-column-btn pt-intent-success"
-						iconName="plus"
+						icon="plus"
 						onClick={this.onAddColumn}>
 					Add Column
 				</Button>

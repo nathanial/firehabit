@@ -262,7 +262,7 @@ export async function loginToFirebase(db: DB){
 		firebase.auth().onAuthStateChanged(async function(user) {
 			if (user) {
 				db.loggedIn = true;
-				db.user.name = user.name || user.displayName;
+				db.user.name = user.displayName;
 				db.user.email = user.email;
 				resolve();
 				// User is signed in.

@@ -21,7 +21,7 @@ export class SettingsDialog extends React.PureComponent<Props,{}> {
                 <h3>Settings</h3>
                 <label>Weight Stasis Goal</label>
                 <input type="text" className="pt-input" value={goal} onChange={this.onGoalChanged} />
-                <Button className="pt-minimal close-btn" iconName="cross" onClick={this.onClose} />
+                <Button className="pt-minimal close-btn" icon="cross" onClick={this.onClose} />
             </div>
         );
     }

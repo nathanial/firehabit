@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import {Button, EditableText, Tabs2, Tab2} from "@blueprintjs/core";
+import {Button, EditableText, Tabs, Tab} from "@blueprintjs/core";
 import {history} from '../../util';
 import {generatePushID} from '../../db/util';
 import TodoView from "./TodoView";
@@ -62,10 +62,10 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                                                 onChange={this.onChangeColumnName}
                                                 onStartEditing={this.onStartEditing}
                                                 onStopEditing={this.onStopEditing}/>
-                                    <Button iconName="settings"
+                                    <Button icon="settings"
                                             className="settings-btn pt-minimal"
                                             onClick={this.gotoColumnSettings} />
-                                    <Button iconName="plus"
+                                    <Button icon="plus"
                                             className={`${addTodoBtnClass} pt-minimal pt-intent-success`}
                                             onClick={this.onAddTodo} />
                                     {this.renderTrashBtn()}
@@ -185,7 +185,7 @@ export default class TodoColumnView extends React.PureComponent<Props> {
     private renderTrashBtn = () => {
         if(this.props.column.showClearButton){
             return (
-                <Button iconName="trash"
+                <Button icon="trash"
                         className={`${trashBtnClass} pt-minimal pt-intent-danger`}
                         onClick={this.onClearColumn} />
             );

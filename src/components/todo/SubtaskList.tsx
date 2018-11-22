@@ -38,10 +38,10 @@ export class SubtaskList extends React.PureComponent<Props> {
 										onStopEditing={() => {}} />
 							<div className="subtask-btns">
 								<Button className="complete-subtask-btn pt-minimal pt-intent-success"
-												iconName="tick"
+												icon="tick"
 												onClick={() => this.props.onChange(i, {complete: !task.complete})} />
 								<Button className="delete-subtask-btn close-btn pt-minimal pt-intent-danger"
-												iconName="cross"
+												icon="cross"
 												onClick={() => this.props.onDelete(i, task)} />
 							</div>
 						</li>

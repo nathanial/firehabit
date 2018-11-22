@@ -37,11 +37,11 @@ export class AddFoodDialog extends React.PureComponent<Props,State> {
         return (
             <div className={classes}>
                 <div className="search-input-container">
-                    <Icon iconName="search" className="search-icon" />
+                    <Icon icon="search" className="search-icon" />
                     <input type="text" className="food-search-input" placeholder="Hamburger" autoFocus={true}
                         onChange={this.onSearchChanged}
                         onKeyDown={this.onKeyDown}/>
-                    <Button className="pt-minimal close-btn" iconName="cross" onClick={this.props.onClose} />
+                    <Button className="pt-minimal close-btn" icon="cross" onClick={this.props.onClose} />
                 </div>
                 {this.renderSearchResults()}
             </div>
@@ -73,7 +73,7 @@ export class AddFoodDialog extends React.PureComponent<Props,State> {
                         {_.map(results, match => {
                             return (
                                 <div key={match.id} className="search-result">
-                                    <Button className="add-btn pt-minimal" iconName="plus" onClick={() => this.onSelectResult(match)} />
+                                    <Button className="add-btn pt-minimal" icon="plus" onClick={() => this.onSelectResult(match)} />
                                     <InlineText className="food-name"
                                                 value={match.name}
                                                 onChange={(newValue) => this.onNameChanged(match, newValue)} />

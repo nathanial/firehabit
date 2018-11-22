@@ -20,7 +20,7 @@ export class ConsumedFoodsList extends React.PureComponent<Props, {}> {
 		return (
 			<div className="food-eaten">
 				<h3>Consumed Foods</h3>
-				<Button iconName="plus" className="pt-minimal add-food-btn" onClick={this.onAddFoodClick}/>
+				<Button icon="plus" className="pt-minimal add-food-btn" onClick={this.onAddFoodClick}/>
 				<ul className="consumed-foods-list">
 					{groups.map((entry, index) => {
 						let name = entry.name;
@@ -31,8 +31,8 @@ export class ConsumedFoodsList extends React.PureComponent<Props, {}> {
 							<li key={JSON.stringify(entry)}>
 								<span className="food-name">{name}</span>
 								<span className="calories">{entry.calories}</span>
-								<Icon iconName="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))}/>
-								<Icon iconName="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
+								<Icon icon="plus" onClick={() => this.onRepeatFood(day, _.last(entry.group))}/>
+								<Icon icon="trash" onClick={() => this.onRemoveFood(day, _.last(entry.group))} />
 							</li>
 						);
 					})}

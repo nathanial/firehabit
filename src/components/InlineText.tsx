@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as AutoTextArea from 'react-textarea-autosize';
+const AutoTextArea = (require('react-textarea-autosize') as any).default;
 
 type Props = {
     className?: string;
