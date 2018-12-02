@@ -37,7 +37,7 @@ module.exports = {
             from: "public/**"
         }]),
         new HtmlWebpackPlugin({
-            template: "src/index.html"
+            template: "src/index.html.hbs"
         }),
         new webpack.HotModuleReplacementPlugin()
     ],

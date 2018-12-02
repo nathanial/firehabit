@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
-import './index.scss';
 import {db, history} from "./util";
 import {generatePushID} from './db/util';
 import * as firebase from 'firebase';

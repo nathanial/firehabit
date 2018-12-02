@@ -6,7 +6,6 @@ import cxs from 'cxs';
 import {generatePushID} from '../../db/util';
 import DayPicker from 'react-day-picker';
 import * as moment from 'moment';
-import 'react-day-picker/lib/style.css';
 import InlineText from '../InlineText';
 import ScrollArea from '../ScrollArea';
 import * as Plot from 'react-plotly.js'
