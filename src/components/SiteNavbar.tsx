@@ -101,9 +101,7 @@ class UserDropdown extends React.PureComponent<UserProps,{}>{
 		}
 		return (
 			<Popover content={compassMenu} position={Position.BOTTOM}>
-				<button className="pt-button pt-minimal" type="button">
-					{renderGravatar()}
-				</button>
+				{renderGravatar()}
 			</Popover>
 		);
 	}

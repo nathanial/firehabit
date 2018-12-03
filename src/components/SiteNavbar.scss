@@ -98,19 +98,21 @@
 .user-section {
     position: absolute;
     right: 16px;
-    top: 10px;
+    top: 5px;
 
     .username {
         padding: 4px 0;
         margin-right: 11px;
+        position: relative;
+        top: -3px;
         vertical-align: middle;
         display: inline-block;
         font-family: 'Roboto';
     }
 
-    .pt-popover-target {
+    .bp3-popover-target {
         display: inline-block;
-        margin-top: -4px;
+        margin-top: 0px;
         & > button {
             padding: 0;
             min-width: 24px;
