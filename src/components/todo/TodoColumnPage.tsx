@@ -5,6 +5,7 @@ import cxs from 'cxs';
 import { DragDropContext } from 'react-beautiful-dnd';
 import TodoSidebar from './TodoSidebar';
 import {TodoPageState} from "../../state";
+import TodoListView from "./listview/TodoListView";
 
 const todoColumnPageClass = cxs({
     display: 'flex',
@@ -73,9 +74,7 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
             )
         } else {
             return (
-                <div className={"list-view"}>
-                    <h1>List View</h1>
-                </div>
+                <TodoListView todoColumns={todoColumns}/>
             );
         }
     }
