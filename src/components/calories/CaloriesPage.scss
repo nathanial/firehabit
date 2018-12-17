@@ -34,13 +34,16 @@
 .calories-page {
 	background: transparent !important;
 	width: 100%;
-	max-width: 1200px;
-	margin: 0 auto;
+	height: 100%;
+	max-width: none;
+	min-width: auto;
 	position: relative;
-	height: calc(100% - 20px);
 
 	display: grid;
 	grid-template-columns: 270px 1fr;
+
+	box-sizing: border-box;
+	overflow: hidden;
 
 	.left-column {
 		height: 100%;
@@ -48,6 +51,7 @@
 		box-shadow:rgba(0,0,0,0.1) 6px 0px 5px;
 		background: #222;
 		border-right: 1px solid rgb(0, 0, 0);
+		padding-top: 0px;
 		z-index: 1;
 
 		.calories-percentage-wrapper {
@@ -162,7 +166,7 @@
 						width: 40px;
 						text-align: center;
 					}
-					.pt-icon-standard {
+					.bp3-icon {
 						font-size: 11px;
 						display :inline-block;
 						line-height: 15px;
@@ -325,6 +329,7 @@
 	background: #333;
 	transition: transform 0.3s ease-in-out;
 	box-shadow:rgba(0,0,0,0.3) 3px 0px 8px;
+	padding-top: 5px;
 
 	&.visible {
 		display: block !important;
@@ -333,6 +338,8 @@
 	z-index: 2;
 
 	.search-input-container {
+		position: relative;
+		display: flex;
 		padding-bottom: 10px;
 		border-bottom: 1px solid #222;
 		box-shadow: rgba(0,0,0,0.08) 0px 3px 10px;
@@ -370,7 +377,7 @@
 
 	.search-results {
 		position: absolute;
-		top: 46px;
+		top: 51px;
 		bottom: 0px;
 		right: 0px;
 		left: 0;
