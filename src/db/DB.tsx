@@ -46,8 +46,6 @@ export class DB {
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = (await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val() as CalorieSettings;
 		const todoPageState = (await this.db.ref(`/users/${userId}/todo-page-state`).once('value')).val() as TodoPageState || {mode: "column-view"};
-		console.log("GET IT", todoPageState)
-
 		if(_.isEmpty(todoColumns)){
 			todoColumns.push({
 				id: generatePushID(),
@@ -96,6 +94,7 @@ export class DB {
 		}
 
 		state.set({
+			search: '',
 			todoColumns: todoColumns,
 			calories: {
 				selectedDate,

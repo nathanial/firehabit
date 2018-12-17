@@ -19,12 +19,12 @@ class BasicDialog extends React.PureComponent<Props,{}> {
 					isOpen={true}
 					onClose={this.onCancel}
 					title={this.props.title}>
-				<div className="pt-dialog-body">
+				<div className="bp3-dialog-body">
 					{this.renderLabel()}
 					{this.props.children}
 				</div>
-				<div className="pt-dialog-footer">
-					<div className="pt-dialog-footer-actions">
+				<div className="bp3-dialog-footer">
+					<div className="bp3-dialog-footer-actions">
 						<Button text={this.props.cancelBtn} onClick={this.onCancel} />
 						<Button
 							intent={this.props.confirmBtnIntent}

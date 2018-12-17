@@ -5,10 +5,6 @@ import {state} from "../../state";
 import * as FileSaver from 'file-saver';
 import {generatePushID} from '../../db/util';
 
-const todoTopbarClass = cxs({
-	display: 'inline-block'
-});
-
 const importButtonClass = cxs({
 });
 
@@ -24,7 +20,9 @@ const devtoolsClass = cxs({
 
 type Props = {
 	todoColumns: TodoColumn[];
+	search: string;
 	showDevTools: boolean;
+	onUpdateSearch(search: String);
 }
 
 export default class TodoTopbar extends React.PureComponent<Props> {
@@ -32,7 +30,10 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 
 	render(){
 		return (
-			<div className={`${todoTopbarClass}`}>
+			<div className={"todo-topbar"}>
+				<div className={"search-input"}>
+					<input type={"text"} value={this.props.search} onChange={this.onUpdateSearch} />
+				</div>
 				<Button className="add-column-btn pt-intent-success"
 						icon="plus"
 						onClick={this.onAddColumn}>
@@ -73,6 +74,10 @@ export default class TodoTopbar extends React.PureComponent<Props> {
 
 	componentWillUnmount(){
 		document.removeEventListener('keydown', this.onKeyDown);
+	}
+
+	private onUpdateSearch = (event: React.FormEvent<HTMLInputElement>) => {
+		this.props.onUpdateSearch(event.currentTarget.value);
 	}
 
 	private onFileInputChanged = () =>{

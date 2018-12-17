@@ -35,32 +35,8 @@
         border: 1px solid #444;
         border-radius: 0;
         opacity: 0;
-        .delete-btn {
-            height: 18px;
-            min-width: 18px;
-            min-height: 18px;
-            line-height: 18px;
-            transition: opacity 0.2s ease-out;
-            &:before {
-                font-size: 11px;
-                line-height: 14px;
-                vertical-align: middle;
-            }
-        }
 
         transition: opacity 0.2s ease-in-out;
-
-        .add-subtask-btn, .file-upload-btn, .todo-settings-btn {
-            min-width: 18px;
-            height: 18px;
-            min-height: 18px;
-            line-height: 10px;
-            border-radius: 0;
-            &:before {
-                font-size: 12px;
-                vertical-align: middle;
-            }
-        }
     }
 }
 
@@ -167,4 +143,37 @@
         }
     }
 
+}
+
+
+.todo-controls {
+    display: flex;
+    .bp3-button {
+        min-height: auto;
+        min-width: auto;
+        font-size: 11px;
+        border-radius: 0;
+        & > span > svg {
+            height: 10px;
+            color: black;
+        }
+    }
+
+    .delete-btn {
+        & > span > svg {
+            color: red;
+        }
+    }
+
+    .add-subtask-btn {
+        & > span > svg {
+            color: green;
+        }
+    }
+
+    .todo-settings-btn {
+        & > span > svg {
+            color: dimgray;
+        }
+    }
 }

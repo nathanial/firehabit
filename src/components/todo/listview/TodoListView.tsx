@@ -4,35 +4,15 @@ import TodoItem from "./TodoItem";
 
 type Props = {
     todoColumns: TodoColumn[];
-};
-
-type State = {
     search: string;
 };
 
-type SearchProps = {
-    search: string;
-    onChange(value: string);
-};
 
-class SearchBar extends React.PureComponent<SearchProps> {
-    render(){
-        return (
-            <div className={"search-bar"}>
-                <input type={"text"} value={this.props.search} onChange={(event) => this.props.onChange(event.target.value)} />
-            </div>
-        );
-    }
-}
-
-export default class TodoListView extends React.Component<Props, State> {
-
-    state = {search: ""};
+export default class TodoListView extends React.PureComponent<Props> {
 
     render(){
         return (
             <div className={"todo-list-view"}>
-                <SearchBar search={this.state.search} onChange={this.onSearchChanged} />
                 <div className={"todo-list-items"}>
                     {this.renderTodos()}
                 </div>
@@ -46,14 +26,10 @@ export default class TodoListView extends React.Component<Props, State> {
                 value: todo,
                 color: c.color
             })))),
-            (todo) => _.includes(todo.value.name.toLowerCase(), this.state.search.toLowerCase())
+            (todo) => _.includes(todo.value.name.toLowerCase(), this.props.search.toLowerCase())
         );
         return allTodos.map(todo => {
             return <TodoItem todo={todo.value} color={todo.color} />;
         });
-    }
-
-    private onSearchChanged = (search: string) => {
-        this.setState({search});
     }
 }

@@ -24,7 +24,7 @@ export default class App extends React.PureComponent<Props> {
 
     render() {
         return (
-            <div className="App pt-dark">
+            <div className="App bp3-dark">
                 <SiteNavbar user={db.user} path={history.location.pathname} onNavigate={this.onNavigate}>
                     {this.renderCustomTopbar()}
                 </SiteNavbar>
@@ -50,9 +50,9 @@ export default class App extends React.PureComponent<Props> {
     private renderPage(){
         const appState = this.props.appState;
         if(history.location.pathname === '/') {
-            const {todoColumns, showDevTools, todoPageState} = appState;
+            const {search, todoColumns, showDevTools, todoPageState} = appState;
             return 	(
-                <TodoColumnPage todoColumns={todoColumns} showDevTools={showDevTools} todoPageState={todoPageState} />
+                <TodoColumnPage search={search} todoColumns={todoColumns} showDevTools={showDevTools} todoPageState={todoPageState} />
             );
         } else if(history.location.pathname === '/calories') {
             return (
@@ -67,8 +67,11 @@ export default class App extends React.PureComponent<Props> {
 
     private renderCustomTopbar() {
 		if(history.location.pathname === '/') {
-            const {todoColumns, showDevTools} = this.props.appState;
-			return <TodoTopbar todoColumns={todoColumns} showDevTools={showDevTools} />
+            const {search, todoColumns, showDevTools} = this.props.appState;
+			return <TodoTopbar search={search}
+                               todoColumns={todoColumns}
+                               showDevTools={showDevTools}
+                               onUpdateSearch={this.onUpdateSearch}/>
 		}
 	}
 
@@ -77,5 +80,8 @@ export default class App extends React.PureComponent<Props> {
         this.forceUpdate();
     };
 
+    private onUpdateSearch = (search: string) => {
+        this.props.appState.set('search', search);
+    }
 }
 

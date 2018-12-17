@@ -35,6 +35,7 @@ const trashBtnClass = cxs({
 });
 
 interface Props {
+    search: string;
     column: TodoColumn;
     onMoveColumnLeft(column: TodoColumn);
     onMoveColumnRight(column: TodoColumn);
@@ -107,7 +108,14 @@ export default class TodoColumnView extends React.PureComponent<Props> {
 
     private renderTodos = () => {
         const column = this.props.column;
-        return column.todos.map((todo, index) => {
+        const search = this.props.search;
+        let todos = column.todos;
+        if(!_.isEmpty(search)){
+            todos = todos.filter(todo => {
+                return todo.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+            });
+        }
+        return todos.map((todo, index) => {
             const visible = _.isUndefined(column.activeTab) || (column.activeTab === '0' && _.isUndefined(todo.tab)) || todo.tab === column.activeTab;
             if(!visible) {
                 return;

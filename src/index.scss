@@ -78,3 +78,22 @@ $out-transition: opacity 50ms ease-out, max-height 100ms ease-out 50ms, transfor
   }
 }
 
+
+.bp3-dark .bp3-button.pt-minimal {
+  background-color: transparent !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+  outline-width: 0 !important;
+
+  &:hover {
+    background-color: rgba(0,0,0,0.4) !important;
+  }
+}
+
+
+.bp3-button {
+  border-radius: 0 !important;
+  min-height: auto;
+  min-width: auto;
+  background-image: none !important;
+}

@@ -34,6 +34,7 @@ export interface AppState {
 	todoColumns: TodoColumn[];
 	todoPageState: TodoPageState;
 	notes: Note[];
+	search: string;
 	set?(name: string, value: any);
 	set?(newState: Partial<AppState>);
 }
@@ -46,6 +47,7 @@ interface FreezerData<T> {
 
 const initialAppState: AppState = {
 	showDevTools: false,
+    search: "",
 	todoPageState: {
 		mode: "column-view"
 	},

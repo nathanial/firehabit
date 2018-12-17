@@ -451,11 +451,13 @@ export default class TodoView extends React.PureComponent<Props, State> {
 
     private onDeleteTodo = async () => {
         if(this.props.confirmDeletion) {
+            console.log("Confirm Deletion", this.props.todo);
             const result = await DialogService.showDangerDialog("Are you sure you want to delete this TODO?", "Delete", "Cancel");
             if(result){
                 this.props.onDelete(this.props.todo);
             }
         } else {
+            console.log("DELETE IT", this.props.todo);
             this.props.onDelete(this.props.todo);
         }
     };
