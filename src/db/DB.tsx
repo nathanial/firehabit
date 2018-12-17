@@ -45,7 +45,7 @@ export class DB {
 		const days = await this.daysCollection.load();
 		const selectedDate = moment().format('MM/DD/YY');
 		const calorieSettings = (await this.db.ref(`/users/${userId}/calorie-settings`).once('value')).val() as CalorieSettings;
-		const todoPageState = (await this.db.ref(`/users/${userId}/todo-page-state`).once('value')).val() as TodoPageState || {mode: "column-view"};
+		const todoPageState = (await this.db.ref(`/users/${userId}/todo-page-state`).once('value')).val() as TodoPageState || {mode: "column-view", todoId: ''};
 		if(_.isEmpty(todoColumns)){
 			todoColumns.push({
 				id: generatePushID(),

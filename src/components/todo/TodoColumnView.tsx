@@ -40,6 +40,7 @@ interface Props {
     onMoveColumnLeft(column: TodoColumn);
     onMoveColumnRight(column: TodoColumn);
     onDeleteColumn(column: TodoColumn);
+    onGotoPage(todo: Todo);
 }
 
 
@@ -131,7 +132,8 @@ export default class TodoColumnView extends React.PureComponent<Props> {
                                     <TodoView todo={todo}
                                         visible={visible}
                                         confirmDeletion={column.confirmDeletion}
-                                        onDelete={this.onDeleteTodo} />
+                                        onDelete={this.onDeleteTodo}
+                                        onGotoPageView={this.onGotoPageView}/>
                                 </div>
                                 {provided.placeholder}
                             </div>
@@ -227,5 +229,9 @@ export default class TodoColumnView extends React.PureComponent<Props> {
             this.props.column.set({todos: []});
         }
     };
+
+    private onGotoPageView = (todo: Todo) => {
+        this.props.onGotoPage(todo);
+    }
 
 }

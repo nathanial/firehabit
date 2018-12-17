@@ -7,6 +7,8 @@ import {AppState} from "./state";
 import TodoTopbar from './components/todo/TodoTopbar';
 import {Spinner} from '@blueprintjs/core';
 import cxs from 'cxs';
+import TodoPageView from "./components/todo/TodoPageView";
+import * as _ from 'lodash';
 
 interface Props {
     appState: AppState
@@ -56,7 +58,7 @@ export default class App extends React.PureComponent<Props> {
             );
         } else if(history.location.pathname === '/calories') {
             return (
-                <CaloriesPage caloriesState={appState.calories} />
+                <CaloriesPage caloriesState={appState.calories}/>
             );
         } else {
             return (

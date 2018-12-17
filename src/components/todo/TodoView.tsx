@@ -17,6 +17,7 @@ interface Props {
     style?: Object;
     confirmDeletion: boolean;
     onDelete(todo: Todo);
+    onGotoPageView(todo: Todo);
 }
 
 function getColorStyle(todo: Todo){
@@ -64,7 +65,7 @@ export default class TodoView extends React.PureComponent<Props, State> {
                     data-todo-id={this.props.todo.id}
                     style={style}
                     {...otherProps}>
-                    <div  style={colorStyle}>
+                    <div style={colorStyle}>
                         <div className="todo-main-content">
                             <div className='todo-wrapper' >
                                 <div className="drag-handle" draggable={true}>
@@ -83,6 +84,7 @@ export default class TodoView extends React.PureComponent<Props, State> {
                                 <div className="todo-controls">
                                     <Button className="delete-btn pt-intent-danger pt-minimal" icon="trash" onClick={this.onDeleteTodo} />
                                     <Button className="add-subtask-btn pt-intent-success pt-minimal" icon="plus" onClick={this.onAddSubtask} />
+                                    <Button className="goto-page-view pt-intent-success pt-minimal" icon="arrow-right" onClick={this.onGotoPageView} />
                                     <Button className="todo-settings-btn pt-intent-success pt-minimal" icon="cog" onClick={this.onOpenTodoSettings} />
                                 </div>
                             </div>
@@ -363,7 +365,11 @@ export default class TodoView extends React.PureComponent<Props, State> {
         this.setState({
             settingsVisible: !this.state.settingsVisible
         })
-    }
+    };
+
+    private onGotoPageView = () => {
+        this.props.onGotoPageView(this.props.todo);
+    };
 
     private getSettings = () => {
         return _.defaults(_.cloneDeep(this.props.todo.settings || {}), {

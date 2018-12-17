@@ -3,10 +3,11 @@ import * as _ from 'lodash';
 import * as uuidv4 from 'uuid/v4';
 import moment = require("moment");
 
-export type TodoPageMode = "column-view" | "list-view"
+export type TodoPageMode = "column-view" | "list-view" | "todo-page-view"
 
 export interface TodoPageState {
 	mode: TodoPageMode;
+	todoId: string;
 
     set?(updates: Partial<TodoPageState>);
 }
@@ -49,6 +50,7 @@ const initialAppState: AppState = {
 	showDevTools: false,
     search: "",
 	todoPageState: {
+		todoId: '',
 		mode: "column-view"
 	},
 	calendarEvents: [],

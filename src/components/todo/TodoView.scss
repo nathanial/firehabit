@@ -1,5 +1,6 @@
 @import "./SubtaskList.scss";
 @import "./TodoColumnSettingsPage.scss";
+@import "./TodoPageView.scss";
 
 .todo-content-wrapper {
     position: relative;
@@ -174,6 +175,12 @@
     .todo-settings-btn {
         & > span > svg {
             color: dimgray;
+        }
+    }
+
+    .goto-page-view {
+        & > span > svg {
+            color: dodgerblue;
         }
     }
 }

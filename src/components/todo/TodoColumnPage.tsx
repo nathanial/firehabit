@@ -6,6 +6,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import TodoSidebar from './TodoSidebar';
 import {TodoPageState} from "../../state";
 import TodoListView from "./listview/TodoListView";
+import TodoPageView from "./TodoPageView";
 
 const todoColumnPageClass = cxs({
     display: 'flex',
@@ -33,7 +34,6 @@ type Props = {
     showDevTools: boolean;
 }
 
-
 function reorder<T>(list: T[], startIndex: number, endIndex: number) {
     const trans = list['transact']();
     const [removed] = trans.splice(startIndex, 1);
@@ -57,7 +57,12 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
     private renderContent(){
         let {search, todoColumns} = this.props
         todoColumns = _.sortBy(todoColumns, column => column.index);
-        if(this.props.todoPageState.mode == "column-view"){
+        if(this.props.todoPageState.mode == "todo-page-view"){
+            const todo = this.findTodoById(this.props.todoPageState.todoId);
+            return (
+              <TodoPageView todo={todo} onGoBack={this.onBackToColumnView} />
+            );
+        } else if(this.props.todoPageState.mode == "column-view"){
             return (
                 <DragDropContext onDragEnd={this.onDragEnd}>
                     <div className={columnsContainerClass}>
@@ -68,7 +73,8 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
                                                 search={search}
                                                 onDeleteColumn={this.onDeleteColumn}
                                                 onMoveColumnLeft={this.onMoveColumnLeft}
-                                                onMoveColumnRight={this.onMoveColumnRight} />
+                                                onMoveColumnRight={this.onMoveColumnRight}
+                                                onGotoPage={this.onGotoPage} />
                             );
                         })}
                     </div>
@@ -137,7 +143,17 @@ export default class TodoColumnPage extends React.PureComponent<Props> {
             column.set({index: nextColumn.index});
             nextColumn.set({index: oldIndex});
         }
-    }
+    };
 
+    private onGotoPage = (page: Todo) => {
+        this.props.todoPageState.set({
+            mode: "todo-page-view",
+            todoId: page.id
+        });
+    };
+
+    private onBackToColumnView = () => {
+        this.props.todoPageState.set({mode: 'column-view'});
+    }
 
 }
